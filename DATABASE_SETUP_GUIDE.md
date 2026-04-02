@@ -55,13 +55,63 @@ spring.jpa.hibernate.ddl-auto=update
 
 ---
 
-## 📝 5. (선택) DB가 잘 들어갔는지 직접 확인하고 싶을 때
+## 📝 5. DB 데이터 직접 확인 및 관리하기
 
-회원가입 후 데이터가 테이블에 들어갔는지 직접 조회하고 싶다면 아래 명령어를 사용하세요.
+도커로 실행 중인 MySQL에 직접 접속하여 데이터를 확인하고 관리하는 방법입니다.
 
-- **컨테이너 DB 진입:**
-  `docker exec -it azit-mysql mysql -u root -p azit_db` (비밀번호: `azit1234`)
-- **데이터 조회 SQL 문:**
-  `SELECT * FROM users;`
+### 1) MySQL 컨테이너 내부 접속
 
-_(주의: 터미널 설정 문제로 터미널 한정 한글이 깨져(??) 보일 수 있으나, 웹 브라우저 화면에서 한글이 정상적으로 출력된다면 데이터 입출력은 정상입니다.)_
+터미널(PowerShell 또는 CMD)에서 아래 명령어를 입력하여 MySQL 클라이언트를 실행합니다.
+
+```bash
+docker exec -it azit-mysql mysql -u root -p azit_db
+```
+
+- **비밀번호 입력:** `azit1234` (입력 시 화면에 글자가 표시되지 않으니 주의하세요.)
+
+### 2) 유용한 SQL 명령어 (접속 후 `mysql>` 프롬프트에서 입력)
+
+모든 SQL 명령어 끝에는 세미콜론(`;`)을 반드시 붙여야 합니다.
+
+- **전체 회원 목록 조회:**
+  ```sql
+  SELECT * FROM users;
+  ```
+- **특정 이메일을 가진 회원 삭제:**
+  ```sql
+  DELETE FROM users WHERE email = 'test@example.com';
+  ```
+- **테이블 구조 확인 (인코딩 등):**
+  ```sql
+  DESC users;
+  -- 또는 상세 정보 보기
+  SHOW CREATE TABLE users;
+  ```
+- **모든 데이터 삭제 (초기화):**
+  ```sql
+  DELETE FROM users;
+  ```
+
+### 3) 접속 종료
+
+확인이 끝나면 아래 명령어로 빠져나옵니다.
+
+```sql
+exit
+```
+
+---
+
+## 💡 자주 발생하는 문제 해결 (Troubleshooting)
+
+### Q: `docker run` 시 "Conflict" 에러가 발생합니다.
+
+이미 `azit-mysql`이라는 이름의 컨테이너가 생성된 상태입니다. 터미널을 다시 켜거나 컴퓨터를 재부팅한 경우라면 아래 명령어로 **이미 생성된 컨테이너를 시작**만 해주면 됩니다.
+
+```bash
+docker start azit-mysql
+```
+
+### Q: 터미널에서 닉네임이 `??`로 보입니다.
+
+이는 터미널(PowerShell 등)이 한글을 제대로 표시하지 못하는 설정일 때 발생합니다. 웹 브라우저(`http://localhost:8080`)에서 닉네임이 정상적으로 출력된다면 데이터베이스 저장은 완벽하게 성공한 것이니 안심하셔도 됩니다.
