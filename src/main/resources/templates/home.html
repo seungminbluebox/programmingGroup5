@@ -1,0 +1,92 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>메인 화면 - Azit</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f9f9f9;
+        margin: 0;
+      }
+      .welcome-box {
+        background: white;
+        padding: 3rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 1rem;
+      }
+      h1 span {
+        color: #007bff;
+      }
+      .btn-group {
+        margin-top: 2rem;
+      }
+      .btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 6px;
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        margin: 0 0.5rem;
+        transition: background-color 0.2s;
+        display: inline-block;
+      }
+      .btn-login {
+        background-color: #007bff;
+      }
+      .btn-login:hover {
+        background-color: #0056b3;
+      }
+      .btn-register {
+        background-color: #28a745;
+      }
+      .btn-register:hover {
+        background-color: #218838;
+      }
+      .btn-logout {
+        background-color: #dc3545;
+      }
+      .btn-logout:hover {
+        background-color: #c82333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="welcome-box">
+      <div th:if="${nickname != null}">
+        <h1>환영합니다, <span th:text="${nickname}"></span>님!</h1>
+        <p>Azit 시스템에 성공적으로 로그인하셨습니다.</p>
+        <div class="btn-group">
+          <form th:action="@{/logout}" method="post" style="display: inline">
+            <button
+              type="submit"
+              class="btn btn-logout"
+              style="border: none; cursor: pointer"
+            >
+              로그아웃
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div th:if="${nickname == null}">
+        <h1>Azit에 오신 것을 환영합니다</h1>
+        <p>서비스를 이용하시려면 로그인해 주세요.</p>
+        <div class="btn-group">
+          <a href="/login" class="btn btn-login">로그인</a>
+          <a href="/register" class="btn btn-register">회원가입</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
