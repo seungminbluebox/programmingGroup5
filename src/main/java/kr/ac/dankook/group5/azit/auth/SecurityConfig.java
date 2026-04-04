@@ -22,6 +22,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/home", "/h2-console/**", "/register").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // 관리자 전용 경로 추가
                         .anyRequest().authenticated())
                 .formLogin((form) -> form
                         .loginPage("/login")

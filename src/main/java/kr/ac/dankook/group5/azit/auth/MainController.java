@@ -1,7 +1,7 @@
 package kr.ac.dankook.group5.azit.auth;
 
-import kr.ac.dankook.group5.azit.user.User;
-import kr.ac.dankook.group5.azit.user.UserRepository;
+import kr.ac.dankook.group5.azit.user.Member;
+import kr.ac.dankook.group5.azit.user.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequiredArgsConstructor
 public class MainController {
 
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     @GetMapping("/")
     public String home(Model model) {
@@ -22,8 +22,8 @@ public class MainController {
         if (authentication != null && authentication.isAuthenticated()
                 && !authentication.getPrincipal().equals("anonymousUser")) {
             String email = authentication.getName();
-            userRepository.findByEmail(email).ifPresent(user -> {
-                model.addAttribute("nickname", user.getNickname());
+            memberRepository.findByEmail(email).ifPresent(member -> {
+                model.addAttribute("nickname", member.getName());
             });
         }
         return "home";

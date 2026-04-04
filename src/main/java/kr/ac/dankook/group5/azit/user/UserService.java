@@ -7,14 +7,16 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void register(String email, String password, String nickname) {
-        User user = new User();
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password));
-        user.setNickname(nickname);
-        userRepository.save(user);
+    public void register(String email, String password, String name, Integer age, String bio) {
+        Member member = new Member();
+        member.setEmail(email);
+        member.setPassword(passwordEncoder.encode(password));
+        member.setName(name);
+        member.setAge(age);
+        member.setBio(bio);
+        memberRepository.save(member);
     }
 }

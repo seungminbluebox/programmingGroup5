@@ -20,8 +20,10 @@ public class RegisterController {
     @PostMapping("/register")
     public String register(@RequestParam String email,
             @RequestParam String password,
-            @RequestParam String nickname) {
-        userService.register(email, password, nickname);
+            @RequestParam String name,
+            @RequestParam(required = false) Integer age,
+            @RequestParam(required = false) String bio) {
+        userService.register(email, password, name, age, bio);
         return "redirect:/login";
     }
 }

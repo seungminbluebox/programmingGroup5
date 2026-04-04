@@ -1,8 +1,9 @@
 package kr.ac.dankook.group5.azit.auth;
 
-import kr.ac.dankook.group5.azit.user.User;
-import kr.ac.dankook.group5.azit.user.UserRepository;
+import kr.ac.dankook.group5.azit.user.Member;
+import kr.ac.dankook.group5.azit.user.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,16 +15,16 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 이메일을 가진 사용자를 찾을 수 없습니다: " + email));
 
         return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                Collections.emptyList());
+                member.getEmail(),
+                member.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority(member.getRole())));
     }
 }

@@ -67,6 +67,12 @@
         <h1>환영합니다, <span th:text="${nickname}"></span>님!</h1>
         <p>Azit 시스템에 성공적으로 로그인하셨습니다.</p>
         <div class="btn-group">
+          <a
+            href="/profile/me"
+            class="btn btn-login"
+            style="background-color: #6c757d"
+            >내 프로필</a
+          >
           <form th:action="@{/logout}" method="post" style="display: inline">
             <button
               type="submit"
