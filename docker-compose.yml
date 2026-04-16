@@ -1,0 +1,47 @@
+services:
+  azit:
+    build: .
+    ports:
+      - 8080:8080
+    depends_on:
+      azit-database:
+        condition: service_healthy
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - azit-net
+    develop:
+      watch:
+        - action: rebuild
+          path: ./src
+
+  azit-database:
+    image: mysql:8
+    environment:
+      MYSQL_DATABASE: azit_db
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - ./volumes/${DB_DIR:db}/:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "${DB_USER}",
+          "-p${DB_PASSWORD}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - azit-net
+
+networks:
+  azit-net:
