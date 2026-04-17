@@ -3,11 +3,12 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueDevTools from "vite-plugin-vue-devtools";
+import vueCustomElements from "vite-plugin-vue-ce";
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
-  plugins: [vue(), vueDevTools()],
-  root: fileURLToPath(new URL("./src/main/resources/templates", import.meta.url)),
+  plugins: [vue(), vueCustomElements(), vueDevTools()],
+  root: fileURLToPath(new URL("./src/main/resources/", import.meta.url)),
   build: {
     minify: mode !== "development",
     sourcemap: mode !== "production",
