@@ -13,16 +13,16 @@ export default defineConfig(({ mode }) => ({
   build: {
     minify: mode !== "development",
     sourcemap: mode !== "production",
-    outDir: fileURLToPath(new URL("./target/classes/", import.meta.url)),
+    outDir: fileURLToPath(new URL("./target/classes", import.meta.url)),
+    assetsDir: "./static",
     emptyOutDir: true,
     rolldownOptions: {
       input: [
-        ...globSync('./src/main/resources/templates/*.html'),
-        ...globSync('./src/main.resources/static/*.html')
-      ]
-    }
+        ...globSync('./src/main/resources/templates/*.html')
+      ],
+    },
   },
-  publicDir: fileURLToPath(new URL("./src/main/resources/static", import.meta.url)),
+  publicDir: './static',
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src/main/resources/", import.meta.url)),
@@ -32,4 +32,11 @@ export default defineConfig(({ mode }) => ({
     "process.env.NODE_ENV": JSON.stringify(mode),
     __VUE_PROD_DEVTOOLS__: mode === "development",
   },
+  experimental: {
+    renderBuiltUrl(fileName) {
+      if(fileName.startsWith('static/')) return fileName.slice('static'.length);
+      if(fileName.startsWith('templates/')) return fileName.slice('templates'.length);
+      return fileName;
+    }
+  }
 }));
