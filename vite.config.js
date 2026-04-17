@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from "node:url";
+import { globSync } from "node:fs";
 
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
@@ -12,23 +13,19 @@ export default defineConfig(({ mode }) => ({
   build: {
     minify: mode !== "development",
     sourcemap: mode !== "production",
-    outDir: fileURLToPath(new URL("./target/classes/static/assets", import.meta.url)),
+    outDir: fileURLToPath(new URL("./target/classes/", import.meta.url)),
+    emptyOutDir: true,
     rolldownOptions: {
       input: [
-        fileURLToPath(new URL("./src/main/js/assets/main.js", import.meta.url)),
-        fileURLToPath(new URL("./src/main/js/assets/main.css", import.meta.url)),
-      ],
-      output: {
-        entryFileNames: `[name].js`,
-        chunkFileNames: `[name].js`,
-        assetFileNames: `[name].[ext]`,
-      },
-    },
+        ...globSync('./src/main/resources/templates/*.html'),
+        ...globSync('./src/main.resources/static/*.html')
+      ]
+    }
   },
   publicDir: fileURLToPath(new URL("./src/main/resources/static", import.meta.url)),
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("./src/main/js", import.meta.url)),
+      "@": fileURLToPath(new URL("./src/main/resources/", import.meta.url)),
     },
   },
   define: {
