@@ -24,7 +24,7 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     volumes:
-      - ./volumes/${DB_DIR:db}/:/var/lib/mysql
+      - ./volumes/${DB_DIR:-db}/:/var/lib/mysql
     healthcheck:
       test:
         [
