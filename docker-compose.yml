@@ -1,6 +1,8 @@
 services:
   azit:
-    build: .
+    build:
+      context: .
+      target: jre
     ports:
       - 8080:8080
     depends_on:
@@ -22,9 +24,59 @@ services:
     develop:
       watch:
         - action: rebuild
-          path: ./src
+          path: ./src/
         - action: rebuild
           path: ./pom.xml
+    profiles:
+      - prod
+
+  azit-backend:
+    build:
+      context: .
+      target: maven
+    ports:
+      - 8080:8080
+    depends_on:
+      azit-database:
+        condition: service_healthy
+      azit-frontend:
+        condition: service_started
+    volumes:
+      - azit-resources-dist:/app/src/main/resources/
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - azit-net
+    develop:
+      watch:
+        - action: sync+exec
+          path: ./src/main/java/
+          target: /app/src/main/java/
+          exec:
+            working_dir: /app
+            command: ./mvnw compile
+        - action: restart
+          path: ./src/main/resources/
+    profiles:
+      - dev
+
+  azit-frontend:
+    build:
+      context: .
+      target: vite
+    volumes:
+      - azit-resources-dist:/app/target/classes/
+    networks:
+      - azit-net
+    command:
+    develop:
+      watch:
+        - action: sync+exec
+          path: ./src/main/resources/
+          target: /app/src/main/resources/
+    profiles:
+      - dev
 
   azit-database:
     image: mysql:8
@@ -55,6 +107,12 @@ services:
       retries: 12
     networks:
       - azit-net
+    profiles:
+      - prod
+      - dev
+
+volumes:
+  azit-resources-dist:
 
 networks:
   azit-net:
