@@ -9,6 +9,8 @@ services:
     environment:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./volumes/${UPLOADS_DIR:-uploads}/:/app/uploads
     networks:
       - azit-net
     develop:
