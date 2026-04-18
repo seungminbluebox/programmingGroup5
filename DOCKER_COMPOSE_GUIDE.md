@@ -101,5 +101,6 @@ docker compose down
 코드를 수정하는 대로 바꾼 점을 서버에서 실시간으로 보고 싶은 경우, watch 모드를 이용할 수 있습니다.
 
 ```sh
-docker compose up --wait --watch
+docker compose up -d --wait &&
+docker compose up --watch
 ```
