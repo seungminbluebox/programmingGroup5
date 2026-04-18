@@ -15,7 +15,6 @@ export default defineConfig(({ mode }) => ({
     sourcemap: mode !== "production",
     outDir: fileURLToPath(new URL("./target/classes", import.meta.url)),
     assetsDir: "./static",
-    emptyOutDir: true,
     rolldownOptions: {
       input: [
         ...globSync('./src/main/resources/templates/*.html')
