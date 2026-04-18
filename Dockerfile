@@ -34,7 +34,8 @@ COPY --link ./pom.xml .
 RUN ./mvnw dependency:go-offline -B
 
 # Java 컴파일
-COPY --link ./src/ ./src/
+COPY --link ./src/main/java ./src/main/java
+COPY --link ./src/main/resources/* ./src/main/resources/
 RUN ./mvnw compile
 
 # jar 패키지 빌드
