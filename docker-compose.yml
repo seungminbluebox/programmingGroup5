@@ -42,7 +42,7 @@ services:
       azit-frontend:
         condition: service_started
     volumes:
-      - azit-resources-dist:/app/target/classes/
+      - ./target/classes/:/app/target/classes/
     environment:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
@@ -64,7 +64,7 @@ services:
       context: .
       target: vite
     volumes:
-      - azit-resources-dist:/app/target/classes/
+      - ./target/classes/:/app/target/classes/
     networks:
       - azit-net
     command:
@@ -108,9 +108,6 @@ services:
     profiles:
       - prod
       - dev
-
-volumes:
-  azit-resources-dist:
 
 networks:
   azit-net:
