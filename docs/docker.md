@@ -107,7 +107,7 @@ docker compose stop
 서버 컨테이너를 삭제해야 하는 경우, 다음 명령어를 사용할 수 있습니다. 컨테이너를 삭제하더라도 데이터베이스 데이터는 `./volumes/` 경로에 남아 컨테이너를 다시 구동하면 바로 사용할 수 있습니다.
 
 ```sh
-docker compose down
+docker compose down -v
 ```
 
 기존 데이터도 전부 삭제하려면 `./volumes/` 경로를 삭제해야 합니다.
