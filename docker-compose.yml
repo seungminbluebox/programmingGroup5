@@ -17,6 +17,8 @@ services:
       watch:
         - action: rebuild
           path: ./src
+        - action: rebuild
+          path: ./pom.xml
 
   azit-database:
     image: mysql:8
