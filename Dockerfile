@@ -43,6 +43,7 @@ COPY --link --from=vite /app/target/classes/ ./src/main/resources/
 RUN ./mvnw package -DskipTests
 
 CMD ["./mvnw", "spring-boot:run"]
+EXPOSE 8080
 
 # == 런타임 ==
 FROM eclipse-temurin:25-alpine AS jre
