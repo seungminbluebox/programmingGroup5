@@ -50,19 +50,27 @@ Docker를 사용하지 않고, Spring Boot 서버를 바로 실행할 때 필요
  * `DB_PORT`: 데이터베이스가 사용하는 포트 번호 (기본값: `3306`)
  * `DB_NAME`: 서버가 연결할 데이터베이스 이름 (기본값: `azit_db`)
 
+## 프로필
+
+이 프로젝트에는 두 종류의 컨테이너가 있습니다. 실제 배포용으로 쓸 수 있는, 완전히 빌드된, 컴팩트한 프로덕션 컨테이너와 코드를 수정하고 실시간으로 결과를 확인할 수 있는 개발 컨테이너가 있습니다.
+
+docker compose에서는 이 둘을 `prod`와 `dev` 프로필로 구분합니다.
+
+`docker compose` 명령어에 `--profile` 옵션으로 이 둘을 선택할 수 있으며, 모든 프로필을 선택하려면 `--profile '*'`로 사용하면 됩니다.
+
 
 ## 빌드 (최초 실행)
 
 코드 수정 후 최초 실행 전에 Docker 이미지 빌드를 진행해야 합니다. 다음 명령어로 진행할 수 있습니다.
 
 ```sh
-docker compose build
+docker compose --profile '*' build
 ```
 
 빌드에서 서버 구동까지 한번에 하려면 다음 명령어로도 가능합니다.
 
 ```sh
-docker compose up --wait
+docker compose --profile prod up --wait
 ```
 
 ## 서버 구동
@@ -70,7 +78,7 @@ docker compose up --wait
 Docker를 이용해 데이터베이스와 서버를 한번에 구동하려면 다음 명령어를 이용하면 됩니다.
 
 ```sh
-docker compose up --wait
+docker compose --profile prod up --wait
 ```
 
 서버가 구동되는 동안 Spring Boot 서버와 MySQL 데이터베이스의 로그가 터미널에 표시됩니다. 여기서 Ctrl+C를 누르면 서버를 종료할 수 있습니다.
@@ -78,7 +86,7 @@ docker compose up --wait
 만약, 로그를 확인할 필요가 없고 서버를 구동하는 동안 다른 명령어를 사용해야 한다면 다음 명령어로도 서버를 구동할 수 있습니다. 서버가 시작되는대로 터미널에서 다음 명령어를 사용할 수 있는 상태가 되며, 서버는 백그라운드에서 작동합니다.
 
 ```sh
-docker compose up -d --wait
+docker compose --profile prod up -d --wait
 ```
 
 ## 서버 정지
@@ -86,7 +94,7 @@ docker compose up -d --wait
 백그라운드에서 구동 중인 서버를 중단하려면 다음 명령어를 사용하면 됩니다.
 
 ```sh
-docker compose stop
+docker compose --profile '*' stop
 ```
 
 ## 컨테이너 삭제
@@ -94,7 +102,7 @@ docker compose stop
 서버 컨테이너를 삭제해야 하는 경우, 다음 명령어를 사용할 수 있습니다. 컨테이너를 삭제하더라도 데이터베이스 데이터는 `./volumes/` 경로에 남아 컨테이너를 다시 구동하면 바로 사용할 수 있습니다.
 
 ```sh
-docker compose down -v
+docker compose --profile '*' down -v
 ```
 
 ## watch 모드
@@ -102,6 +110,6 @@ docker compose down -v
 코드를 수정하는 대로 바꾼 점을 서버에서 실시간으로 보고 싶은 경우, watch 모드를 이용할 수 있습니다.
 
 ```sh
-docker compose up -d --wait &&
-docker compose up --watch
+docker compose --profile dev up -d --wait --build &&
+docker compose --profile dev up --watch
 ```
