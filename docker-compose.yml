@@ -56,8 +56,12 @@ services:
           exec:
             working_dir: /app
             command: ./mvnw compile
-        - action: restart
+        - action: sync+exec
           path: ./src/main/resources/
+          target: /dev/null
+          exec:
+            working_dir: /app
+            command: ./mvnw compile
     profiles:
       - dev
 
@@ -72,7 +76,7 @@ services:
     command:
     develop:
       watch:
-        - action: sync+exec
+        - action: sync
           path: ./src/main/resources/
           target: /app/src/main/resources/
     profiles:
