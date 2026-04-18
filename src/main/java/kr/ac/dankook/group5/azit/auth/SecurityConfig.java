@@ -12,28 +12,29 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/home", "/login", "/register", "/css/**", "/js/**", "/images/**",
-                                "/uploads/**", "/h2-console/**")
-                        .permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN") // 관리자 전용 경로 추가
-                        .anyRequest().authenticated())
-                .formLogin((form) -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
-                        .permitAll())
-                .logout((logout) -> logout.permitAll())
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
-                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                .authorizeHttpRequests((requests) -> requests
+                                                .requestMatchers("/", "/home", "/login", "/register", "/**.js",
+                                                                "/**.css", "/css/**", "/js/**", "/images/**",
+                                                                "/uploads/**", "/h2-console/**")
+                                                .permitAll()
+                                                .requestMatchers("/admin/**").hasRole("ADMIN") // 관리자 전용 경로 추가
+                                                .anyRequest().authenticated())
+                                .formLogin((form) -> form
+                                                .loginPage("/login")
+                                                .defaultSuccessUrl("/", true)
+                                                .permitAll())
+                                .logout((logout) -> logout.permitAll())
+                                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
+                                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
-        return http.build();
-    }
+                return http.build();
+        }
 }
