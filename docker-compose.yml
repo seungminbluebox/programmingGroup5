@@ -1,0 +1,58 @@
+services:
+  azit:
+    build: .
+    ports:
+      - 8080:8080
+    depends_on:
+      azit-database:
+        condition: service_healthy
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./volumes/${UPLOADS_DIR:-uploads}/:/app/uploads
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "8080"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+    networks:
+      - azit-net
+    develop:
+      watch:
+        - action: rebuild
+          path: ./src
+        - action: rebuild
+          path: ./pom.xml
+
+  azit-database:
+    image: mysql:8
+    environment:
+      MYSQL_DATABASE: azit_db
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - ./volumes/${DB_DIR:-db}/:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "${DB_USER}",
+          "-p${DB_PASSWORD}",
+        ]
+      interval: 5s
+      timeout: 5s
+      start_period: 5s
+      retries: 12
+    networks:
+      - azit-net
+
+networks:
+  azit-net:
