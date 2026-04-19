@@ -11,6 +11,12 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ./volumes/${UPLOADS_DIR:-uploads}/:/app/uploads
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "8080"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
     networks:
       - azit-net
     develop:
@@ -43,7 +49,8 @@ services:
         ]
       interval: 5s
       timeout: 5s
-      retries: 10
+      start_period: 5s
+      retries: 12
     networks:
       - azit-net
 
