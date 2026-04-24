@@ -20,6 +20,9 @@ DB_ROOT_PASSWORD = azit1234
 
 # 로컬
 DB_URL = localhost
+
+# Docker
+PROFILE = dev
 ```
 
 ### 공통 필수
@@ -40,6 +43,7 @@ Docker를 사용하지 않고, Spring Boot 서버를 바로 실행할 때 필요
 
 Docker compose를 사용할 때, 필요에 따라 변경할 수 있는 설정입니다.
 
+ * `PROFILE`: 배포용 이미지([`prod`](./docker-compose.prod.yml))를 실행할 지, 개발 서버([`dev`](./docker-compose.dev.yml))를 실행할 지 선택할 수 있습니다. (기본값: `dev`)
  * `DB_DIR`: `./volumes/` 아래의 데이터베이스 디렉토리. 다른 데이터를 이용해 테스트를 하고자 할 때 사용합니다. (기본값: `db`)
  * `UPLOADS_DIR`: `./volumes/` 아래의 업로드 파일 디렉토리. 다른 데이터를 이용해 테스트를 하고자 할 때 사용합니다. (기본값: `uploads`)
 
@@ -64,13 +68,13 @@ docker compose에서는 이 둘을 `prod`와 `dev` 프로필로 구분합니다.
 코드 수정 후 최초 실행 전에 Docker 이미지 빌드를 진행해야 합니다. 다음 명령어로 진행할 수 있습니다.
 
 ```sh
-docker compose --profile '*' build
+docker compose build
 ```
 
 빌드에서 서버 구동까지 한번에 하려면 다음 명령어로도 가능합니다.
 
 ```sh
-docker compose --profile prod up --wait
+docker compose --wait
 ```
 
 ## 서버 구동
@@ -78,7 +82,7 @@ docker compose --profile prod up --wait
 Docker를 이용해 데이터베이스와 서버를 한번에 구동하려면 다음 명령어를 이용하면 됩니다.
 
 ```sh
-docker compose --profile prod up --wait
+docker compose --wait
 ```
 
 서버가 구동되는 동안 Spring Boot 서버와 MySQL 데이터베이스의 로그가 터미널에 표시됩니다. 여기서 Ctrl+C를 누르면 서버를 종료할 수 있습니다.
@@ -86,7 +90,7 @@ docker compose --profile prod up --wait
 만약, 로그를 확인할 필요가 없고 서버를 구동하는 동안 다른 명령어를 사용해야 한다면 다음 명령어로도 서버를 구동할 수 있습니다. 서버가 시작되는대로 터미널에서 다음 명령어를 사용할 수 있는 상태가 되며, 서버는 백그라운드에서 작동합니다.
 
 ```sh
-docker compose --profile prod up -d --wait
+docker compose -d --wait
 ```
 
 ## 서버 정지
@@ -94,7 +98,7 @@ docker compose --profile prod up -d --wait
 백그라운드에서 구동 중인 서버를 중단하려면 다음 명령어를 사용하면 됩니다.
 
 ```sh
-docker compose --profile '*' stop
+docker compose stop
 ```
 
 ## 컨테이너 삭제
@@ -102,7 +106,7 @@ docker compose --profile '*' stop
 서버 컨테이너를 삭제해야 하는 경우, 다음 명령어를 사용할 수 있습니다. 컨테이너를 삭제하더라도 데이터베이스 데이터는 `./volumes/` 경로에 남아 컨테이너를 다시 구동하면 바로 사용할 수 있습니다.
 
 ```sh
-docker compose --profile '*' down -v
+docker compose down -v
 ```
 
 ## watch 모드
@@ -110,6 +114,5 @@ docker compose --profile '*' down -v
 코드를 수정하는 대로 바꾼 점을 서버에서 실시간으로 보고 싶은 경우, watch 모드를 이용할 수 있습니다.
 
 ```sh
-docker compose --profile dev up -d --wait --build &&
-docker compose --profile dev up --watch
+docker compose up --build --watch
 ```
