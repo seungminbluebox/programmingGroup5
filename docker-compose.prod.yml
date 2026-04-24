@@ -1,0 +1,37 @@
+# 배포용 최종 빌드 이미지 실행
+
+include:
+  - ./docker-compose.common.yml
+
+services:
+  azit:
+    build:
+      context: .
+      target: jre
+    ports:
+      - 8080:8080
+    depends_on:
+      azit-database:
+        condition: service_healthy
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./volumes/${UPLOADS_DIR:-uploads}/:/app/uploads
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "8080" ]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+    networks:
+      - azit-net
+    develop:
+      watch:
+        - action: rebuild
+          path: ./src/
+        - action: rebuild
+          path: ./pom.xml
+
+networks:
+  azit-net:

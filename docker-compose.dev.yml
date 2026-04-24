@@ -1,0 +1,57 @@
+# 개발 서버 실행
+
+include:
+  - ./docker-compose.common.yml
+
+services:
+  azit-backend:
+    build:
+      context: .
+      target: maven
+    ports:
+      - 8080:8080
+    depends_on:
+      azit-database:
+        condition: service_healthy
+      azit-frontend:
+        condition: service_started
+    volumes:
+      - ./volumes/${UPLOADS_DIR:-uploads}/:/app/uploads
+      - azit-resources-dist:/app/target/classes/
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: [ "CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/8080" ]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+    networks:
+      - azit-net
+    develop:
+      watch:
+        - action: sync+exec
+          path: ./src/main/java/
+          target: /app/src/main/java/
+          exec:
+            working_dir: /app
+            command: ./mvnw compile
+
+  azit-frontend:
+    build:
+      context: .
+      target: vite
+    volumes:
+      - azit-resources-dist:/app/target/classes/
+    networks:
+      - azit-net
+    command:
+    develop:
+      watch:
+        - action: sync
+          path: ./src/main/resources/
+          target: /app/src/main/resources/
+
+volumes:
+  azit-resources-dist:
