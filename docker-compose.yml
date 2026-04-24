@@ -28,6 +28,8 @@ services:
 
   azit-database:
     image: mysql:8
+    ports:
+      - 3306:3306
     environment:
       MYSQL_DATABASE: azit_db
       MYSQL_USER: ${DB_USER}
