@@ -7,8 +7,9 @@ services:
       azit-database:
         condition: service_healthy
     environment:
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      DB_NAME: ${DB_NAME:-azit_db}
     volumes:
       - ./volumes/${UPLOADS_DIR:-uploads}/:/app/uploads
     healthcheck:
@@ -31,10 +32,10 @@ services:
     ports:
       - 3306:3306
     environment:
-      MYSQL_DATABASE: azit_db
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME:-azit_db}
+      MYSQL_USER: ${DB_USER:?DB_USER is required}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?DB_ROOT_PASSWORD is required}
     volumes:
       - ./volumes/${DB_DIR:-db}/:/var/lib/mysql
     healthcheck:
@@ -46,8 +47,8 @@ services:
           "-h",
           "localhost",
           "-u",
-          "${DB_USER}",
-          "-p${DB_PASSWORD}",
+          "${DB_USER:?DB_USER is required}",
+          "-p${DB_PASSWORD:?DB_PASSWORD is required}",
         ]
       interval: 5s
       timeout: 5s

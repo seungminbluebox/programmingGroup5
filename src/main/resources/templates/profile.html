@@ -20,6 +20,11 @@
       .edit-mode {
         display: none;
       }
+      .profile-preview-image {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+      }
     </style>
   </head>
   <body>
@@ -171,15 +176,24 @@
             <!-- Profile Image Upload -->
             <div class="col-12 mb-3 text-center">
               <label class="form-label fw-bold d-block">Profile Photo</label>
+              <img
+                id="profileImagePreview"
+                th:src="${member.profileUrl != null ? member.profileUrl : 'https://via.placeholder.com/150'}"
+                th:attr="data-original-src=${member.profileUrl != null ? member.profileUrl : 'https://via.placeholder.com/150'}"
+                class="rounded-circle profile-preview-image shadow-sm mb-3"
+                alt="Profile preview"
+              />
               <input
+                id="profileImageInput"
                 type="file"
                 name="profileImage"
                 class="form-control w-50 mx-auto"
                 accept="image/*"
               />
               <small class="text-muted"
-                >Choose a new image to update your profile picture.</small
+                >Choose a new image up to 5MB to update your profile picture.</small
               >
+              <div id="profileImageError" class="text-danger small mt-2"></div>
             </div>
 
             <div class="col-md-6 mb-3">
@@ -402,6 +416,9 @@
     </div>
 
     <script>
+      let activeProfilePreviewUrl = null;
+      const maxProfileImageSize = 5 * 1024 * 1024;
+
       function toggleEdit() {
         const viewMode = document.getElementById("viewMode");
         const editMode = document.getElementById("editMode");
@@ -418,7 +435,63 @@
           editMode.style.display = "none";
           viewMode.style.display = "block";
           editBtn.innerText = "Edit Profile";
+          resetProfileImagePreview();
         }
+      }
+
+      function resetProfileImagePreview() {
+        const imageInput = document.getElementById("profileImageInput");
+        const imagePreview = document.getElementById("profileImagePreview");
+        const imageError = document.getElementById("profileImageError");
+        if (!imageInput || !imagePreview) return;
+
+        if (activeProfilePreviewUrl) {
+          URL.revokeObjectURL(activeProfilePreviewUrl);
+          activeProfilePreviewUrl = null;
+        }
+
+        imageInput.value = "";
+        imagePreview.src = imagePreview.dataset.originalSrc;
+        if (imageError) imageError.innerText = "";
+      }
+
+      function setupProfileImagePreview() {
+        const imageInput = document.getElementById("profileImageInput");
+        const imagePreview = document.getElementById("profileImagePreview");
+        const imageError = document.getElementById("profileImageError");
+        if (!imageInput || !imagePreview) return;
+
+        imageInput.addEventListener("change", () => {
+          const selectedFile = imageInput.files && imageInput.files[0];
+          if (!selectedFile) {
+            resetProfileImagePreview();
+            return;
+          }
+
+          if (selectedFile.size > maxProfileImageSize) {
+            resetProfileImagePreview();
+            if (imageError) {
+              imageError.innerText = "Profile image must be 5MB or smaller.";
+            }
+            return;
+          }
+
+          if (!selectedFile.type.startsWith("image/")) {
+            resetProfileImagePreview();
+            if (imageError) {
+              imageError.innerText = "Please choose an image file.";
+            }
+            return;
+          }
+
+          if (activeProfilePreviewUrl) {
+            URL.revokeObjectURL(activeProfilePreviewUrl);
+          }
+
+          activeProfilePreviewUrl = URL.createObjectURL(selectedFile);
+          imagePreview.src = activeProfilePreviewUrl;
+          if (imageError) imageError.innerText = "";
+        });
       }
 
       function addCareer() {
@@ -456,6 +529,8 @@
         `;
         container.appendChild(newRow);
       }
+
+      setupProfileImagePreview();
     </script>
   </body>
 </html>
