@@ -43,7 +43,7 @@ jobs:
   # lint:
   #   uses: ./.github/workflows/eslint.yml
 
-  build:
+  publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
