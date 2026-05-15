@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AZIT 대시보드</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* ── Reset & Variables ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary:       #6C63FF;
+    --primary-light: #EEF0FF;
+    --primary-dark:  #5A52D5;
+    --green:         #4CAF7D;
+    --blue:          #4BB3E8;
+    --red:           #FF6B6B;
+    --orange:        #FF9F43;
+    --urgent-bg:     #FFE8E8;
+    --urgent-text:   #FF4D4D;
+    --important-bg:  #FFF3E0;
+    --important-text:#FF9F43;
+    --normal-bg:     #E8F5E9;
+    --normal-text:   #4CAF7D;
+    --bg:            #F4F5FA;
+    --sidebar-bg:    #FFFFFF;
+    --card-bg:       #FFFFFF;
+    --text-primary:  #1A1A2E;
+    --text-secondary:#6B7280;
+    --text-muted:    #9CA3AF;
+    --border:        #EBEBF5;
+    --shadow:        0 2px 12px rgba(108,99,255,0.07);
+    --shadow-card:   0 4px 20px rgba(108,99,255,0.10);
+    --radius:        14px;
+    --radius-sm:     8px;
+    --font:          'Noto Sans KR', sans-serif;
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── Top Title Bar ── */
+  .top-bar {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    justify-content: center;
+    padding: 18px 20px 10px;
+  }
+  .top-bar-btn {
+    background: var(--primary);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 10px 36px;
+    border-radius: 30px;
+    letter-spacing: -0.3px;
+  }
+
+  /* ── App Shell ── */
+  .app-shell {
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 8px 40px rgba(108,99,255,0.13);
+    overflow: hidden;
+    display: flex;
+    min-height: 880px;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 160px;
+    min-width: 160px;
+    background: var(--sidebar-bg);
+    border-right: 1.5px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 0 20px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 20px 28px;
+  }
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--primary);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -1px;
+  }
+  .logo-text {
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 2px;
+    color: var(--text-primary);
+  }
+
+  .nav-list { display: flex; flex-direction: column; gap: 2px; padding: 0 10px; flex: 1; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: background 0.18s, color 0.18s;
+  }
+  .nav-item:hover { background: var(--primary-light); color: var(--primary); }
+  .nav-item.active {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 700;
+  }
+  .nav-icon { font-size: 17px; width: 22px; text-align: center; }
+
+  .sidebar-user {
+    margin: 0 10px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-top: 1.5px solid var(--border);
+    cursor: pointer;
+    border-radius: 10px;
+  }
+  .sidebar-user:hover { background: var(--bg); }
+  .user-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #a78bfa, #60a5fa);
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 14px; font-weight: 700;
+  }
+  .user-info { flex: 1; min-width: 0; }
+  .user-name { font-size: 12.5px; font-weight: 600; color: var(--text-primary); }
+  .user-role { font-size: 10.5px; color: var(--text-muted); margin-top: 1px; }
+  .user-arrow { font-size: 11px; color: var(--text-muted); }
+
+  /* ── Main Content ── */
+  .main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 18px 100px;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  /* ── Header ── */
+  .main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .main-header h1 { font-size: 19px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.5px; }
+  .main-header p  { font-size: 12.5px; color: var(--text-secondary); margin-top: 4px; }
+  .notif-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow);
+    font-size: 18px;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ── Section Header ── */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .badge {
+    background: var(--primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 20px;
+  }
+  .view-all {
+    font-size: 12px;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex; align-items: center; gap: 2px;
+  }
+  .view-all:hover { color: var(--primary); }
+
+  /* ── Project Cards ── */
+  .project-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .project-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 14px 12px 12px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform 0.18s, box-shadow 0.18s;
+    cursor: pointer;
+  }
+  .project-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
+
+  .project-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    margin-bottom: 2px;
+  }
+  .icon-purple { background: #EDE9FF; }
+  .icon-green  { background: #E6F9F0; }
+  .icon-blue   { background: #E3F5FF; }
+
+  .project-name  { font-size: 12px; font-weight: 700; color: var(--text-primary); line-height: 1.3; }
+  .project-type  { font-size: 10.5px; color: var(--text-muted); margin-top: 1px; }
+
+  .progress-bar-wrap { margin-top: 4px; }
+  .progress-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 3px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--primary);
+  }
+  .progress-fill.green { background: var(--green); }
+  .progress-fill.blue  { background: var(--blue); }
+  .progress-pct {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: right;
+    font-weight: 600;
+  }
+
+  .avatars {
+    display: flex;
+    align-items: center;
+    gap: -4px;
+    margin-top: 2px;
+  }
+  .avatar {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid #fff;
+    background: linear-gradient(135deg, #c4b5fd, #93c5fd);
+    margin-right: -5px;
+    font-size: 9px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .avatar:nth-child(2) { background: linear-gradient(135deg, #6ee7b7, #3b82f6); }
+  .avatar:nth-child(3) { background: linear-gradient(135deg, #fca5a5, #f472b6); }
+  .member-count {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-left: 10px;
+    font-weight: 600;
+  }
+
+  /* ── Task List ── */
+  .task-list { display: flex; flex-direction: column; gap: 0; }
+  .task-item {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 13px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: box-shadow 0.15s;
+  }
+  .task-item:hover { box-shadow: var(--shadow-card); }
+
+  .task-check {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .task-check:hover { border-color: var(--primary); }
+
+  .task-priority {
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    letter-spacing: 0.2px;
+  }
+  .priority-urgent   { background: var(--urgent-bg);   color: var(--urgent-text); }
+  .priority-important{ background: var(--important-bg); color: var(--important-text); }
+  .priority-normal   { background: var(--normal-bg);   color: var(--normal-text); }
+
+  .task-info { flex: 1; min-width: 0; }
+  .task-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .task-project { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .task-due {
+    font-size: 11.5px;
+    font-weight: 600;
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .due-today { color: var(--urgent-text); }
+  .due-d1    { color: var(--text-secondary); }
+  .due-d3    { color: var(--text-secondary); }
+  .task-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #a78bfa, #60a5fa);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 11px; font-weight: 700;
+  }
+
+  /* ── Schedule Cards ── */
+  .schedule-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .schedule-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 14px 12px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    transition: transform 0.18s, box-shadow 0.18s;
+  }
+  .schedule-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
+  .schedule-name    { font-size: 12.5px; font-weight: 700; color: var(--text-primary); }
+  .schedule-project { font-size: 10.5px; color: var(--text-muted); }
+  .schedule-time    { font-size: 12px; font-weight: 700; color: var(--primary); margin-top: 2px; }
+  .schedule-avatars { margin-top: 6px; display: flex; align-items: center; }
+
+  /* ── Bottom Nav ── */
+  .bottom-nav {
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    border-top: 1.5px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0 16px;
+    border-radius: 0 0 24px 24px;
+    position: sticky;
+    bottom: 0;
+    box-shadow: 0 -4px 20px rgba(108,99,255,0.08);
+  }
+  .bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    padding: 4px 14px;
+    border-radius: 10px;
+    transition: background 0.15s;
+  }
+  .bottom-nav-item:hover { background: var(--primary-light); }
+  .bottom-nav-item .nav-icon { font-size: 20px; }
+  .bottom-nav-item span { font-size: 10.5px; color: var(--text-muted); font-weight: 500; }
+  .bottom-nav-item.active .nav-icon { color: var(--primary); }
+  .bottom-nav-item.active span { color: var(--primary); font-weight: 700; }
+
+  /* ── FAB ── */
+  .fab {
+    position: fixed;
+    bottom: 80px;
+    right: calc(50% - 240px + 12px);
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    font-size: 26px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 20px rgba(108,99,255,0.45);
+    cursor: pointer;
+    transition: transform 0.18s, box-shadow 0.18s;
+    z-index: 100;
+    line-height: 1;
+  }
+  .fab:hover { transform: scale(1.09); box-shadow: 0 8px 28px rgba(108,99,255,0.55); }
+
+  /* ── Scrollbar ── */
+  .main::-webkit-scrollbar { width: 4px; }
+  .main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* ── Section wrapper ── */
+  .section { display: flex; flex-direction: column; }
+</style>
+</head>
+<body>
+
+<!-- Top title bar -->
+<div class="top-bar">
+  <div class="top-bar-btn">대시보드 (내 프로젝트 홈)</div>
+</div>
+
+<!-- App shell -->
+<div class="app-shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">A</div>
+      <span class="logo-text">AZIT</span>
+    </div>
+
+    <nav class="nav-list">
+      <div class="nav-item active"><span class="nav-icon">🏠</span>대시보드</div>
+      <div class="nav-item"><span class="nav-icon">🚀</span>시작하기</div>
+      <div class="nav-item"><span class="nav-icon">☑️</span>할 일</div>
+      <div class="nav-item"><span class="nav-icon">📅</span>일정</div>
+      <div class="nav-item"><span class="nav-icon">👤</span>마이페이지</div>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">김</div>
+      <div class="user-info">
+        <div class="user-name">김아지트</div>
+        <div class="user-role">프론트엔드 개발자</div>
+      </div>
+      <span class="user-arrow">›</span>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Header -->
+    <div class="main-header">
+      <div>
+        <h1>안녕하세요, 아지트님! 👋</h1>
+        <p>오늘도 조금씩, 함께 성장해요.</p>
+      </div>
+      <div class="notif-btn">🔔</div>
+    </div>
+
+    <!-- Projects -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">참여 중인 프로젝트</span>
+        <span class="view-all">전체 보기 ›</span>
+      </div>
+      <div class="project-grid">
+
+        <div class="project-card">
+          <div class="project-icon icon-purple">🤖</div>
+          <div>
+            <div class="project-name">AI 스터디 메이트</div>
+            <div class="project-type">백엔드 개발</div>
+          </div>
+          <div class="progress-bar-wrap">
+            <div style="display:flex;justify-content:flex-end;margin-bottom:3px">
+              <span class="progress-pct">72%</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width:72%"></div></div>
+          </div>
+          <div class="avatars">
+            <div class="avatar">A</div><div class="avatar">B</div><div class="avatar">C</div>
+            <span class="member-count">5명</span>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-icon icon-green">🌿</div>
+          <div>
+            <div class="project-name">GreenTrip</div>
+            <div class="project-type">프론트엔드 개발</div>
+          </div>
+          <div class="progress-bar-wrap">
+            <div style="display:flex;justify-content:flex-end;margin-bottom:3px">
+              <span class="progress-pct">45%</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill green" style="width:45%"></div></div>
+          </div>
+          <div class="avatars">
+            <div class="avatar">D</div><div class="avatar">E</div><div class="avatar">F</div>
+            <span class="member-count">4명</span>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-icon icon-blue">📊</div>
+          <div>
+            <div class="project-name">팀빌딩 서비스</div>
+            <div class="project-type">UI/UX 디자인</div>
+          </div>
+          <div class="progress-bar-wrap">
+            <div style="display:flex;justify-content:flex-end;margin-bottom:3px">
+              <span class="progress-pct">30%</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill blue" style="width:30%"></div></div>
+          </div>
+          <div class="avatars">
+            <div class="avatar">G</div><div class="avatar">H</div><div class="avatar">I</div>
+            <span class="member-count">3명</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Tasks -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">오늘의 할 일 <span class="badge">3</span></span>
+        <span class="view-all">모든 할 일 보기 ›</span>
+      </div>
+      <div class="task-list">
+
+        <div class="task-item">
+          <div class="task-check"></div>
+          <span class="task-priority priority-urgent">긴급</span>
+          <div class="task-info">
+            <div class="task-title">로그인 API 에러 수정</div>
+            <div class="task-project">AI 스터디 메이트</div>
+          </div>
+          <div class="task-due due-today">오늘 마감</div>
+          <div class="task-avatar">A</div>
+        </div>
+
+        <div class="task-item">
+          <div class="task-check"></div>
+          <span class="task-priority priority-important">중요</span>
+          <div class="task-info">
+            <div class="task-title">메인 페이지 반응형 구현</div>
+            <div class="task-project">GreenTrip</div>
+          </div>
+          <div class="task-due due-d1">D-1</div>
+          <div class="task-avatar">B</div>
+        </div>
+
+        <div class="task-item">
+          <div class="task-check"></div>
+          <span class="task-priority priority-normal">보통</span>
+          <div class="task-info">
+            <div class="task-title">사용자 온보딩 플로우 설계</div>
+            <div class="task-project">팀빌딩 서비스</div>
+          </div>
+          <div class="task-due due-d3">D-3</div>
+          <div class="task-avatar">C</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Schedule -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">다가오는 일정</span>
+        <span class="view-all">전체 일정 보기 ›</span>
+      </div>
+      <div class="schedule-grid">
+
+        <div class="schedule-card">
+          <div class="schedule-name">팀 데일리 미팅</div>
+          <div class="schedule-project">AI 스터디 메이트</div>
+          <div class="schedule-time">오늘 10:00</div>
+          <div class="schedule-avatars avatars">
+            <div class="avatar">A</div><div class="avatar">B</div><div class="avatar">C</div>
+            <span class="member-count">5명</span>
+          </div>
+        </div>
+
+        <div class="schedule-card">
+          <div class="schedule-name">UI 리뷰 미팅</div>
+          <div class="schedule-project">GreenTrip</div>
+          <div class="schedule-time">오늘 14:00</div>
+          <div class="schedule-avatars avatars">
+            <div class="avatar">D</div><div class="avatar">E</div><div class="avatar">F</div>
+            <span class="member-count">+1</span>
+          </div>
+        </div>
+
+        <div class="schedule-card">
+          <div class="schedule-name">기획 회의</div>
+          <div class="schedule-project">팀빌딩 서비스</div>
+          <div class="schedule-time">내일 11:00</div>
+          <div class="schedule-avatars avatars">
+            <div class="avatar">G</div><div class="avatar">H</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Bottom Nav -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-item active"><span class="nav-icon">🏠</span><span>대시보드</span></div>
+  <div class="bottom-nav-item"><span class="nav-icon">🚀</span><span>시작하기</span></div>
+  <div class="bottom-nav-item"><span class="nav-icon">☑️</span><span>할 일</span></div>
+  <div class="bottom-nav-item"><span class="nav-icon">📅</span><span>일정</span></div>
+  <div class="bottom-nav-item"><span class="nav-icon">👤</span><span>마이페이지</span></div>
+</nav>
+
+<!-- FAB -->
+<div class="fab">+</div>
+
+</body>
+</html>
