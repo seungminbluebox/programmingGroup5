@@ -31,7 +31,7 @@
       </div>
     </header>
 
-    <main class="azit-shell azit-hero">
+    <main class="azit-shell azit-hero" th:if="${nickname == null}">
       <section class="azit-hero-copy">
         <div class="azit-kicker">팀 빌딩과 구직 프로필을 한 곳에서</div>
         <h1>함께 일할 사람을 더 정확하게 찾는 공간</h1>
@@ -80,6 +80,72 @@
           </div>
         </div>
       </aside>
+    </main>
+
+    <main class="azit-shell azit-page" th:if="${nickname != null}">
+      <section class="azit-page-heading">
+        <div>
+          <div class="azit-kicker">Project Dashboard</div>
+          <h1>내 프로젝트</h1>
+          <p>소속된 프로젝트의 기본 정보와 작업 공간으로 바로 이동합니다.</p>
+        </div>
+        <a href="/profile/me" class="azit-button azit-button-secondary">프로필 관리</a>
+      </section>
+
+      <section class="azit-grid">
+        <div class="azit-card">
+          <div class="azit-card-header">소속 프로젝트</div>
+          <div class="azit-card-body">
+            <div th:if="${projects != null and !projects.isEmpty()}" style="display: grid; gap: 14px">
+              <a
+                class="azit-form-section"
+                style="display: block; color: inherit; text-decoration: none"
+                th:each="project : ${projects}"
+                th:href="@{/project/{id}(id=${project.id})}"
+              >
+                <strong th:text="${project.title}">프로젝트 이름</strong>
+                <p class="azit-empty" style="margin-top: 8px" th:text="${project.description}">
+                  프로젝트 설명
+                </p>
+              </a>
+            </div>
+            <p class="azit-empty" th:if="${projects == null or projects.isEmpty()}">
+              아직 소속된 프로젝트가 없습니다. 오른쪽에서 첫 프로젝트를 생성하세요.
+            </p>
+          </div>
+        </div>
+
+        <div class="azit-card">
+          <div class="azit-card-header">당신만의 프로젝트를 생성하세요</div>
+          <div class="azit-card-body">
+            <form th:action="@{/projects}" method="post" style="display: grid; gap: 16px">
+              <div>
+                <label class="azit-form-label" for="projectTitle">프로젝트 이름</label>
+                <input
+                  id="projectTitle"
+                  class="azit-input"
+                  type="text"
+                  name="title"
+                  placeholder="예: 포트폴리오 매칭 서비스"
+                  required
+                />
+              </div>
+              <div>
+                <label class="azit-form-label" for="projectDescription">프로젝트 설명</label>
+                <textarea
+                  id="projectDescription"
+                  class="azit-input"
+                  name="description"
+                  rows="6"
+                  placeholder="프로젝트 목표, 만들 기능, 필요한 협업 방식을 적어주세요."
+                  required
+                ></textarea>
+              </div>
+              <button type="submit" class="azit-button">프로젝트 생성</button>
+            </form>
+          </div>
+        </div>
+      </section>
     </main>
   </body>
 </html>

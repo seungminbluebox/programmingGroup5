@@ -1,5 +1,6 @@
 package kr.ac.dankook.group5.azit.auth;
 
+import kr.ac.dankook.group5.azit.project.ProjectService;
 import kr.ac.dankook.group5.azit.user.Member;
 import kr.ac.dankook.group5.azit.user.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MainController {
 
     private final MemberRepository memberRepository;
+    private final ProjectService projectService;
 
     @GetMapping("/")
     public String home(Model model) {
@@ -24,6 +26,7 @@ public class MainController {
             String email = authentication.getName();
             memberRepository.findByEmail(email).ifPresent(member -> {
                 model.addAttribute("nickname", member.getName());
+                model.addAttribute("projects", projectService.findProjectsForMember(email));
             });
         }
         return "home";
