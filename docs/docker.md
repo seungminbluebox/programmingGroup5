@@ -110,6 +110,12 @@ docker compose stop
 docker compose down
 ```
 
+기존 데이터도 전부 삭제하려면 `./volumes/` 경로를 삭제해야 합니다.
+
+```sh
+rm -rf ./volumes/
+```
+
 ## watch 모드
 
 코드를 수정하는 대로 바꾼 점을 서버에서 실시간으로 보고 싶은 경우, watch 모드를 이용할 수 있습니다.
