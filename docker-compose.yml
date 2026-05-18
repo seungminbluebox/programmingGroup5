@@ -1,5 +1,6 @@
 services:
   azit:
+    image: ghcr.io/seungminbluebox/programminggroup5:latest
     build: .
     ports:
       - 8080:8080

@@ -12,25 +12,25 @@ azit-database  MySQL 데이터베이스
 ## 실행
 
 ```powershell
-docker compose up --build
+docker-compose up --build
 ```
 
-백그라운드에서 실행하려면 다음 명령어를 사용합니다.
+빌드에서 서버 구동까지 한번에 하려면 다음 명령어로도 가능합니다.
 
 ```powershell
-docker compose up -d --build
+docker-compose up -d --build
 ```
 
 ## 중지
 
 ```powershell
-docker compose stop
+docker-compose stop
 ```
 
 ## 컨테이너 삭제
 
 ```powershell
-docker compose down
+docker-compose down
 ```
 
 컨테이너와 네트워크는 삭제되지만, 데이터베이스 파일은 `./volumes/db` 아래에 남아 있습니다.
@@ -38,8 +38,8 @@ docker compose down
 ## 로그 확인
 
 ```powershell
-docker compose logs -f azit
-docker compose logs -f azit-database
+docker-compose logs -f azit
+docker-compose logs -f azit-database
 ```
 
 ## 로컬 데이터베이스 초기화
@@ -47,19 +47,19 @@ docker compose logs -f azit-database
 먼저 컨테이너를 종료합니다.
 
 ```powershell
-docker compose down
+docker-compose down
 ```
 
 그 다음 로컬 데이터베이스 디렉터리를 삭제합니다.
 
-```powershell
-Remove-Item -Recurse -Force .\volumes\db
+```sh
+rm -rf ./volumes/
 ```
 
-다시 실행합니다.
+## watch 모드
+
+코드를 수정하는 대로 바꾼 점을 서버에서 실시간으로 보고 싶은 경우, watch 모드를 이용할 수 있습니다.
 
 ```powershell
-docker compose up --build
+docker-compose up --build
 ```
-
-초기화는 로컬 DB를 완전히 새로 만들고 싶을 때만 사용합니다.
