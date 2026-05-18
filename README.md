@@ -56,6 +56,15 @@ Docker를 사용하지 않고, Spring Boot 서버를 바로 실행할 때 필요
  * `DB_PORT`: 데이터베이스가 사용하는 포트 번호 (기본값: `3306`)
  * `DB_NAME`: 서버가 연결할 데이터베이스 이름 (기본값: `azit_db`)
 
+## 주요 페이지
+
+- `/`, `/home`: 홈
+- `/register`: 회원가입
+- `/login`: 로그인
+- `/profile/me`: 현재 로그인한 회원의 프로필
+- `/profile/{id}`: 회원 ID 기반 프로필
+- `/admin/stacks`: 기술 스택 관리, 관리자 전용
+
 ## 문서
 
 - [데이터베이스 가이드](docs/database.md)
