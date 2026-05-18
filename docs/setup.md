@@ -29,7 +29,7 @@ DB_URL=localhost
 프로젝트 루트에서 실행합니다.
 
 ```powershell
-docker-compose up --build
+docker compose up --build
 ```
 
 애플리케이션 접속 주소는 다음과 같습니다.
@@ -43,7 +43,7 @@ http://localhost:8080
 데이터베이스만 Docker로 먼저 실행합니다.
 
 ```powershell
-docker-compose up -d azit-database
+docker compose up -d azit-database
 ```
 
 IDE에서 `AzitApplication`을 실행하기 전에 환경변수를 설정합니다.

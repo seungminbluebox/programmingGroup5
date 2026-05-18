@@ -9,7 +9,7 @@ Azit은 회원가입, 로그인, 프로필 관리, 기술 스택, 경력, 활동
 3. 애플리케이션과 데이터베이스를 실행합니다.
 
 ```powershell
-docker-compose up --build
+docker compose up --build
 ```
 
 4. 브라우저에서 접속합니다.
