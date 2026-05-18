@@ -58,7 +58,6 @@ Docker를 사용하지 않고, Spring Boot 서버를 바로 실행할 때 필요
 
 ## 문서
 
-- [개발 환경 설정 가이드](docs/setup.md)
 - [데이터베이스 가이드](docs/database.md)
 - [공용 GCP 데이터베이스 접속 가이드](docs/shared-gcp-db.md)
 - [Docker 가이드](docs/docker.md)
