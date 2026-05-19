@@ -90,4 +90,71 @@ class ProjectServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("프로젝트 멤버만");
     }
+
+    @Test
+    void addMemberToProjectRequiresOwnerRole() {
+        Member owner = new Member();
+        owner.setEmail("owner@example.com");
+        Member member = new Member();
+        member.setEmail("member@example.com");
+        Project project = new Project();
+        project.setTitle("Team Project");
+
+        ProjectMember ownerMembership = new ProjectMember(project, owner, ProjectMemberRole.MEMBER);
+
+        when(memberRepository.findByEmail("owner@example.com")).thenReturn(Optional.of(owner));
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+        when(projectMemberRepository.findByProjectAndMember(project, owner)).thenReturn(Optional.of(ownerMembership));
+
+        assertThatThrownBy(() -> projectService.addMemberToProject("owner@example.com", 1L, "member@example.com"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("프로젝트 소유자만");
+    }
+
+    @Test
+    void addMemberToProjectAddsNewMemberWhenOwner() {
+        Member owner = new Member();
+        owner.setEmail("owner@example.com");
+        Member invitee = new Member();
+        invitee.setEmail("invitee@example.com");
+        Project project = new Project();
+        project.setTitle("Team Project");
+
+        ProjectMember ownerMembership = new ProjectMember(project, owner, ProjectMemberRole.OWNER);
+
+        when(memberRepository.findByEmail("owner@example.com")).thenReturn(Optional.of(owner));
+        when(memberRepository.findByEmail("invitee@example.com")).thenReturn(Optional.of(invitee));
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+        when(projectMemberRepository.findByProjectAndMember(project, owner)).thenReturn(Optional.of(ownerMembership));
+        when(projectMemberRepository.existsByProjectAndMember(project, invitee)).thenReturn(false);
+        when(projectMemberRepository.save(any(ProjectMember.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ProjectMember addedMember = projectService.addMemberToProject("owner@example.com", 1L, "invitee@example.com");
+
+        assertThat(addedMember.getProject()).isSameAs(project);
+        assertThat(addedMember.getMember()).isSameAs(invitee);
+        assertThat(addedMember.getRole()).isEqualTo(ProjectMemberRole.MEMBER);
+    }
+
+    @Test
+    void addMemberToProjectFailsWhenAlreadyMember() {
+        Member owner = new Member();
+        owner.setEmail("owner@example.com");
+        Member invitee = new Member();
+        invitee.setEmail("invitee@example.com");
+        Project project = new Project();
+        project.setTitle("Team Project");
+
+        ProjectMember ownerMembership = new ProjectMember(project, owner, ProjectMemberRole.OWNER);
+
+        when(memberRepository.findByEmail("owner@example.com")).thenReturn(Optional.of(owner));
+        when(memberRepository.findByEmail("invitee@example.com")).thenReturn(Optional.of(invitee));
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+        when(projectMemberRepository.findByProjectAndMember(project, owner)).thenReturn(Optional.of(ownerMembership));
+        when(projectMemberRepository.existsByProjectAndMember(project, invitee)).thenReturn(true);
+
+        assertThatThrownBy(() -> projectService.addMemberToProject("owner@example.com", 1L, "invitee@example.com"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("이미 프로젝트 멤버입니다.");
+    }
 }

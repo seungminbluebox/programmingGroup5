@@ -50,6 +50,21 @@ public class ProjectService {
         return projectLinkRepository.save(new ProjectLink(project, required(label, "링크 이름"), required(url, "링크 주소")));
     }
 
+    //프로젝트에 멤버 추가 (프로젝트 소유자만)
+    @Transactional
+    public ProjectMember addMemberToProject(String ownerEmail, Long projectId, String memberEmail) {
+        Member owner = getMemberByEmail(ownerEmail);
+        Project project = getProjectById(projectId);
+        assertProjectOwner(project, owner);
+
+        Member member = getMemberByEmail(memberEmail);
+        if (projectMemberRepository.existsByProjectAndMember(project, member)) {
+            throw new IllegalArgumentException("이미 프로젝트 멤버입니다.");
+        }
+
+        return projectMemberRepository.save(new ProjectMember(project, member, ProjectMemberRole.MEMBER));
+    }
+
     private Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
@@ -63,6 +78,16 @@ public class ProjectService {
     private void assertProjectMember(Project project, Member member) {
         if (!projectMemberRepository.existsByProjectAndMember(project, member)) {
             throw new IllegalArgumentException("프로젝트 멤버만 접근할 수 있습니다.");
+        }
+    }
+
+    //프로젝트 소유자인지 확인하기
+    private void assertProjectOwner(Project project, Member member) {
+        ProjectMember projectMember = projectMemberRepository.findByProjectAndMember(project, member)
+                .orElseThrow(() -> new IllegalArgumentException("프로젝트 소유자만 접근할 수 있습니다."));
+
+        if (projectMember.getRole() != ProjectMemberRole.OWNER) {
+            throw new IllegalArgumentException("프로젝트 소유자만 접근할 수 있습니다.");
         }
     }
 

@@ -73,6 +73,18 @@
             </form>
           </div>
         </article>
+
+        <article class="azit-card">
+          <div class="azit-card-header">팀원 초대</div>
+          <div class="azit-card-body">
+            <form th:action="@{/project/{projectId}/members(projectId=${project.id})}" method="post" style="display: grid; gap: 12px">
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+              <input class="azit-input" type="email" name="memberEmail" placeholder="초대할 팀원 이메일" required />
+              <button type="submit" class="azit-button">초대하기</button>
+            </form>
+            <p class="azit-empty" th:if="${errorMessage}" th:text="${errorMessage}" style="color: #b91c1c; margin-top: 8px"></p>
+          </div>
+        </article>
       </div>
 
       <aside class="azit-card">

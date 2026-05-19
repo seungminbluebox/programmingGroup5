@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
@@ -48,6 +49,20 @@ public class ProjectController {
             @RequestParam String label,
             @RequestParam String url) {
         projectService.addProjectLink(authentication.getName(), projectId, label, url);
+        return "redirect:/project/" + projectId;
+    }
+    
+    @PostMapping("/project/{projectId}/members")
+    public String addMember(
+            Authentication authentication,
+            @PathVariable Long projectId,
+            @RequestParam String memberEmail,
+            RedirectAttributes redirectAttributes) {
+        try {
+            projectService.addMemberToProject(authentication.getName(), projectId, memberEmail);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/project/" + projectId;
     }
 
