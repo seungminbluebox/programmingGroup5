@@ -69,4 +69,5 @@ public class ProjectController {
         projectService.toggleTask(authentication.getName(), projectId, taskId);
         return "redirect:/project/" + projectId;
     }
+
 }
