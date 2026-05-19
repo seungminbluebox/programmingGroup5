@@ -19,8 +19,7 @@ public class ProjectController {
     public String createProject(
             Authentication authentication,
             @RequestParam String title,
-            @RequestParam String description
-    ) {
+            @RequestParam String description) {
         Project project = projectService.createProject(authentication.getName(), title, description);
         return "redirect:/project/" + project.getId();
     }
@@ -29,10 +28,16 @@ public class ProjectController {
     public String detail(
             Authentication authentication,
             @PathVariable Long projectId,
-            Model model
-    ) {
-        Project project = projectService.getProjectForMember(authentication.getName(), projectId);
+            Model model) {
+        String email = authentication.getName();
+
+        Project project = projectService.getProjectForMember(email, projectId);
+
         model.addAttribute("project", project);
+        model.addAttribute("tasks", projectService.getTasks(email, projectId));
+        model.addAttribute("myTaskCompletionRate", projectService.getMyTaskCompletionRate(email, projectId));
+        model.addAttribute("myCompletedTaskCount", projectService.getMyCompletedTaskCount(email, projectId));
+
         return "project_detail";
     }
 
@@ -41,9 +46,28 @@ public class ProjectController {
             Authentication authentication,
             @PathVariable Long projectId,
             @RequestParam String label,
-            @RequestParam String url
-    ) {
+            @RequestParam String url) {
         projectService.addProjectLink(authentication.getName(), projectId, label, url);
         return "redirect:/project/" + projectId;
     }
+
+    @PostMapping("/project/{projectId}/tasks")
+    public String addTask(
+            Authentication authentication,
+            @PathVariable Long projectId,
+            @RequestParam String title,
+            @RequestParam Long assigneeId) {
+        projectService.addTask(authentication.getName(), projectId, title, assigneeId);
+        return "redirect:/project/" + projectId;
+    }
+
+    @PostMapping("/project/{projectId}/tasks/{taskId}/toggle")
+    public String toggleTask(
+            Authentication authentication,
+            @PathVariable Long projectId,
+            @PathVariable Long taskId) {
+        projectService.toggleTask(authentication.getName(), projectId, taskId);
+        return "redirect:/project/" + projectId;
+    }
+
 }
