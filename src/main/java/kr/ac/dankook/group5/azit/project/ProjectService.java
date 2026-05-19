@@ -17,11 +17,13 @@ public class ProjectService {
     private final ProjectMemberRepository projectMemberRepository;
     private final ProjectLinkRepository projectLinkRepository;
     private final MemberRepository memberRepository;
+    private final ProjectTaskRepository projectTaskRepository;
 
     @Transactional
     public Project createProject(String ownerEmail, String title, String description) {
         Member owner = getMemberByEmail(ownerEmail);
-        Project project = projectRepository.save(new Project(required(title, "프로젝트 이름"), required(description, "프로젝트 설명")));
+        Project project = projectRepository
+                .save(new Project(required(title, "프로젝트 이름"), required(description, "프로젝트 설명")));
         projectMemberRepository.save(new ProjectMember(project, owner, ProjectMemberRole.OWNER));
         return project;
     }
@@ -69,5 +71,71 @@ public class ProjectService {
             throw new IllegalArgumentException(fieldName + "을 입력해 주세요.");
         }
         return value.trim();
+    }
+
+    public List<ProjectTask> getTasks(String email, Long projectId) {
+        Member member = getMemberByEmail(email);
+        Project project = getProjectById(projectId);
+        assertProjectMember(project, member);
+
+        return projectTaskRepository.findAllByProjectOrderByIdDesc(project);
+    }
+
+    public int getMyTaskCompletionRate(String email, Long projectId) {
+        Member member = getMemberByEmail(email);
+        Project project = getProjectById(projectId);
+        assertProjectMember(project, member);
+
+        List<ProjectTask> myTasks = projectTaskRepository.findAllByProjectAndAssignee(project, member);
+
+        if (myTasks.isEmpty()) {
+            return 0;
+        }
+
+        long completedCount = myTasks.stream()
+                .filter(ProjectTask::isCompleted)
+                .count();
+
+        return (int) Math.round((completedCount * 100.0) / myTasks.size());
+    }
+
+    public long getMyCompletedTaskCount(String email, Long projectId) {
+        Member member = getMemberByEmail(email);
+        Project project = getProjectById(projectId);
+        assertProjectMember(project, member);
+
+        return projectTaskRepository.findAllByProjectAndAssignee(project, member).stream()
+                .filter(ProjectTask::isCompleted)
+                .count();
+    }
+
+    @Transactional
+    public ProjectTask addTask(String email, Long projectId, String title, Long assigneeId) {
+        Member member = getMemberByEmail(email);
+        Project project = getProjectById(projectId);
+        assertProjectMember(project, member);
+
+        Member assignee = memberRepository.findById(assigneeId)
+                .orElseThrow(() -> new IllegalArgumentException("담당자를 찾을 수 없습니다."));
+
+        assertProjectMember(project, assignee);
+
+        return projectTaskRepository.save(new ProjectTask(project, assignee, required(title, "태스크 제목")));
+    }
+
+    @Transactional
+    public void toggleTask(String email, Long projectId, Long taskId) {
+        Member member = getMemberByEmail(email);
+        Project project = getProjectById(projectId);
+        assertProjectMember(project, member);
+
+        ProjectTask task = projectTaskRepository.findById(taskId)
+                .orElseThrow(() -> new IllegalArgumentException("태스크를 찾을 수 없습니다."));
+
+        if (!task.getProject().getId().equals(project.getId())) {
+            throw new IllegalArgumentException("해당 프로젝트의 태스크가 아닙니다.");
+        }
+
+        task.toggleCompleted();
     }
 }
