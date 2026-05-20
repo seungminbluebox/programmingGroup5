@@ -1,7 +1,6 @@
 ---
 name: AZIT Design System
 
-# ─── Colors ───────────────────────────────────────────────
 colors:
 
   # Primary — indigo
@@ -56,7 +55,6 @@ colors:
   accent-yellow: "#fee140"        # yellow/62 · bright yellow
   accent-magenta: "#f093fb"       # magenta/78 · magenta
 
-# ─── Typography ───────────────────────────────────────────
 typography:
   font-family: "Pretendard Variable, Pretendard, Inter, Noto Sans KR"  # 한글/영문 단일 패밀리
 
@@ -112,7 +110,6 @@ typography:
     2xl: 33px
     3xl: 40px
 
-# ─── Spacing ──────────────────────────────────────────────
 # 소수점 대형 값(59.52, 178.33 등)은 html.to.design 자동 측정 artifact — 전부 제거
 spacing:
   xxxs: 2px
@@ -137,21 +134,18 @@ spacing:
   28: 28px
   34: 34px
 
-# ─── Border Radius ────────────────────────────────────────
 radius:
   sm:   8px
   md:   14px
   lg:   24px
   full: 9999px
 
-# ─── Stroke ───────────────────────────────────────────────
 # 분수 값(1.08, 1.33, 1.67 등)은 SVG 스케일링 artifact — 제거
 stroke:
   thin: 1px
   base: 1.5px
   thick: 2px
 
-# ─── Dimensions (의도적 고정값만) ─────────────────────────
 dimensions:
   width:
     icon-xs: 13px
