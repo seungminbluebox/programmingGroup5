@@ -157,4 +157,23 @@ class ProjectServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("이미 프로젝트 멤버입니다.");
     }
+
+    @Test
+    void addMemberToProjectFailsWhenInviteeEmailDoesNotExist() {
+        Member owner = new Member();
+        owner.setEmail("owner@example.com");
+        Project project = new Project();
+        project.setTitle("Team Project");
+
+        ProjectMember ownerMembership = new ProjectMember(project, owner, ProjectMemberRole.OWNER);
+
+        when(memberRepository.findByEmail("owner@example.com")).thenReturn(Optional.of(owner));
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+        when(projectMemberRepository.findByProjectAndMember(project, owner)).thenReturn(Optional.of(ownerMembership));
+        when(memberRepository.findByEmail("missing@example.com")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> projectService.addMemberToProject("owner@example.com", 1L, "missing@example.com"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("회원을 찾을 수 없습니다.");
+    }
 }
