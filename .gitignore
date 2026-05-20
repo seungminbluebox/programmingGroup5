@@ -6,6 +6,7 @@ target/
 !**/src/test/**/target/
 
 volumes/
+uploads/
 
 ### STS ###
 .apt_generated
