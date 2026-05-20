@@ -58,7 +58,7 @@ colors:
 
 # ─── Typography ───────────────────────────────────────────
 typography:
-  font-family: "Pretendard Variable, Pretendard"  # 한글/영문 단일 패밀리
+  font-family: "Pretendard Variable, Pretendard, Inter, Noto Sans KR"  # 한글/영문 단일 패밀리
 
   # Font sizes (px) — 소수점 값은 artifact로 판단하여 제거
   font-size:
@@ -226,7 +226,7 @@ One font family handles everything:
 Use `Pretendard Variable` when variable font support is available (modern browsers, most native environments). Fall back to static `Pretendard` otherwise.
 
 ```css
-font-family: "Pretendard Variable", Pretendard, sans-serif;
+font-family: "Pretendard Variable", Pretendard, Inter, "Noto Sans KR", sans-serif;
 ```
 
 ### Type Scale
@@ -327,7 +327,7 @@ Never use a solid accent color as a chip background — always use the pastel va
 **Do:**
 - Use `primary` exclusively for interactive or active-state elements
 - Always pair pastel chip backgrounds with their matching darker text color
-- Use `Pretendard Variable, Pretendard, sans-serif` as the single font stack for all text
+- Use `Pretendard Variable, Pretendard, Inter, "Noto Sans KR", sans-serif` as the single font stack for all text
 - Apply tight letter-spacing (`-0.3` to `-1px`) on text 24px and above
 
 **Don't:**
