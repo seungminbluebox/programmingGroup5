@@ -38,6 +38,8 @@ public class ProjectController {
         model.addAttribute("tasks", projectService.getTasks(email, projectId));
         model.addAttribute("myTaskCompletionRate", projectService.getMyTaskCompletionRate(email, projectId));
         model.addAttribute("myCompletedTaskCount", projectService.getMyCompletedTaskCount(email, projectId));
+        model.addAttribute("inviteCandidates", projectService.getInviteCandidates(email, projectId));
+        model.addAttribute("pendingInvitations", projectService.getPendingInvitations(email));
 
         return "project_detail";
     }
@@ -83,6 +85,55 @@ public class ProjectController {
             @PathVariable Long taskId) {
         projectService.toggleTask(authentication.getName(), projectId, taskId);
         return "redirect:/project/" + projectId;
+    }
+
+    @PostMapping("/project/{projectId}/invitations")
+    public String sendInvitation(
+            Authentication authentication,
+            @PathVariable Long projectId,
+            @RequestParam Long receiverId) {
+        projectService.sendInvitation(authentication.getName(), projectId, receiverId);
+        return "redirect:/project/" + projectId;
+    }
+
+    @GetMapping("/invitations")
+    public String invitations(Authentication authentication, Model model) {
+        model.addAttribute("pendingInvitations", projectService.getPendingInvitations(authentication.getName()));
+        return "invitations";
+    }
+
+    @GetMapping("/invitations/{invitationId}")
+    public String invitationDetail(
+            Authentication authentication,
+            @PathVariable Long invitationId,
+            Model model) {
+        model.addAttribute("invitation",
+                projectService.getInvitationForReceiver(authentication.getName(), invitationId));
+        return "invitation_detail";
+    }
+
+    @PostMapping("/invitations/{invitationId}/accept")
+    public String acceptInvitation(
+            Authentication authentication,
+            @PathVariable Long invitationId) {
+        Project project = projectService.acceptInvitation(authentication.getName(), invitationId);
+        return "redirect:/project/" + project.getId();
+    }
+
+    @PostMapping("/invitations/{invitationId}/reject")
+    public String rejectInvitation(
+            Authentication authentication,
+            @PathVariable Long invitationId) {
+        projectService.rejectInvitation(authentication.getName(), invitationId);
+        return "redirect:/invitations";
+    }
+
+    @PostMapping("/project/{projectId}/delete")
+    public String deleteProject(
+            Authentication authentication,
+            @PathVariable Long projectId) {
+        projectService.deleteProject(authentication.getName(), projectId);
+        return "redirect:/";
     }
 
 }

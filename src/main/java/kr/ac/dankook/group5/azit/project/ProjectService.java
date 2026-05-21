@@ -18,6 +18,7 @@ public class ProjectService {
     private final ProjectLinkRepository projectLinkRepository;
     private final MemberRepository memberRepository;
     private final ProjectTaskRepository projectTaskRepository;
+    private final ProjectInvitationRepository projectInvitationRepository;
 
     @Transactional
     public Project createProject(String ownerEmail, String title, String description) {
@@ -162,5 +163,105 @@ public class ProjectService {
         }
 
         task.toggleCompleted();
+    }
+
+    public List<Member> getInviteCandidates(String email, Long projectId) {
+        Member currentMember = getMemberByEmail(email);
+        Project project = getProjectById(projectId);
+        assertProjectMember(project, currentMember);
+
+        return memberRepository.findAll().stream()
+                .filter(member -> !member.getId().equals(currentMember.getId()))
+                .filter(member -> !projectMemberRepository.existsByProjectAndMember(project, member))
+                .filter(member -> !projectInvitationRepository.existsByProjectAndReceiverAndStatus(
+                        project,
+                        member,
+                        ProjectInvitationStatus.PENDING))
+                .toList();
+    }
+
+    @Transactional
+    public void sendInvitation(String email, Long projectId, Long receiverId) {
+        Member sender = getMemberByEmail(email);
+        Project project = getProjectById(projectId);
+        assertProjectMember(project, sender);
+
+        Member receiver = memberRepository.findById(receiverId)
+                .orElseThrow(() -> new IllegalArgumentException("초대할 회원을 찾을 수 없습니다."));
+
+        if (projectMemberRepository.existsByProjectAndMember(project, receiver)) {
+            throw new IllegalArgumentException("이미 프로젝트에 참여 중인 회원입니다.");
+        }
+
+        if (projectInvitationRepository.existsByProjectAndReceiverAndStatus(project, receiver,
+                ProjectInvitationStatus.PENDING)) {
+            throw new IllegalArgumentException("이미 초대를 보낸 회원입니다.");
+        }
+
+        projectInvitationRepository.save(new ProjectInvitation(project, sender, receiver));
+    }
+
+    public List<ProjectInvitation> getPendingInvitations(String email) {
+        Member receiver = getMemberByEmail(email);
+        return projectInvitationRepository.findAllByReceiverAndStatus(receiver, ProjectInvitationStatus.PENDING);
+    }
+
+    public ProjectInvitation getInvitationForReceiver(String email, Long invitationId) {
+        Member receiver = getMemberByEmail(email);
+
+        ProjectInvitation invitation = projectInvitationRepository.findById(invitationId)
+                .orElseThrow(() -> new IllegalArgumentException("초대를 찾을 수 없습니다."));
+
+        if (!invitation.getReceiver().getId().equals(receiver.getId())) {
+            throw new IllegalArgumentException("본인에게 온 초대만 확인할 수 있습니다.");
+        }
+
+        return invitation;
+    }
+
+    @Transactional
+    public Project acceptInvitation(String email, Long invitationId) {
+        ProjectInvitation invitation = getInvitationForReceiver(email, invitationId);
+
+        if (invitation.getStatus() != ProjectInvitationStatus.PENDING) {
+            throw new IllegalArgumentException("이미 처리된 초대입니다.");
+        }
+
+        Project project = invitation.getProject();
+        Member receiver = invitation.getReceiver();
+
+        if (!projectMemberRepository.existsByProjectAndMember(project, receiver)) {
+            projectMemberRepository.save(new ProjectMember(project, receiver, ProjectMemberRole.MEMBER));
+        }
+
+        invitation.accept();
+
+        return project;
+    }
+
+    @Transactional
+    public void rejectInvitation(String email, Long invitationId) {
+        ProjectInvitation invitation = getInvitationForReceiver(email, invitationId);
+
+        if (invitation.getStatus() != ProjectInvitationStatus.PENDING) {
+            throw new IllegalArgumentException("이미 처리된 초대입니다.");
+        }
+
+        invitation.reject();
+    }
+
+    @Transactional
+    public void deleteProject(String email, Long projectId) {
+        Member member = getMemberByEmail(email);
+        Project project = getProjectById(projectId);
+
+        ProjectMember projectMember = projectMemberRepository.findByProjectAndMember(project, member)
+                .orElseThrow(() -> new IllegalArgumentException("프로젝트 멤버만 접근할 수 있습니다."));
+
+        if (projectMember.getRole() != ProjectMemberRole.OWNER) {
+            throw new IllegalArgumentException("프로젝트 소유자만 삭제할 수 있습니다.");
+        }
+
+        projectRepository.delete(project);
     }
 }

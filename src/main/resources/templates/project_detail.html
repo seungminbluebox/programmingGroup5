@@ -17,6 +17,19 @@
       </a>
       <div class="azit-nav-actions">
         <a href="/" class="azit-button azit-button-secondary">대시보드</a>
+        <a href="/invitations" class="azit-button azit-button-secondary">
+          초대
+          <span th:if="${pendingInvitations != null and !pendingInvitations.isEmpty()}"
+            th:text="${pendingInvitations.size()}">
+            0
+          </span>
+        </a>
+        <form th:action="@{/project/{projectId}/delete(projectId=${project.id})}" method="post"
+          onsubmit="return confirm('프로젝트를 삭제하시겠습니까?')">
+          <button type="submit" class="azit-button azit-button-danger">
+            프로젝트 삭제
+          </button>
+        </form>
         <form th:action="@{/logout}" method="post">
           <button type="submit" class="azit-button azit-button-danger">로그아웃</button>
         </form>
@@ -36,8 +49,43 @@
     <section class="azit-grid">
       <div style="display: grid; gap: 24px">
         <article class="azit-card">
-          <div class="azit-card-header">팀원 목록</div>
+          <div class="azit-card-header"
+            style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+            <span>팀원 목록</span>
+            <button type="button" class="azit-button azit-button-secondary" onclick="toggleInvitePanel()">
+              팀원 추가
+            </button>
+          </div>
+
           <div class="azit-card-body">
+            <div id="invitePanel" class="azit-form-section" style="display: none; margin-bottom: 16px">
+              <strong>팀원 초대</strong>
+              <div th:if="${inviteCandidates != null and !inviteCandidates.isEmpty()}"
+                style="display: grid; gap: 10px; margin-top: 12px">
+                <div class="azit-form-section" th:each="member : ${inviteCandidates}"
+                  style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+                  <div>
+                    <strong th:text="${member.name}">사용자 이름</strong>
+                    <p class="azit-empty" th:text="${member.email}" style="margin-top: 6px">
+                      email@example.com
+                    </p>
+                  </div>
+
+                  <form th:action="@{/project/{projectId}/invitations(projectId=${project.id})}" method="post">
+                    <input type="hidden" name="receiverId" th:value="${member.id}" />
+                    <button type="submit" class="azit-button azit-button-secondary">
+                      초대 보내기
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <p class="azit-empty" th:if="${inviteCandidates == null or inviteCandidates.isEmpty()}"
+                style="margin-top: 10px">
+                초대할 수 있는 사용자가 없습니다.
+              </p>
+            </div>
+
             <div th:if="${project.members != null and !project.members.isEmpty()}" style="display: grid; gap: 12px">
               <div class="azit-form-section" th:each="projectMember : ${project.members}">
                 <strong th:text="${projectMember.member.name}">팀원 이름</strong>
@@ -45,6 +93,7 @@
                 <p class="azit-empty" th:text="${projectMember.member.email}">email@example.com</p>
               </div>
             </div>
+
             <p class="azit-empty" th:if="${project.members == null or project.members.isEmpty()}">
               아직 등록된 팀원이 없습니다.
             </p>
@@ -165,6 +214,12 @@
       </aside>
     </section>
   </main>
+  <script>
+    function toggleInvitePanel() {
+      const panel = document.getElementById("invitePanel");
+      panel.style.display = panel.style.display === "none" ? "block" : "none";
+    }
+  </script>
 </body>
 
 </html>

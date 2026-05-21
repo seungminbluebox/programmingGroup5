@@ -27,6 +27,7 @@ public class MainController {
             memberRepository.findByEmail(email).ifPresent(member -> {
                 model.addAttribute("nickname", member.getName());
                 model.addAttribute("projects", projectService.findProjectsForMember(email));
+                model.addAttribute("pendingInvitations", projectService.getPendingInvitations(authentication.getName()));
             });
         }
         return "home";
