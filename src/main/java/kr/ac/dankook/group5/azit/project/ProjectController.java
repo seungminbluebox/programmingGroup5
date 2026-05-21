@@ -40,6 +40,7 @@ public class ProjectController {
         model.addAttribute("myCompletedTaskCount", projectService.getMyCompletedTaskCount(email, projectId));
         model.addAttribute("inviteCandidates", projectService.getInviteCandidates(email, projectId));
         model.addAttribute("pendingInvitations", projectService.getPendingInvitations(email));
+        model.addAttribute("projectOwner", projectService.isProjectOwner(email, projectId));
 
         return "project_detail";
     }
@@ -53,7 +54,7 @@ public class ProjectController {
         projectService.addProjectLink(authentication.getName(), projectId, label, url);
         return "redirect:/project/" + projectId;
     }
-    
+
     @PostMapping("/project/{projectId}/members")
     public String addMember(
             Authentication authentication,

@@ -12,4 +12,6 @@ public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Lo
     boolean existsByProjectAndMember(Project project, Member member);
 
     Optional<ProjectMember> findByProjectAndMember(Project project, Member member);
+
+    void deleteAllByProject(Project project);
 }

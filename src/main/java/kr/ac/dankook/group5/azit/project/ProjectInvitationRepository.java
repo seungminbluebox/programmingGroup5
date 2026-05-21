@@ -14,4 +14,6 @@ public interface ProjectInvitationRepository extends JpaRepository<ProjectInvita
             Member receiver,
             ProjectInvitationStatus status
     );
+
+    void deleteAllByProject(Project project);
 }

@@ -51,7 +51,7 @@ public class ProjectService {
         return projectLinkRepository.save(new ProjectLink(project, required(label, "링크 이름"), required(url, "링크 주소")));
     }
 
-    //프로젝트에 멤버 추가 (프로젝트 소유자만)
+    // 프로젝트에 멤버 추가 (프로젝트 소유자만)
     @Transactional
     public ProjectMember addMemberToProject(String ownerEmail, Long projectId, String memberEmail) {
         Member owner = getMemberByEmail(ownerEmail);
@@ -82,7 +82,7 @@ public class ProjectService {
         }
     }
 
-    //프로젝트 소유자인지 확인하기
+    // 프로젝트 소유자인지 확인하기
     private void assertProjectOwner(Project project, Member member) {
         ProjectMember projectMember = projectMemberRepository.findByProjectAndMember(project, member)
                 .orElseThrow(() -> new IllegalArgumentException("프로젝트 소유자만 접근할 수 있습니다."));
@@ -262,6 +262,19 @@ public class ProjectService {
             throw new IllegalArgumentException("프로젝트 소유자만 삭제할 수 있습니다.");
         }
 
+        projectInvitationRepository.deleteAllByProject(project);
+        projectTaskRepository.deleteAllByProject(project);
+        projectLinkRepository.deleteAllByProject(project);
+        projectMemberRepository.deleteAllByProject(project);
         projectRepository.delete(project);
+    }
+
+    public boolean isProjectOwner(String email, Long projectId) {
+        Member member = getMemberByEmail(email);
+        Project project = getProjectById(projectId);
+
+        return projectMemberRepository.findByProjectAndMember(project, member)
+                .map(projectMember -> projectMember.getRole() == ProjectMemberRole.OWNER)
+                .orElse(false);
     }
 }
