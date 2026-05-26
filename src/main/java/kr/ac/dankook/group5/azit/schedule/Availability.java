@@ -1,6 +1,7 @@
-package kr.ac.dankook.group5.azit.user;
+package kr.ac.dankook.group5.azit.schedule;
 
 import jakarta.persistence.*;
+import kr.ac.dankook.group5.azit.user.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,7 +28,7 @@ public class Availability {
     private LocalTime startTime;
     private LocalTime endTime;
 
-    public enum DayOfWeek {
-        MON, TUE, WED, THU, FRI, SAT, SUN
+    public Schedule toSchedule() {
+        return new Schedule(dayOfWeek, startTime, endTime);
     }
 }
