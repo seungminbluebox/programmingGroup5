@@ -208,9 +208,10 @@
             <strong>태스크 목록</strong>
 
             <div th:if="${tasks != null and !tasks.isEmpty()}" style="display: grid; gap: 10px; margin-top: 12px">
-              <div class="azit-form-section" th:each="task : ${tasks}">
+              <div class="azit-form-section azit-task-item" th:each="task : ${tasks}"
+                th:classappend="${task.completed} ? ' completed' : ''">
                 <div style="display: flex; justify-content: space-between; gap: 12px; align-items: center">
-                  <div>
+                  <div class="azit-task-content">
                     <strong th:text="${task.title}">태스크 제목</strong>
                     <p class="azit-empty" style="margin-top: 6px">
                       담당자:
@@ -221,16 +222,16 @@
                   <form
                     th:if="${projectEditable}"
                     th:action="@{/project/{projectId}/tasks/{taskId}/toggle(projectId=${project.id}, taskId=${task.id})}"
-                    method="post">
-                    <button type="submit" class="azit-button azit-button-secondary"
-                      th:text="${task.completed} ? '완료됨' : '완료하기'">
-                      완료하기
-                    </button>
+                    method="post" class="azit-task-check-form">
+                    <label class="azit-task-check">
+                      <input type="checkbox" th:checked="${task.completed}" onchange="this.form.submit()" />
+                      <span>완료</span>
+                    </label>
                   </form>
-                  <span th:if="${projectEditable == false}" class="azit-stack-badge"
-                    th:text="${task.completed} ? '완료' : '미완료'">
-                    미완료
-                  </span>
+                  <label th:if="${projectEditable == false}" class="azit-task-check readonly">
+                    <input type="checkbox" th:checked="${task.completed}" disabled />
+                    <span th:text="${task.completed} ? '완료' : '미완료'">미완료</span>
+                  </label>
                 </div>
               </div>
             </div>

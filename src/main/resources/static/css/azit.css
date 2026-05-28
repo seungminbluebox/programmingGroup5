@@ -448,6 +448,53 @@ button.azit-button-danger:hover {
   background: #f8fafc;
 }
 
+.azit-task-item {
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.azit-task-item.completed {
+  border-color: #e2e8f0;
+  background: #f1f5f9;
+}
+
+.azit-task-item.completed .azit-task-content {
+  color: var(--azit-muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  text-decoration-color: #94a3b8;
+}
+
+.azit-task-check-form {
+  margin: 0;
+}
+
+.azit-task-check {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  border: 1px solid var(--azit-border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--azit-text);
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.azit-task-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--azit-accent);
+}
+
+.azit-task-check.readonly {
+  cursor: default;
+}
+
 @media (max-width: 900px) {
   .azit-hero,
   .azit-auth-page,

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -120,7 +121,9 @@ public class ProjectService {
         Project project = getProjectById(projectId);
         assertProjectMember(project, member);
 
-        return projectTaskRepository.findAllByProjectOrderByIdDesc(project);
+        return projectTaskRepository.findAllByProjectOrderByIdDesc(project).stream()
+                .sorted(Comparator.comparing(ProjectTask::isCompleted))
+                .toList();
     }
 
     public int getMyTaskCompletionRate(String email, Long projectId) {

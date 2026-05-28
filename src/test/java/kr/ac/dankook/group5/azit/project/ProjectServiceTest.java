@@ -99,6 +99,25 @@ class ProjectServiceTest {
     }
 
     @Test
+    void getTasksReturnsIncompleteTasksBeforeCompletedTasks() {
+        Member member = new Member();
+        member.setEmail("member@example.com");
+        Project project = new Project();
+        ProjectTask completedTask = new ProjectTask(project, member, "Completed");
+        completedTask.toggleCompleted();
+        ProjectTask incompleteTask = new ProjectTask(project, member, "Incomplete");
+
+        when(memberRepository.findByEmail("member@example.com")).thenReturn(Optional.of(member));
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+        when(projectMemberRepository.existsByProjectAndMember(project, member)).thenReturn(true);
+        when(projectTaskRepository.findAllByProjectOrderByIdDesc(project)).thenReturn(List.of(completedTask, incompleteTask));
+
+        List<ProjectTask> tasks = projectService.getTasks("member@example.com", 1L);
+
+        assertThat(tasks).containsExactly(incompleteTask, completedTask);
+    }
+
+    @Test
     void addMemberToProjectRequiresOwnerRole() {
         Member owner = new Member();
         owner.setEmail("owner@example.com");
