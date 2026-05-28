@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import kr.ac.dankook.group5.azit.schedule.Availability;
+import kr.ac.dankook.group5.azit.schedule.Routine;
 import kr.ac.dankook.group5.azit.schedule.DayOfWeek;
 
 import java.io.IOException;
@@ -129,7 +129,7 @@ public class ProfileService {
                 if (availEnds.get(i) == null || availEnds.get(i).trim().isEmpty())
                     continue;
 
-                Availability availability = new Availability();
+                Routine availability = new Routine();
                 availability.setMember(member);
                 try {
                     availability.setDayOfWeek(DayOfWeek.valueOf(availDays.get(i)));
