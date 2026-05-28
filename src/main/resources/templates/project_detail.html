@@ -41,10 +41,32 @@
     <section class="azit-page-heading">
       <div>
         <div class="azit-kicker">Project Workspace</div>
-        <h1 th:text="${project.title}">프로젝트 이름</h1>
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+          <h1 th:text="${project.title}">프로젝트 이름</h1>
+          <span class="azit-status-badge" th:classappend="${project.status.cssClass}"
+            th:text="${project.status.label}">
+            진행중
+          </span>
+        </div>
         <p th:text="${project.description}">프로젝트 설명</p>
       </div>
+      <form th:if="${projectOwner}" th:action="@{/project/{projectId}/status(projectId=${project.id})}" method="post"
+        onsubmit="return confirmProjectStatusChange()" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+        <select id="projectStatusSelect" class="azit-input" name="status" required>
+          <option th:each="status : ${projectStatuses}" th:value="${status}" th:text="${status.label}"
+            th:selected="${status == project.status}">
+            진행중
+          </option>
+        </select>
+        <button type="submit" class="azit-button">상태 변경</button>
+      </form>
     </section>
+
+    <p class="azit-alert" th:if="${errorMessage}" th:text="${errorMessage}" style="margin-bottom: 16px"></p>
+    <p class="azit-alert-success" th:if="${successMessage}" th:text="${successMessage}" style="margin-bottom: 16px"></p>
+    <p class="azit-alert" th:if="${projectEditable == false}" style="margin-bottom: 16px">
+      완료 또는 중단된 프로젝트는 조회만 가능합니다. 오너가 상태를 진행중으로 변경하면 다시 수정할 수 있습니다.
+    </p>
 
     <section class="azit-grid">
       <div style="display: grid; gap: 24px">
@@ -52,13 +74,13 @@
           <div class="azit-card-header"
             style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
             <span>팀원 목록</span>
-            <button type="button" class="azit-button azit-button-secondary" onclick="toggleInvitePanel()">
+            <button th:if="${projectEditable}" type="button" class="azit-button azit-button-secondary" onclick="toggleInvitePanel()">
               팀원 추가
             </button>
           </div>
 
           <div class="azit-card-body">
-            <div id="invitePanel" class="azit-form-section" style="display: none; margin-bottom: 16px">
+            <div th:if="${projectEditable}" id="invitePanel" class="azit-form-section" style="display: none; margin-bottom: 16px">
               <strong>팀원 초대</strong>
               <div th:if="${inviteCandidates != null and !inviteCandidates.isEmpty()}"
                 style="display: grid; gap: 10px; margin-top: 12px">
@@ -115,7 +137,7 @@
               style="margin-bottom: 18px">
               GitHub, Figma 같은 작업 링크를 추가하세요.
             </p>
-            <form th:action="@{/project/{id}/links(id=${project.id})}" method="post" style="display: grid; gap: 12px">
+            <form th:if="${projectEditable}" th:action="@{/project/{id}/links(id=${project.id})}" method="post" style="display: grid; gap: 12px">
               <input class="azit-input" type="text" name="label" placeholder="링크 이름: GitHub" required />
               <input class="azit-input" type="url" name="url" placeholder="https://github.com/team/repo" required />
               <button type="submit" class="azit-button">링크 추가</button>
@@ -123,7 +145,7 @@
           </div>
         </article>
 
-        <article class="azit-card">
+        <article class="azit-card" th:if="${projectEditable}">
           <div class="azit-card-header">팀원 초대</div>
           <div class="azit-card-body">
             <form th:action="@{/project/{projectId}/members(projectId=${project.id})}" method="post"
@@ -166,7 +188,7 @@
           <div class="azit-form-section" style="margin-bottom: 16px">
             <strong>태스크 추가</strong>
 
-            <form th:action="@{/project/{id}/tasks(id=${project.id})}" method="post"
+            <form th:if="${projectEditable}" th:action="@{/project/{id}/tasks(id=${project.id})}" method="post"
               style="display: grid; gap: 10px; margin-top: 12px">
               <input class="azit-input" type="text" name="title" placeholder="태스크 제목" required />
 
@@ -197,6 +219,7 @@
                   </div>
 
                   <form
+                    th:if="${projectEditable}"
                     th:action="@{/project/{projectId}/tasks/{taskId}/toggle(projectId=${project.id}, taskId=${task.id})}"
                     method="post">
                     <button type="submit" class="azit-button azit-button-secondary"
@@ -204,6 +227,10 @@
                       완료하기
                     </button>
                   </form>
+                  <span th:if="${projectEditable == false}" class="azit-stack-badge"
+                    th:text="${task.completed} ? '완료' : '미완료'">
+                    미완료
+                  </span>
                 </div>
               </div>
             </div>
@@ -216,7 +243,17 @@
       </aside>
     </section>
   </main>
-  <script>
+  <script th:inline="javascript">
+    const incompleteTaskCount = Number(/*[[${incompleteTaskCount}]]*/ 0);
+
+    function confirmProjectStatusChange() {
+      const select = document.getElementById("projectStatusSelect");
+      if (select && select.value === "COMPLETED" && incompleteTaskCount > 0) {
+        return confirm("미완료 태스크가 있습니다. 그래도 완료하시겠습니까?");
+      }
+      return true;
+    }
+
     function toggleInvitePanel() {
       const panel = document.getElementById("invitePanel");
       panel.style.display = panel.style.display === "none" ? "block" : "none";

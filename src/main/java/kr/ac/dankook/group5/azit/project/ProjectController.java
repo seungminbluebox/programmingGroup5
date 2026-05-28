@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class ProjectController {
@@ -33,14 +35,18 @@ public class ProjectController {
         String email = authentication.getName();
 
         Project project = projectService.getProjectForMember(email, projectId);
+        List<ProjectTask> tasks = projectService.getTasks(email, projectId);
 
         model.addAttribute("project", project);
-        model.addAttribute("tasks", projectService.getTasks(email, projectId));
+        model.addAttribute("tasks", tasks);
         model.addAttribute("myTaskCompletionRate", projectService.getMyTaskCompletionRate(email, projectId));
         model.addAttribute("myCompletedTaskCount", projectService.getMyCompletedTaskCount(email, projectId));
         model.addAttribute("inviteCandidates", projectService.getInviteCandidates(email, projectId));
         model.addAttribute("pendingInvitations", projectService.getPendingInvitations(email));
         model.addAttribute("projectOwner", projectService.isProjectOwner(email, projectId));
+        model.addAttribute("projectStatuses", ProjectStatus.values());
+        model.addAttribute("projectEditable", project.getStatus() == ProjectStatus.IN_PROGRESS);
+        model.addAttribute("incompleteTaskCount", tasks.stream().filter(task -> !task.isCompleted()).count());
 
         return "project_detail";
     }
@@ -50,8 +56,29 @@ public class ProjectController {
             Authentication authentication,
             @PathVariable Long projectId,
             @RequestParam String label,
-            @RequestParam String url) {
-        projectService.addProjectLink(authentication.getName(), projectId, label, url);
+            @RequestParam String url,
+            RedirectAttributes redirectAttributes) {
+        try {
+            projectService.addProjectLink(authentication.getName(), projectId, label, url);
+            redirectAttributes.addFlashAttribute("successMessage", "작업 링크가 추가되었습니다.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/project/" + projectId;
+    }
+
+    @PostMapping("/project/{projectId}/status")
+    public String updateStatus(
+            Authentication authentication,
+            @PathVariable Long projectId,
+            @RequestParam ProjectStatus status,
+            RedirectAttributes redirectAttributes) {
+        try {
+            projectService.updateProjectStatus(authentication.getName(), projectId, status);
+            redirectAttributes.addFlashAttribute("successMessage", "프로젝트 상태가 변경되었습니다.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/project/" + projectId;
     }
 
@@ -63,6 +90,7 @@ public class ProjectController {
             RedirectAttributes redirectAttributes) {
         try {
             projectService.addMemberToProject(authentication.getName(), projectId, memberEmail);
+            redirectAttributes.addFlashAttribute("successMessage", "팀원이 추가되었습니다.");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
@@ -74,8 +102,14 @@ public class ProjectController {
             Authentication authentication,
             @PathVariable Long projectId,
             @RequestParam String title,
-            @RequestParam Long assigneeId) {
-        projectService.addTask(authentication.getName(), projectId, title, assigneeId);
+            @RequestParam Long assigneeId,
+            RedirectAttributes redirectAttributes) {
+        try {
+            projectService.addTask(authentication.getName(), projectId, title, assigneeId);
+            redirectAttributes.addFlashAttribute("successMessage", "태스크가 추가되었습니다.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/project/" + projectId;
     }
 
@@ -83,8 +117,13 @@ public class ProjectController {
     public String toggleTask(
             Authentication authentication,
             @PathVariable Long projectId,
-            @PathVariable Long taskId) {
-        projectService.toggleTask(authentication.getName(), projectId, taskId);
+            @PathVariable Long taskId,
+            RedirectAttributes redirectAttributes) {
+        try {
+            projectService.toggleTask(authentication.getName(), projectId, taskId);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/project/" + projectId;
     }
 
@@ -92,8 +131,14 @@ public class ProjectController {
     public String sendInvitation(
             Authentication authentication,
             @PathVariable Long projectId,
-            @RequestParam Long receiverId) {
-        projectService.sendInvitation(authentication.getName(), projectId, receiverId);
+            @RequestParam Long receiverId,
+            RedirectAttributes redirectAttributes) {
+        try {
+            projectService.sendInvitation(authentication.getName(), projectId, receiverId);
+            redirectAttributes.addFlashAttribute("successMessage", "초대를 보냈습니다.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/project/" + projectId;
     }
 
@@ -116,9 +161,15 @@ public class ProjectController {
     @PostMapping("/invitations/{invitationId}/accept")
     public String acceptInvitation(
             Authentication authentication,
-            @PathVariable Long invitationId) {
-        Project project = projectService.acceptInvitation(authentication.getName(), invitationId);
-        return "redirect:/project/" + project.getId();
+            @PathVariable Long invitationId,
+            RedirectAttributes redirectAttributes) {
+        try {
+            Project project = projectService.acceptInvitation(authentication.getName(), invitationId);
+            return "redirect:/project/" + project.getId();
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/invitations";
+        }
     }
 
     @PostMapping("/invitations/{invitationId}/reject")

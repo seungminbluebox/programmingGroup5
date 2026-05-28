@@ -33,6 +33,12 @@ class ProjectServiceTest {
     @Mock
     private MemberRepository memberRepository;
 
+    @Mock
+    private ProjectTaskRepository projectTaskRepository;
+
+    @Mock
+    private ProjectInvitationRepository projectInvitationRepository;
+
     @InjectMocks
     private ProjectService projectService;
 
@@ -48,6 +54,7 @@ class ProjectServiceTest {
 
         assertThat(project.getTitle()).isEqualTo("Portfolio Matching");
         assertThat(project.getDescription()).isEqualTo("Build matching app");
+        assertThat(project.getStatus()).isEqualTo(ProjectStatus.IN_PROGRESS);
 
         ArgumentCaptor<ProjectMember> memberCaptor = ArgumentCaptor.forClass(ProjectMember.class);
         verify(projectMemberRepository).save(memberCaptor.capture());
@@ -175,5 +182,188 @@ class ProjectServiceTest {
         assertThatThrownBy(() -> projectService.addMemberToProject("owner@example.com", 1L, "missing@example.com"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("회원을 찾을 수 없습니다.");
+    }
+
+    @Test
+    void updateProjectStatusChangesStatusWhenOwner() {
+        Member owner = new Member();
+        owner.setEmail("owner@example.com");
+        Project project = new Project();
+        ProjectMember ownerMembership = new ProjectMember(project, owner, ProjectMemberRole.OWNER);
+
+        when(memberRepository.findByEmail("owner@example.com")).thenReturn(Optional.of(owner));
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+        when(projectMemberRepository.findByProjectAndMember(project, owner)).thenReturn(Optional.of(ownerMembership));
+
+        projectService.updateProjectStatus("owner@example.com", 1L, ProjectStatus.COMPLETED);
+
+        assertThat(project.getStatus()).isEqualTo(ProjectStatus.COMPLETED);
+    }
+
+    @Test
+    void updateProjectStatusRequiresOwnerRole() {
+        Member member = new Member();
+        member.setEmail("member@example.com");
+        Project project = new Project();
+        ProjectMember membership = new ProjectMember(project, member, ProjectMemberRole.MEMBER);
+
+        when(memberRepository.findByEmail("member@example.com")).thenReturn(Optional.of(member));
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+        when(projectMemberRepository.findByProjectAndMember(project, member)).thenReturn(Optional.of(membership));
+
+        assertThatThrownBy(() -> projectService.updateProjectStatus("member@example.com", 1L, ProjectStatus.COMPLETED))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("프로젝트 소유자만");
+    }
+
+    @Test
+    void updateProjectStatusAllowsSubmittingCurrentStatus() {
+        Member owner = new Member();
+        owner.setEmail("owner@example.com");
+        Project project = new Project();
+        ProjectMember ownerMembership = new ProjectMember(project, owner, ProjectMemberRole.OWNER);
+
+        when(memberRepository.findByEmail("owner@example.com")).thenReturn(Optional.of(owner));
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+        when(projectMemberRepository.findByProjectAndMember(project, owner)).thenReturn(Optional.of(ownerMembership));
+
+        projectService.updateProjectStatus("owner@example.com", 1L, ProjectStatus.IN_PROGRESS);
+
+        assertThat(project.getStatus()).isEqualTo(ProjectStatus.IN_PROGRESS);
+    }
+
+    @Test
+    void addProjectLinkFailsWhenProjectIsCompleted() {
+        Member member = new Member();
+        member.setEmail("member@example.com");
+        Project project = completedProject();
+
+        when(memberRepository.findByEmail("member@example.com")).thenReturn(Optional.of(member));
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+        when(projectMemberRepository.existsByProjectAndMember(project, member)).thenReturn(true);
+
+        assertThatThrownBy(() -> projectService.addProjectLink("member@example.com", 1L, "GitHub", "https://github.com/example/repo"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("완료 또는 중단된 프로젝트는 수정할 수 없습니다.");
+    }
+
+    @Test
+    void addProjectLinkFailsWhenProjectIsPaused() {
+        Member member = new Member();
+        member.setEmail("member@example.com");
+        Project project = pausedProject();
+
+        when(memberRepository.findByEmail("member@example.com")).thenReturn(Optional.of(member));
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+        when(projectMemberRepository.existsByProjectAndMember(project, member)).thenReturn(true);
+
+        assertThatThrownBy(() -> projectService.addProjectLink("member@example.com", 1L, "GitHub", "https://github.com/example/repo"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("완료 또는 중단된 프로젝트는 수정할 수 없습니다.");
+    }
+
+    @Test
+    void addMemberToProjectFailsWhenProjectIsCompleted() {
+        Member owner = new Member();
+        owner.setEmail("owner@example.com");
+        Project project = completedProject();
+        ProjectMember ownerMembership = new ProjectMember(project, owner, ProjectMemberRole.OWNER);
+
+        when(memberRepository.findByEmail("owner@example.com")).thenReturn(Optional.of(owner));
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+        when(projectMemberRepository.findByProjectAndMember(project, owner)).thenReturn(Optional.of(ownerMembership));
+
+        assertThatThrownBy(() -> projectService.addMemberToProject("owner@example.com", 1L, "invitee@example.com"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("완료 또는 중단된 프로젝트는 수정할 수 없습니다.");
+    }
+
+    @Test
+    void sendInvitationFailsWhenProjectIsCompleted() {
+        Member sender = new Member();
+        sender.setEmail("sender@example.com");
+        Project project = completedProject();
+
+        when(memberRepository.findByEmail("sender@example.com")).thenReturn(Optional.of(sender));
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+        when(projectMemberRepository.existsByProjectAndMember(project, sender)).thenReturn(true);
+
+        assertThatThrownBy(() -> projectService.sendInvitation("sender@example.com", 1L, 2L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("완료 또는 중단된 프로젝트는 수정할 수 없습니다.");
+    }
+
+    @Test
+    void addTaskFailsWhenProjectIsCompleted() {
+        Member member = new Member();
+        member.setEmail("member@example.com");
+        Project project = completedProject();
+
+        when(memberRepository.findByEmail("member@example.com")).thenReturn(Optional.of(member));
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+        when(projectMemberRepository.existsByProjectAndMember(project, member)).thenReturn(true);
+
+        assertThatThrownBy(() -> projectService.addTask("member@example.com", 1L, "Task", 2L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("완료 또는 중단된 프로젝트는 수정할 수 없습니다.");
+    }
+
+    @Test
+    void toggleTaskFailsWhenProjectIsCompleted() {
+        Member member = new Member();
+        member.setEmail("member@example.com");
+        Project project = completedProject();
+
+        when(memberRepository.findByEmail("member@example.com")).thenReturn(Optional.of(member));
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+        when(projectMemberRepository.existsByProjectAndMember(project, member)).thenReturn(true);
+
+        assertThatThrownBy(() -> projectService.toggleTask("member@example.com", 1L, 10L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("완료 또는 중단된 프로젝트는 수정할 수 없습니다.");
+    }
+
+    @Test
+    void acceptInvitationFailsWhenProjectIsCompleted() {
+        Member receiver = new Member();
+        receiver.setId(1L);
+        receiver.setEmail("receiver@example.com");
+        Project project = completedProject();
+        ProjectInvitation invitation = new ProjectInvitation(project, new Member(), receiver);
+
+        when(memberRepository.findByEmail("receiver@example.com")).thenReturn(Optional.of(receiver));
+        when(projectInvitationRepository.findById(1L)).thenReturn(Optional.of(invitation));
+
+        assertThatThrownBy(() -> projectService.acceptInvitation("receiver@example.com", 1L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("완료 또는 중단된 프로젝트는 수정할 수 없습니다.");
+    }
+
+    @Test
+    void deleteProjectAllowsCompletedProjectWhenOwner() {
+        Member owner = new Member();
+        owner.setEmail("owner@example.com");
+        Project project = completedProject();
+        ProjectMember ownerMembership = new ProjectMember(project, owner, ProjectMemberRole.OWNER);
+
+        when(memberRepository.findByEmail("owner@example.com")).thenReturn(Optional.of(owner));
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+        when(projectMemberRepository.findByProjectAndMember(project, owner)).thenReturn(Optional.of(ownerMembership));
+
+        projectService.deleteProject("owner@example.com", 1L);
+
+        verify(projectRepository).delete(project);
+    }
+
+    private Project completedProject() {
+        Project project = new Project();
+        project.setStatus(ProjectStatus.COMPLETED);
+        return project;
+    }
+
+    private Project pausedProject() {
+        Project project = new Project();
+        project.setStatus(ProjectStatus.PAUSED);
+        return project;
     }
 }

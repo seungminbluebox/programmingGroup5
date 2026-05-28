@@ -103,7 +103,13 @@
                 th:each="project : ${projects}"
                 th:href="@{/project/{id}(id=${project.id})}"
               >
-                <strong th:text="${project.title}">프로젝트 이름</strong>
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+                  <strong th:text="${project.title}">프로젝트 이름</strong>
+                  <span class="azit-status-badge" th:classappend="${project.status.cssClass}"
+                    th:text="${project.status.label}">
+                    진행중
+                  </span>
+                </div>
                 <p class="azit-empty" style="margin-top: 8px" th:text="${project.description}">
                   프로젝트 설명
                 </p>
