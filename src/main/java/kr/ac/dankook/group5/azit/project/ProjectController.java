@@ -83,14 +83,14 @@ public class ProjectController {
     }
 
     @PostMapping("/project/{projectId}/members")
-    public String addMember(
+    public String sendInvitationByEmail(
             Authentication authentication,
             @PathVariable Long projectId,
             @RequestParam String memberEmail,
             RedirectAttributes redirectAttributes) {
         try {
-            projectService.addMemberToProject(authentication.getName(), projectId, memberEmail);
-            redirectAttributes.addFlashAttribute("successMessage", "팀원이 추가되었습니다.");
+            projectService.sendInvitationByEmail(authentication.getName(), projectId, memberEmail);
+            redirectAttributes.addFlashAttribute("successMessage", "초대를 보냈습니다.");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }

@@ -74,13 +74,13 @@
           <div class="azit-card-header"
             style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
             <span>팀원 목록</span>
-            <button th:if="${projectEditable}" type="button" class="azit-button azit-button-secondary" onclick="toggleInvitePanel()">
+            <button th:if="${projectOwner and projectEditable}" type="button" class="azit-button azit-button-secondary" onclick="toggleInvitePanel()">
               팀원 추가
             </button>
           </div>
 
           <div class="azit-card-body">
-            <div th:if="${projectEditable}" id="invitePanel" class="azit-form-section" style="display: none; margin-bottom: 16px">
+            <div th:if="${projectOwner and projectEditable}" id="invitePanel" class="azit-form-section" style="display: none; margin-bottom: 16px">
               <strong>팀원 초대</strong>
               <div th:if="${inviteCandidates != null and !inviteCandidates.isEmpty()}"
                 style="display: grid; gap: 10px; margin-top: 12px">
@@ -145,14 +145,14 @@
           </div>
         </article>
 
-        <article class="azit-card" th:if="${projectEditable}">
-          <div class="azit-card-header">팀원 초대</div>
+        <article class="azit-card" th:if="${projectOwner and projectEditable}">
+          <div class="azit-card-header">이메일로 초대</div>
           <div class="azit-card-body">
             <form th:action="@{/project/{projectId}/members(projectId=${project.id})}" method="post"
               style="display: grid; gap: 12px">
               <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-              <input class="azit-input" type="email" name="memberEmail" placeholder="초대할 팀원 이메일" required />
-              <button type="submit" class="azit-button">초대하기</button>
+              <input class="azit-input" type="email" name="memberEmail" placeholder="초대할 회원 이메일" required />
+              <button type="submit" class="azit-button">초대 보내기</button>
             </form>
             <p class="azit-empty" th:if="${errorMessage}" th:text="${errorMessage}"
               style="color: #b91c1c; margin-top: 8px"></p>
