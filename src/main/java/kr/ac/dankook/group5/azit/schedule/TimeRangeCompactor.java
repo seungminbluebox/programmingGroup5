@@ -3,7 +3,7 @@ package kr.ac.dankook.group5.azit.schedule;
 import java.util.List;
 import java.util.Set;
 
-public interface TimeRangeOverlapManager {
+public interface TimeRangeCompactor {
 	/**
 	 * 하루의 여러 일정을 받고, 일정이 존재하는 시간대를 출력
 	 * 

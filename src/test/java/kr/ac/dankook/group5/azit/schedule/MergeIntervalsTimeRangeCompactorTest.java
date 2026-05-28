@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class MergeIntervalsTimeOverlapManagerTest {
-    private TimeRangeOverlapManager timeRangeOverlapManager = new MergeIntervalsTimeRangeOverlapManager();
+class MergeIntervalsTimeRangeCompactorTest {
+    private TimeRangeCompactor timeRangeCompactor = new MergeIntervalsTimeRangeCompactor();
 
     // 정수 시(hour)로 간단히 Schedule을 생성하는 헬퍼
     private TimeRange s(int startH, int endH) {
@@ -30,7 +31,7 @@ class MergeIntervalsTimeOverlapManagerTest {
      */
     @Test
     void combineOccupied_emptySet_returnsEmptyList() {
-        List<TimeRange> result = timeRangeOverlapManager.combineOccupiedSchedules(Set.of());
+        List<TimeRange> result = timeRangeCompactor.combineOccupiedSchedules(Set.of());
 
         assertThat(result).isEmpty();
     }
@@ -47,7 +48,7 @@ class MergeIntervalsTimeOverlapManagerTest {
     void combineOccupied_singleSchedule_returnsSelf() {
         TimeRange schedule = s(9, 12);
 
-        List<TimeRange> result = timeRangeOverlapManager.combineOccupiedSchedules(Set.of(schedule));
+        List<TimeRange> result = timeRangeCompactor.combineOccupiedSchedules(Set.of(schedule));
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0)).isEqualTo(schedule);
@@ -69,7 +70,7 @@ class MergeIntervalsTimeOverlapManagerTest {
         // 역순으로 넣어도 정렬되어 나와야 한다
         Set<TimeRange> schedules = new HashSet<>(Set.of(afternoon, morning));
 
-        List<TimeRange> result = timeRangeOverlapManager.combineOccupiedSchedules(schedules);
+        List<TimeRange> result = timeRangeCompactor.combineOccupiedSchedules(schedules);
 
         assertThat(result).hasSize(2);
         assertThat(result.get(0)).isEqualTo(morning);
@@ -89,7 +90,7 @@ class MergeIntervalsTimeOverlapManagerTest {
         TimeRange a = s(9, 14);
         TimeRange b = s(11, 17);
 
-        List<TimeRange> result = timeRangeOverlapManager.combineOccupiedSchedules(Set.of(a, b));
+        List<TimeRange> result = timeRangeCompactor.combineOccupiedSchedules(Set.of(a, b));
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getStartTime()).isEqualTo(LocalTime.of(9, 0));
@@ -109,7 +110,7 @@ class MergeIntervalsTimeOverlapManagerTest {
         TimeRange outer = s(9, 17);
         TimeRange inner = s(11, 14);
 
-        List<TimeRange> result = timeRangeOverlapManager.combineOccupiedSchedules(Set.of(outer, inner));
+        List<TimeRange> result = timeRangeCompactor.combineOccupiedSchedules(Set.of(outer, inner));
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getStartTime()).isEqualTo(LocalTime.of(9, 0));
@@ -129,7 +130,7 @@ class MergeIntervalsTimeOverlapManagerTest {
         TimeRange shorter = s(9, 12);
         TimeRange longer = s(9, 17);
 
-        List<TimeRange> result = timeRangeOverlapManager.combineOccupiedSchedules(Set.of(shorter, longer));
+        List<TimeRange> result = timeRangeCompactor.combineOccupiedSchedules(Set.of(shorter, longer));
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getStartTime()).isEqualTo(LocalTime.of(9, 0));
@@ -149,7 +150,7 @@ class MergeIntervalsTimeOverlapManagerTest {
         TimeRange first = s(9, 12);
         TimeRange second = s(12, 17);
 
-        List<TimeRange> result = timeRangeOverlapManager.combineOccupiedSchedules(Set.of(first, second));
+        List<TimeRange> result = timeRangeCompactor.combineOccupiedSchedules(Set.of(first, second));
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getStartTime()).isEqualTo(LocalTime.of(9, 0));
@@ -170,7 +171,7 @@ class MergeIntervalsTimeOverlapManagerTest {
      */
     @Test
     void findAvailable_emptySet_returnsFullDay() {
-        List<TimeRange> result = timeRangeOverlapManager.findAvailableSchedules(Set.of());
+        List<TimeRange> result = timeRangeCompactor.findAvailableSchedules(Set.of());
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getStartTime()).isEqualTo(LocalTime.MIN);
@@ -191,7 +192,7 @@ class MergeIntervalsTimeOverlapManagerTest {
     void findAvailable_singleOccupiedInMiddle_returnsBeforeAndAfter() {
         TimeRange occupied = s(9, 17);
 
-        List<TimeRange> result = timeRangeOverlapManager.findAvailableSchedules(Set.of(occupied));
+        List<TimeRange> result = timeRangeCompactor.findAvailableSchedules(Set.of(occupied));
 
         assertThat(result).hasSize(2);
 
@@ -219,7 +220,7 @@ class MergeIntervalsTimeOverlapManagerTest {
         TimeRange morning = s(9, 12);
         TimeRange afternoon = s(14, 17);
 
-        List<TimeRange> result = timeRangeOverlapManager.findAvailableSchedules(Set.of(morning, afternoon));
+        List<TimeRange> result = timeRangeCompactor.findAvailableSchedules(Set.of(morning, afternoon));
 
         assertThat(result).hasSize(3);
 
@@ -251,7 +252,7 @@ class MergeIntervalsTimeOverlapManagerTest {
     void findAvailable_occupiedFromMidnight_returnsOnlyAfter() {
         TimeRange fromMidnight = new TimeRange(LocalTime.MIN, LocalTime.of(12, 0));
 
-        List<TimeRange> result = timeRangeOverlapManager.findAvailableSchedules(Set.of(fromMidnight));
+        List<TimeRange> result = timeRangeCompactor.findAvailableSchedules(Set.of(fromMidnight));
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getStartTime()).isEqualTo(LocalTime.of(12, 0));
@@ -273,7 +274,7 @@ class MergeIntervalsTimeOverlapManagerTest {
     void findAvailable_occupiedToEndOfDay_returnsOnlyBefore() {
         TimeRange toEndOfDay = new TimeRange(LocalTime.of(12, 0), LocalTime.MAX);
 
-        List<TimeRange> result = timeRangeOverlapManager.findAvailableSchedules(Set.of(toEndOfDay));
+        List<TimeRange> result = timeRangeCompactor.findAvailableSchedules(Set.of(toEndOfDay));
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getStartTime()).isEqualTo(LocalTime.MIN);
@@ -292,8 +293,20 @@ class MergeIntervalsTimeOverlapManagerTest {
     void findAvailable_fullDayOccupied_returnsEmpty() {
         TimeRange fullDay = new TimeRange(LocalTime.MIN, LocalTime.MAX);
 
-        List<TimeRange> result = timeRangeOverlapManager.findAvailableSchedules(Set.of(fullDay));
+        List<TimeRange> result = timeRangeCompactor.findAvailableSchedules(Set.of(fullDay));
 
         assertThat(result).isEmpty();
+    }
+
+    // =========================================================
+    // 정렬 위반 입력 테스트
+    // =========================================================
+
+    @Test
+    void combineOccupied_unsortedInput_throwsIllegalArgument() {
+        // (11-14) 다음에 (9-12) — 시작 시간 역순
+        List<TimeRange> unsorted = List.of(s(11, 14), s(9, 12));
+        assertThatThrownBy(() -> timeRangeCompactor.combineOccupiedSchedules(unsorted))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

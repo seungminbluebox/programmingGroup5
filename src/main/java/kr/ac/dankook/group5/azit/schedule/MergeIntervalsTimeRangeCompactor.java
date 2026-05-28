@@ -9,7 +9,7 @@ import java.util.Set;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MergeIntervalsTimeRangeOverlapManager implements TimeRangeOverlapManager {
+public class MergeIntervalsTimeRangeCompactor implements TimeRangeCompactor {
 	/**
 	 * 하루의 여러 일정을 받고, 일정이 존재하는 시간대를 출력
 	 * 
@@ -23,13 +23,13 @@ public class MergeIntervalsTimeRangeOverlapManager implements TimeRangeOverlapMa
 		for (var currentSchedule : sortedSchedules) {
 			if (activeSchedule == null) {
 				activeSchedule = currentSchedule;
-			} else {
-				if (activeSchedule.getEndTime().isBefore(currentSchedule.getStartTime())) {
-					occupiedSchedules.add(activeSchedule);
-					activeSchedule = currentSchedule;
-				} else if (activeSchedule.getEndTime().isBefore(currentSchedule.getEndTime())) {
-					activeSchedule = activeSchedule.withEndTime(currentSchedule.getEndTime());
-				}
+			} else if (activeSchedule.getEndTime().isBefore(currentSchedule.getStartTime())) {
+				occupiedSchedules.add(activeSchedule);
+				activeSchedule = currentSchedule;
+			} else if (activeSchedule.getEndTime().isBefore(currentSchedule.getEndTime())) {
+				activeSchedule = activeSchedule.withEndTime(currentSchedule.getEndTime());
+			} else if (!activeSchedule.contains(currentSchedule)) {
+				throw new IllegalArgumentException("Schedules must be sorted");
 			}
 		}
 

@@ -3,7 +3,6 @@ package kr.ac.dankook.group5.azit.schedule;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +18,7 @@ import kr.ac.dankook.group5.azit.user.Member;
 public class ScheduleService {
 	RoutineRepository routineRepository;
 	ScheduleRepository scheduleRepository;
-	TimeRangeOverlapManager timeRangeOverlapManager;
+	TimeRangeCompactor timeRangeCompactor;
 
 	public List<TimeRange> getMyAvailableTimeOnDate(Member member, LocalDate date) {
 		Set<TimeRange> occupied = new HashSet<>();
@@ -28,7 +27,7 @@ public class ScheduleService {
 				TimeRange.class));
 		occupied.addAll(scheduleRepository.findByMemberAndDate(member, date, TimeRange.class));
 
-		return timeRangeOverlapManager.findAvailableSchedules(occupied);
+		return timeRangeCompactor.findAvailableSchedules(occupied);
 	}
 
 	public List<TimeRange> getGroupAvailableTimeOnDate(Collection<Member> members, LocalDate date) {
@@ -38,7 +37,7 @@ public class ScheduleService {
 				DayOfWeek.fromBuiltin(date.getDayOfWeek()), TimeRange.class));
 		occupied.addAll(scheduleRepository.findByMemberInAndDate(members, date, TimeRange.class));
 
-		return timeRangeOverlapManager.findAvailableSchedules(occupied);
+		return timeRangeCompactor.findAvailableSchedules(occupied);
 	}
 
 	public Map<DayOfWeek, List<TimeRange>> getMyAvailableTimeOnDateBetween(Member member, LocalDate startDate,
@@ -66,7 +65,7 @@ public class ScheduleService {
 
 		return occupied.entrySet().stream().collect(
 				Collectors.toMap(Map.Entry::getKey,
-						entry -> timeRangeOverlapManager.findAvailableSchedules(entry.getValue())));
+						entry -> timeRangeCompactor.findAvailableSchedules(entry.getValue())));
 	}
 
 	public Map<DayOfWeek, List<TimeRange>> getGroupAvailableTimeOnDate(Collection<Member> members, LocalDate startDate,
@@ -101,8 +100,8 @@ public class ScheduleService {
 		return occupied.entrySet().stream().collect(
 				Collectors.toMap(
 						Map.Entry::getKey,
-						entry -> timeRangeOverlapManager.findAvailableSchedules(entry.getValue()),
-						(a, b) -> a,
+						entry -> timeRangeCompactor.findAvailableSchedules(entry.getValue()),
+								(a, b) -> a,
 						() -> new EnumMap<>(DayOfWeek.class)));
 	}
 
