@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "availabilities")
+@Table(name = "routines")
 @Getter
 @Setter
 @NoArgsConstructor
