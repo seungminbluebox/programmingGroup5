@@ -165,6 +165,7 @@ public class ProjectController {
             RedirectAttributes redirectAttributes) {
         try {
             Project project = projectService.acceptInvitation(authentication.getName(), invitationId);
+            redirectAttributes.addFlashAttribute("successMessage", "프로젝트에 참여했습니다.");
             return "redirect:/project/" + project.getId();
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
@@ -175,8 +176,14 @@ public class ProjectController {
     @PostMapping("/invitations/{invitationId}/reject")
     public String rejectInvitation(
             Authentication authentication,
-            @PathVariable Long invitationId) {
-        projectService.rejectInvitation(authentication.getName(), invitationId);
+            @PathVariable Long invitationId,
+            RedirectAttributes redirectAttributes) {
+        try {
+            projectService.rejectInvitation(authentication.getName(), invitationId);
+            redirectAttributes.addFlashAttribute("successMessage", "초대를 거절했습니다.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/invitations";
     }
 

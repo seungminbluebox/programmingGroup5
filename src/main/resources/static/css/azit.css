@@ -17,6 +17,7 @@
 }
 
 body.azit-app {
+  display: block;
   min-height: 100vh;
   margin: 0;
   color: var(--azit-text);
@@ -27,6 +28,10 @@ body.azit-app {
     Inter, Pretendard, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
     "Noto Sans KR", sans-serif;
   letter-spacing: 0;
+}
+
+body.azit-app.has-sidebar {
+  display: flex;
 }
 
 a {

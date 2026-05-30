@@ -20,34 +20,34 @@
 		<header id="sidebar" th:fragment="sidebar">
 			<div id="sidebar-header">
 				<h1 id="logo">
-					<a id="sidebar-home">AZIT</a>
+					<a id="sidebar-home" th:href="@{/}">AZIT</a>
 				</h1>
 				<div>
-					<a id="sidebar-notification"></a>
+					<a id="sidebar-notification" th:href="@{/invitations}" aria-label="초대 목록"></a>
 				</div>
 			</div>
 			<nav id="sidebar-menu">
 				<ul>
 					<li>
-						<a id="sidebar-dashboard" class="sidebar-page">
+						<a id="sidebar-dashboard" class="sidebar-page" th:href="@{/}">
 							<div class="sidebar-page-icon"></div>
 							<div class="sidebar-page-name">대시보드</div>
 						</a>
 					</li>
 					<li>
-						<a id="sidebar-start" class="sidebar-page">
+						<a id="sidebar-start" class="sidebar-page" th:href="@{/}">
 							<div class="sidebar-page-icon"></div>
 							<div class="sidebar-page-name">시작하기</div>
 						</a>
 					</li>
 					<li>
-						<a id="sidebar-task" class="sidebar-page">
+						<a id="sidebar-task" class="sidebar-page" th:href="@{/}">
 							<div class="sidebar-page-icon"></div>
 							<div class="sidebar-page-name">할 일</div>
 						</a>
 					</li>
 					<li>
-						<a id="sidebar-schedule" class="sidebar-page">
+						<a id="sidebar-schedule" class="sidebar-page" th:href="@{/}">
 							<div class="sidebar-page-icon"></div>
 							<div class="sidebar-page-name">일정</div>
 						</a>
@@ -56,7 +56,7 @@
 			</nav>
 			<nav id="sidebar-projects" th:if="${#authentication != null and #authentication.name != 'anonymousUser'}">
 				<h2>내 프로젝트</h2>
-				<ul th:each="project: ${projects}">
+				<ul th:each="project: ${sidebarProjects}">
 					<li>
 						<a
 							class="sidebar-project"
@@ -76,7 +76,7 @@
 					id="sidebar-userpage"
 					class="sidebar-user"
 					th:if="${#authentication != null and #authentication.name != 'anonymousUser'}"
-					th:text="${#authentication.name}"
+					th:text="${sidebarMemberName}"
 					th:href="@{/profile/me}"
 				></a>
 				<a
