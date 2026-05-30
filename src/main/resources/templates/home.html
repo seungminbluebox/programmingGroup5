@@ -9,7 +9,9 @@
     <link rel="stylesheet" href="/css/azit.css" />
   </head>
   <body class="azit-app" th:classappend="${nickname != null} ? ' has-sidebar' : ''">
-    <div th:if="${nickname != null}" th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <div th:if="${nickname != null}">
+      <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    </div>
 
     <header class="azit-nav" th:if="${nickname == null}">
       <div class="azit-shell azit-nav-inner">

@@ -34,6 +34,11 @@ body.azit-app.has-sidebar {
   display: flex;
 }
 
+body.azit-app.has-sidebar > main {
+  padding-left: 28px;
+  padding-right: 28px;
+}
+
 a {
   color: var(--azit-primary);
 }
@@ -501,6 +506,11 @@ button.azit-button-danger:hover {
 }
 
 @media (max-width: 900px) {
+  body.azit-app.has-sidebar > main {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
   .azit-hero,
   .azit-auth-page,
   .azit-grid,
