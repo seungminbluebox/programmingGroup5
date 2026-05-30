@@ -54,7 +54,7 @@
 					</li>
 				</ul>
 			</nav>
-			<nav id="sidebar-projects" th:if="${#authentication != null}">
+			<nav id="sidebar-projects" th:if="${#authentication != null and #authentication.name != 'anonymousUser'}">
 				<h2>내 프로젝트</h2>
 				<ul th:each="project: ${projects}">
 					<li>
@@ -75,14 +75,14 @@
 				<a
 					id="sidebar-userpage"
 					class="sidebar-user"
-					th:if="${#authentication != null}"
+					th:if="${#authentication != null and #authentication.name != 'anonymousUser'}"
 					th:text="${#authentication.name}"
 					th:href="@{/profile/me}"
 				></a>
 				<a
 					id="sidebar-login"
 					class="sidebar-user"
-					th:unless="${#authentication != null}"
+					th:unless="${#authentication != null and #authentication.name != 'anonymousUser'}"
 					th:href="@{/login}"
 					>로그인</a
 				>
@@ -95,9 +95,13 @@
 					id="sidebar-usermenu-toggle-button"
 					class="toggle-button"
 					for="sidebar-usermenu-toggle-input"
-					th:if="${#authentication != null}"
+					th:if="${#authentication != null and #authentication.name != 'anonymousUser'}"
 				></label>
-				<nav id="sidebar-usermenu" th:if="${#authentication != null}"></nav>
+				<nav id="sidebar-usermenu" th:if="${#authentication != null and #authentication.name != 'anonymousUser'}">
+					<form th:action="@{/logout}" method="post">
+						<button type="submit" class="btn btn-danger btn-sm">로그아웃</button>
+					</form>
+				</nav>
 			</div>
 		</header>
 		<main>
