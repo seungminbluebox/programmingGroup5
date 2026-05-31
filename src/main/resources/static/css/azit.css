@@ -17,6 +17,7 @@
 }
 
 body.azit-app {
+  display: block;
   min-height: 100vh;
   margin: 0;
   color: var(--azit-text);
@@ -27,6 +28,15 @@ body.azit-app {
     Inter, Pretendard, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
     "Noto Sans KR", sans-serif;
   letter-spacing: 0;
+}
+
+body.azit-app.has-sidebar {
+  display: flex;
+}
+
+body.azit-app.has-sidebar > main {
+  padding-left: 28px;
+  padding-right: 28px;
 }
 
 a {
@@ -303,6 +313,15 @@ button.azit-button-danger:hover {
   font-size: 0.9rem;
 }
 
+.azit-alert-success {
+  padding: 12px 14px;
+  border: 1px solid rgba(20, 184, 166, 0.24);
+  border-radius: 8px;
+  color: #0f766e;
+  background: #ecfdf5;
+  font-size: 0.9rem;
+}
+
 .azit-page {
   padding: 32px 0 56px;
 }
@@ -385,6 +404,31 @@ button.azit-button-danger:hover {
   height: 18px;
 }
 
+.azit-status-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 11px;
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--azit-primary-dark);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.azit-status-badge.completed {
+  border-color: rgba(20, 184, 166, 0.28);
+  background: rgba(20, 184, 166, 0.1);
+  color: #0f766e;
+}
+
+.azit-status-badge.paused {
+  border-color: rgba(104, 116, 137, 0.25);
+  background: #f1f5f9;
+  color: #475467;
+}
+
 .azit-empty {
   margin: 0;
   color: var(--azit-muted);
@@ -414,7 +458,59 @@ button.azit-button-danger:hover {
   background: #f8fafc;
 }
 
+.azit-task-item {
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.azit-task-item.completed {
+  border-color: #e2e8f0;
+  background: #f1f5f9;
+}
+
+.azit-task-item.completed .azit-task-content {
+  color: var(--azit-muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  text-decoration-color: #94a3b8;
+}
+
+.azit-task-check-form {
+  margin: 0;
+}
+
+.azit-task-check {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  border: 1px solid var(--azit-border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--azit-text);
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.azit-task-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--azit-accent);
+}
+
+.azit-task-check.readonly {
+  cursor: default;
+}
+
 @media (max-width: 900px) {
+  body.azit-app.has-sidebar > main {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
   .azit-hero,
   .azit-auth-page,
   .azit-grid,

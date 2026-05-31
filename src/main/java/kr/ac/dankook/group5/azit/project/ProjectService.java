@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -48,22 +49,16 @@ public class ProjectService {
         Member member = getMemberByEmail(email);
         Project project = getProjectById(projectId);
         assertProjectMember(project, member);
+        assertProjectEditable(project);
         return projectLinkRepository.save(new ProjectLink(project, required(label, "링크 이름"), required(url, "링크 주소")));
     }
 
-    // 프로젝트에 멤버 추가 (프로젝트 소유자만)
     @Transactional
-    public ProjectMember addMemberToProject(String ownerEmail, Long projectId, String memberEmail) {
-        Member owner = getMemberByEmail(ownerEmail);
+    public void updateProjectStatus(String email, Long projectId, ProjectStatus status) {
+        Member owner = getMemberByEmail(email);
         Project project = getProjectById(projectId);
         assertProjectOwner(project, owner);
-
-        Member member = getMemberByEmail(memberEmail);
-        if (projectMemberRepository.existsByProjectAndMember(project, member)) {
-            throw new IllegalArgumentException("이미 프로젝트 멤버입니다.");
-        }
-
-        return projectMemberRepository.save(new ProjectMember(project, member, ProjectMemberRole.MEMBER));
+        project.setStatus(status);
     }
 
     private Member getMemberByEmail(String email) {
@@ -92,6 +87,12 @@ public class ProjectService {
         }
     }
 
+    private void assertProjectEditable(Project project) {
+        if (project.getStatus() != ProjectStatus.IN_PROGRESS) {
+            throw new IllegalArgumentException("완료 또는 중단된 프로젝트는 수정할 수 없습니다.");
+        }
+    }
+
     private String required(String value, String fieldName) {
         if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException(fieldName + "을 입력해 주세요.");
@@ -104,7 +105,9 @@ public class ProjectService {
         Project project = getProjectById(projectId);
         assertProjectMember(project, member);
 
-        return projectTaskRepository.findAllByProjectOrderByIdDesc(project);
+        return projectTaskRepository.findAllByProjectOrderByIdDesc(project).stream()
+                .sorted(Comparator.comparing(ProjectTask::isCompleted))
+                .toList();
     }
 
     public int getMyTaskCompletionRate(String email, Long projectId) {
@@ -140,6 +143,7 @@ public class ProjectService {
         Member member = getMemberByEmail(email);
         Project project = getProjectById(projectId);
         assertProjectMember(project, member);
+        assertProjectEditable(project);
 
         Member assignee = memberRepository.findById(assigneeId)
                 .orElseThrow(() -> new IllegalArgumentException("담당자를 찾을 수 없습니다."));
@@ -154,6 +158,7 @@ public class ProjectService {
         Member member = getMemberByEmail(email);
         Project project = getProjectById(projectId);
         assertProjectMember(project, member);
+        assertProjectEditable(project);
 
         ProjectTask task = projectTaskRepository.findById(taskId)
                 .orElseThrow(() -> new IllegalArgumentException("태스크를 찾을 수 없습니다."));
@@ -184,10 +189,32 @@ public class ProjectService {
     public void sendInvitation(String email, Long projectId, Long receiverId) {
         Member sender = getMemberByEmail(email);
         Project project = getProjectById(projectId);
-        assertProjectMember(project, sender);
+        assertProjectOwner(project, sender);
+        assertProjectEditable(project);
 
         Member receiver = memberRepository.findById(receiverId)
                 .orElseThrow(() -> new IllegalArgumentException("초대할 회원을 찾을 수 없습니다."));
+
+        createInvitation(project, sender, receiver);
+    }
+
+    @Transactional
+    public void sendInvitationByEmail(String senderEmail, Long projectId, String receiverEmail) {
+        Member sender = getMemberByEmail(senderEmail);
+        Project project = getProjectById(projectId);
+        assertProjectOwner(project, sender);
+        assertProjectEditable(project);
+
+        Member receiver = memberRepository.findByEmail(required(receiverEmail, "초대할 회원 이메일"))
+                .orElseThrow(() -> new IllegalArgumentException("가입된 회원을 찾을 수 없습니다."));
+
+        createInvitation(project, sender, receiver);
+    }
+
+    private void createInvitation(Project project, Member sender, Member receiver) {
+        if (sender.getId() != null && sender.getId().equals(receiver.getId())) {
+            throw new IllegalArgumentException("자기 자신에게는 초대할 수 없습니다.");
+        }
 
         if (projectMemberRepository.existsByProjectAndMember(project, receiver)) {
             throw new IllegalArgumentException("이미 프로젝트에 참여 중인 회원입니다.");
@@ -229,9 +256,10 @@ public class ProjectService {
 
         Project project = invitation.getProject();
         Member receiver = invitation.getReceiver();
+        assertProjectEditable(project);
 
         if (!projectMemberRepository.existsByProjectAndMember(project, receiver)) {
-            projectMemberRepository.save(new ProjectMember(project, receiver, ProjectMemberRole.MEMBER));
+            addProjectMember(project, receiver);
         }
 
         invitation.accept();
@@ -276,5 +304,9 @@ public class ProjectService {
         return projectMemberRepository.findByProjectAndMember(project, member)
                 .map(projectMember -> projectMember.getRole() == ProjectMemberRole.OWNER)
                 .orElse(false);
+    }
+
+    private ProjectMember addProjectMember(Project project, Member member) {
+        return projectMemberRepository.save(new ProjectMember(project, member, ProjectMemberRole.MEMBER));
     }
 }

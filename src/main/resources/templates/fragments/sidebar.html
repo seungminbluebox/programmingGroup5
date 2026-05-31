@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>AZIT</title>
+		<link
+			rel="stylesheet"
+			href="/src/main/resources/static/css/common.css"
+			th:href="@{/css/common.css}"
+		/>
+		<link
+			th:fragment="stylesheet"
+			rel="stylesheet"
+			href="/src/main/resources/static/css/fragments/sidebar.css"
+			th:href="@{/css/fragments/sidebar.css}"
+		/>
+	</head>
+	<body>
+		<header id="sidebar" th:fragment="sidebar">
+			<div id="sidebar-header">
+				<h1 id="logo">
+					<a id="sidebar-home" th:href="@{/}">AZIT</a>
+				</h1>
+				<div>
+					<a id="sidebar-notification" th:href="@{/invitations}" aria-label="초대 목록"></a>
+				</div>
+			</div>
+			<nav id="sidebar-menu">
+				<ul>
+					<li>
+						<a id="sidebar-dashboard" class="sidebar-page" th:href="@{/}">
+							<div class="sidebar-page-icon"></div>
+							<div class="sidebar-page-name">대시보드</div>
+						</a>
+					</li>
+					<li>
+						<a id="sidebar-start" class="sidebar-page" th:href="@{/}">
+							<div class="sidebar-page-icon"></div>
+							<div class="sidebar-page-name">시작하기</div>
+						</a>
+					</li>
+					<li>
+						<a id="sidebar-task" class="sidebar-page" th:href="@{/}">
+							<div class="sidebar-page-icon"></div>
+							<div class="sidebar-page-name">할 일</div>
+						</a>
+					</li>
+					<li>
+						<a id="sidebar-schedule" class="sidebar-page" th:href="@{/}">
+							<div class="sidebar-page-icon"></div>
+							<div class="sidebar-page-name">일정</div>
+						</a>
+					</li>
+				</ul>
+			</nav>
+			<nav id="sidebar-projects" th:if="${sidebarMemberName != null}">
+				<h2>내 프로젝트</h2>
+				<ul th:each="project: ${sidebarProjects}">
+					<li>
+						<a
+							class="sidebar-project"
+							th:href="@{/project/{projectId}(projectId=${project.id})}"
+						>
+							<div class="sidebar-project-icon"></div>
+							<div
+								class="sidebar-project-name"
+								th:text="${project.title}"
+							></div>
+						</a>
+					</li>
+				</ul>
+			</nav>
+			<div id="sidebar-footer">
+				<a
+					id="sidebar-userpage"
+					class="sidebar-user"
+					th:if="${sidebarMemberName != null}"
+					th:text="${sidebarMemberName}"
+					th:href="@{/profile/me}"
+				></a>
+				<a
+					id="sidebar-login"
+					class="sidebar-user"
+					th:unless="${sidebarMemberName != null}"
+					th:href="@{/login}"
+					>로그인</a
+				>
+				<input
+					id="sidebar-usermenu-toggle-input"
+					class="toggle-input"
+					type="checkbox"
+				/>
+				<label
+					id="sidebar-usermenu-toggle-button"
+					class="toggle-button"
+					for="sidebar-usermenu-toggle-input"
+					th:if="${sidebarMemberName != null}"
+				></label>
+				<nav id="sidebar-usermenu" th:if="${sidebarMemberName != null}">
+					<form th:action="@{/logout}" method="post">
+						<button type="submit" class="btn btn-danger btn-sm">로그아웃</button>
+					</form>
+				</nav>
+			</div>
+		</header>
+		<main>
+			<h1>본문</h1>
+		</main>
+	</body>
+</html>
