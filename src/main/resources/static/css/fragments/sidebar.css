@@ -49,6 +49,10 @@
 	color: var(--color-primary);
 }
 
+#logo a {
+	color: inherit;
+}
+
 #sidebar-notification {
 	display: block;
 	width: 22px;
