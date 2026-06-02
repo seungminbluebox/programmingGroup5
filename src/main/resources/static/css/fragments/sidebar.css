@@ -42,15 +42,15 @@
 	padding: var(--space-3xs) var(--space-2xs) var(--space-md);
 }
 
-#logo {
+#sidebar-home {
+	display: block;
+}
+
+.logo {
 	font-size: var(--font-size-4xl);
 	font-weight: var(--font-weight-bold);
 	letter-spacing: var(--letter-spacing-tight-md);
 	color: var(--color-primary);
-}
-
-#logo a {
-	color: inherit;
 }
 
 #sidebar-notification {
