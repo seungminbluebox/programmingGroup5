@@ -43,7 +43,7 @@
 }
 
 #logo {
-	font-size: var(--font-size-5xl);
+	font-size: var(--font-size-4xl);
 	font-weight: var(--font-weight-extrabold);
 	letter-spacing: var(--letter-spacing-tight-md);
 	color: var(--color-primary);
