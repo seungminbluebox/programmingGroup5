@@ -23,7 +23,11 @@
 					<a id="sidebar-home" th:href="@{/}">AZIT</a>
 				</h1>
 				<div>
-					<a id="sidebar-notification" th:href="@{/invitations}" aria-label="초대 목록"></a>
+					<a
+						id="sidebar-notification"
+						th:href="@{/invitations}"
+						aria-label="초대 목록"
+					></a>
 				</div>
 			</div>
 			<nav id="sidebar-menu">
@@ -47,7 +51,11 @@
 						</a>
 					</li>
 					<li>
-						<a id="sidebar-schedule" class="sidebar-page" th:href="@{/}">
+						<a
+							id="sidebar-schedule"
+							class="sidebar-page"
+							th:href="@{/schedule}"
+						>
 							<div class="sidebar-page-icon"></div>
 							<div class="sidebar-page-name">일정</div>
 						</a>
@@ -71,38 +79,49 @@
 					</li>
 				</ul>
 			</nav>
-			<div id="sidebar-footer">
-				<a
-					id="sidebar-userpage"
-					class="sidebar-user"
-					th:if="${sidebarMemberName != null}"
-					th:text="${sidebarMemberName}"
-					th:href="@{/profile/me}"
-				></a>
-				<a
-					id="sidebar-login"
-					class="sidebar-user"
-					th:unless="${sidebarMemberName != null}"
-					th:href="@{/login}"
-					>로그인</a
-				>
-				<input
-					id="sidebar-usermenu-toggle-input"
-					class="toggle-input"
-					type="checkbox"
-				/>
-				<label
-					id="sidebar-usermenu-toggle-button"
-					class="toggle-button"
-					for="sidebar-usermenu-toggle-input"
-					th:if="${sidebarMemberName != null}"
-				></label>
-				<nav id="sidebar-usermenu" th:if="${sidebarMemberName != null}">
-					<form th:action="@{/logout}" method="post">
-						<button type="submit" class="btn btn-danger btn-sm">로그아웃</button>
-					</form>
-				</nav>
-			</div>
+			<nav id="sidebar-footer">
+				<ul>
+					<li id="sidebar-user">
+						<a
+							id="sidebar-userpage"
+							th:if="${sidebarMemberName != null}"
+							th:text="${sidebarMemberName}"
+							th:href="@{/profile/me}"
+						></a>
+						<a
+							id="sidebar-login"
+							th:unless="${sidebarMemberName != null}"
+							th:href="@{/login}"
+							>로그인</a
+						>
+						<input
+							id="sidebar-usermenu-toggle-input"
+							class="toggle-input"
+							type="checkbox"
+						/>
+						<label
+							id="sidebar-usermenu-toggle-button"
+							class="toggle-button"
+							for="sidebar-usermenu-toggle-input"
+							th:if="${sidebarMemberName != null}"
+						></label>
+						<nav id="sidebar-usermenu" th:if="${sidebarMemberName != null}">
+							<ul>
+								<li>
+									<form th:action="@{/logout}" method="POST">
+										<button id="sidebar-logout" type="submit">
+											<div class="sidebar-usermenu-icon"></div>
+											<div class="sidebar-usermenu-label">
+												로그아웃
+											</div>
+										</button>
+									</form>
+								</li>
+							</ul>
+						</nav>
+					</li>
+				</ul>
+			</nav>
 		</header>
 		<main>
 			<h1>본문</h1>

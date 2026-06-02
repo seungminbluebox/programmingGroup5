@@ -15,6 +15,7 @@ colors:
   text-light: "#9ca3af"        # azure/65 · placeholder, disabled
 
   # Surface & Border
+  bg: "#eef2ff"                 # default page background, theme-overridable
   surface: "#ffffff"
   border: "#e5e7eb"            # grey/91 · card borders, dividers, input strokes
   border-indigo: "#c7d2fe"     # blue/89 · indigo-tinted stroke (active inputs, focus rings)
@@ -112,11 +113,15 @@ typography:
 
 # 소수점 대형 값(59.52, 178.33 등)은 html.to.design 자동 측정 artifact — 전부 제거
 spacing:
-  xxxs: 2px
-  xxs:  4px
-  xs:   8px
-  s:    16px
-  s+:   24px
+  4xs:  2px
+  3xs:  4px
+  2xs:  8px
+  xs:   12px
+  sm:   16px
+  md:   20px
+  lg:   24px
+  xl:   28px
+  2xl:  34px
   # 추가 정수 단계 (컴포넌트 내부 패딩 등에서 관찰됨)
   1:  1px
   3:  3px
@@ -125,14 +130,10 @@ spacing:
   7:  7px
   9:  9px
   10: 10px
-  12: 12px
   14: 14px
   15: 15px
   18: 18px
-  20: 20px
   22: 22px
-  28: 28px
-  34: 34px
 
 radius:
   sm:   8px
@@ -190,6 +191,7 @@ The primary color family is a **deep indigo** that reads as trustworthy and focu
 
 ### Surface & Border
 
+- **Background** (`#eef2ff`): The default page background. Pages may override it to match their context; project pages can use the project's theme color as the page background.
 - **Surface** (`#ffffff`): All card and panel backgrounds.
 - **Border** (`#e5e7eb`): The universal separator — card borders, table dividers, input outlines.
 - **Border Indigo** (`#c7d2fe`): Indigo-tinted stroke for active input states and focus rings.
@@ -248,15 +250,19 @@ The scale is continuous from 9px to 48px. Key levels in practice:
 
 ## Spacing
 
-The semantic scale uses a named system (`xxxs` → `s+`) for component-level spacing, with raw integer values available for fine-tuning layout internals.
+The semantic scale uses a named system (`4xs` → `2xl`) for component-level spacing, with raw integer values available for fine-tuning layout internals.
 
 | Token | Value | Common use |
 |---|---|---|
-| `xxxs` | 2px | Icon-to-label gap, inline badge padding |
-| `xxs` | 4px | Tight internal padding |
-| `xs` | 8px | Default item gap, small padding |
-| `s` | 16px | Card internal padding, section rhythm |
-| `s+` | 24px | Section-to-section gap, page margins |
+| `4xs` | 2px | Icon-to-label gap, inline badge padding |
+| `3xs` | 4px | Tight internal padding |
+| `2xs` | 8px | Default item gap, small padding |
+| `xs` | 12px | List item gap, compact horizontal padding |
+| `sm` | 16px | Card internal padding, section rhythm |
+| `md` | 20px | Comfortable component padding |
+| `lg` | 24px | Section-to-section gap, page margins |
+| `xl` | 28px | Dense page section padding, compact large-card padding |
+| `2xl` | 34px | Large card or panel padding |
 
 ---
 
@@ -288,8 +294,8 @@ Only three stroke weights are used intentionally:
 ### Tags & Role Chips
 
 Always use the pastel chip background with its matching text color. Fully rounded (`radius: full`). Two sizes:
-- **SM**: 12px text, `xxs`/`xs` padding — inline within list rows
-- **MD**: 13px text, `xs`/`s` padding — filter selectors, profile badges
+- **SM**: 12px text, `3xs`/`2xs` padding — inline within list rows
+- **MD**: 13px text, `2xs`/`sm` padding — filter selectors, profile badges
 
 Never use a solid accent color as a chip background — always use the pastel variant.
 
@@ -304,7 +310,7 @@ Never use a solid accent color as a chip background — always use the pastel va
 - Background: `surface`
 - Border: `1px solid border`
 - Radius: `md` (14px)
-- Internal padding: `s` (16px)
+- Internal padding: `sm` (16px)
 - No heavy shadow — background contrast between `surface` and the page background creates the elevation.
 
 ### Progress Bars
