@@ -6,7 +6,7 @@
 
 #sidebar {
 	width: 260px;
-	min-height: 100vh;
+	height: 100vh;
 	position: sticky;
 	top: 0;
 	z-index: 10;
@@ -44,7 +44,7 @@
 
 #logo {
 	font-size: var(--font-size-4xl);
-	font-weight: var(--font-weight-extrabold);
+	font-weight: var(--font-weight-bold);
 	letter-spacing: var(--letter-spacing-tight-md);
 	color: var(--color-primary);
 }
@@ -198,6 +198,12 @@
 	background: var(--color-bg);
 }
 
+.sidebar-project.active {
+	background: var(--chip-indigo);
+	color: var(--color-primary);
+	font-weight: var(--font-weight-semibold);
+}
+
 .sidebar-project-icon {
 	width: 32px;
 	height: 32px;
@@ -312,12 +318,18 @@
 	display: block;
 }
 
+#sidebar-user:has(#sidebar-login):hover #sidebar-usermenu,
+#sidebar-user:has(#sidebar-login):focus-within #sidebar-usermenu {
+	display: block;
+}
+
 #sidebar-usermenu ul {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
 
+#sidebar-register,
 #sidebar-logout {
 	display: flex;
 	align-items: center;
@@ -327,24 +339,43 @@
 	border: 0;
 	border-radius: var(--radius-sm);
 	background: transparent;
-	color: var(--color-accent-red);
 	font: inherit;
 	cursor: pointer;
 }
 
+#sidebar-register {
+	color: var(--color-primary);
+}
+
+#sidebar-logout {
+	color: var(--color-accent-red);
+}
+
+#sidebar-usermenu a:hover,
 #sidebar-usermenu button:hover {
 	background: var(--color-bg);
 }
 
+#sidebar-register .sidebar-usermenu-icon,
 #sidebar-logout .sidebar-usermenu-icon {
 	width: 16px;
 	height: 16px;
 	flex-shrink: 0;
+	background-color: currentColor;
+}
+
+#sidebar-register .sidebar-usermenu-icon {
+	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/user-plus.svg')
+		no-repeat center / contain;
+	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/user-plus.svg')
+		no-repeat center / contain;
+}
+
+#sidebar-logout .sidebar-usermenu-icon {
 	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/log-out.svg')
 		no-repeat center / contain;
 	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/log-out.svg')
 		no-repeat center / contain;
-	background-color: currentColor;
 }
 
 .sidebar-usermenu-label {

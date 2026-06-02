@@ -33,19 +33,34 @@
 			<nav id="sidebar-menu">
 				<ul>
 					<li>
-						<a id="sidebar-dashboard" class="sidebar-page" th:href="@{/}">
+						<a
+							id="sidebar-dashboard"
+							class="sidebar-page"
+							th:href="@{/}"
+							th:classappend="${currentPath == '/'} ? 'active'"
+						>
 							<div class="sidebar-page-icon"></div>
 							<div class="sidebar-page-name">대시보드</div>
 						</a>
 					</li>
 					<li>
-						<a id="sidebar-start" class="sidebar-page" th:href="@{/}">
+						<a
+							id="sidebar-start"
+							class="sidebar-page"
+							th:href="@{/}"
+							th:classappend="${currentPath == '/'} ? 'active'"
+						>
 							<div class="sidebar-page-icon"></div>
 							<div class="sidebar-page-name">시작하기</div>
 						</a>
 					</li>
 					<li>
-						<a id="sidebar-task" class="sidebar-page" th:href="@{/}">
+						<a
+							id="sidebar-task"
+							class="sidebar-page"
+							th:href="@{/}"
+							th:classappend="${currentPath == '/'} ? 'active'"
+						>
 							<div class="sidebar-page-icon"></div>
 							<div class="sidebar-page-name">할 일</div>
 						</a>
@@ -55,6 +70,7 @@
 							id="sidebar-schedule"
 							class="sidebar-page"
 							th:href="@{/schedule}"
+							th:classappend="${currentPath == '/schedule'} ? 'active'"
 						>
 							<div class="sidebar-page-icon"></div>
 							<div class="sidebar-page-name">일정</div>
@@ -64,11 +80,12 @@
 			</nav>
 			<nav id="sidebar-projects" th:if="${sidebarMemberName != null}">
 				<h2>내 프로젝트</h2>
-				<ul th:each="project: ${sidebarProjects}">
-					<li>
+				<ul>
+					<li th:each="project: ${sidebarProjects}">
 						<a
 							class="sidebar-project"
 							th:href="@{/project/{projectId}(projectId=${project.id})}"
+							th:classappend="${currentPath == #strings.concat('/project/', project.id)} ? 'active'"
 						>
 							<div class="sidebar-project-icon"></div>
 							<div
@@ -87,11 +104,13 @@
 							th:if="${sidebarMemberName != null}"
 							th:text="${sidebarMemberName}"
 							th:href="@{/profile/me}"
+							th:classappend="${currentPath == '/profile/me'} ? 'active'"
 						></a>
 						<a
 							id="sidebar-login"
 							th:unless="${sidebarMemberName != null}"
 							th:href="@{/login}"
+							th:classappend="${currentPath == '/login'} ? 'active'"
 							>로그인</a
 						>
 						<input
@@ -105,9 +124,15 @@
 							for="sidebar-usermenu-toggle-input"
 							th:if="${sidebarMemberName != null}"
 						></label>
-						<nav id="sidebar-usermenu" th:if="${sidebarMemberName != null}">
+						<nav id="sidebar-usermenu">
 							<ul>
-								<li>
+								<li th:unless="${sidebarMemberName != null}">
+									<a id="sidebar-register" th:href="@{/register}">
+										<div class="sidebar-usermenu-icon"></div>
+										<div class="sidebar-usermenu-label">회원가입</div>
+									</a>
+								</li>
+								<li th:if="${sidebarMemberName != null}">
 									<form th:action="@{/logout}" method="POST">
 										<button id="sidebar-logout" type="submit">
 											<div class="sidebar-usermenu-icon"></div>

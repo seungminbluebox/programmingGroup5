@@ -1,5 +1,6 @@
 package kr.ac.dankook.group5.azit.project;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kr.ac.dankook.group5.azit.user.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -15,6 +16,11 @@ public class SidebarModelAdvice {
 
     private final MemberRepository memberRepository;
     private final ProjectService projectService;
+
+    @ModelAttribute("currentPath")
+    public String currentPath(HttpServletRequest request) {
+        return request.getRequestURI();
+    }
 
     @ModelAttribute("sidebarMemberName")
     public String sidebarMemberName(Authentication authentication) {
