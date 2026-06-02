@@ -42,10 +42,6 @@
 	padding: var(--space-3xs) var(--space-2xs) var(--space-md);
 }
 
-#sidebar-home {
-	display: block;
-}
-
 .logo {
 	font-size: var(--font-size-4xl);
 	font-weight: var(--font-weight-bold);
