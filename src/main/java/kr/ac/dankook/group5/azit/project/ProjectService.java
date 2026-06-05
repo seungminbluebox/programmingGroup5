@@ -346,4 +346,44 @@ public class ProjectService {
 
         return (int) Math.min(100, Math.max(0, passedDays * 100 / totalDays));
     }
+
+    @Transactional
+    public void updateDeadline(String email, Long projectId, LocalDate deadline) {
+        Project project = getProjectForMember(email, projectId);
+
+        if (!isProjectOwner(email, projectId)) {
+            throw new IllegalArgumentException("프로젝트 소유자만 마감일을 수정할 수 있습니다.");
+        }
+
+        System.out.println("요청 deadline = " + deadline);
+        System.out.println("저장 전 deadline = " + project.getDeadline());
+
+        project.setDeadline(deadline);
+        projectRepository.save(project);
+
+        Project savedProject = projectRepository.findById(projectId)
+                .orElseThrow();
+
+        System.out.println("저장 후 deadline = " + savedProject.getDeadline());
+    }
+
+    public String getDeadlineDday(String email, Long projectId) {
+        Project project = getProjectForMember(email, projectId);
+
+        if (project.getDeadline() == null) {
+            return "미설정";
+        }
+
+        long days = ChronoUnit.DAYS.between(LocalDate.now(), project.getDeadline());
+
+        if (days > 0) {
+            return "D-" + days;
+        }
+
+        if (days == 0) {
+            return "D-Day";
+        }
+
+        return "D+" + Math.abs(days);
+    }
 }

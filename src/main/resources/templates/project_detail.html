@@ -162,7 +162,21 @@
                 <p class="azit-empty" style="margin-top: 8px">
                   마감일
                   <strong th:text="${project.deadline != null ? project.deadline : '미설정'}">미설정</strong>
+                  <span th:if="${project.deadline != null}" th:text="'(' + ${deadlineDday} + ')'"
+                    style="margin-left: 6px; font-weight: 700; color: #f59e0b">
+                    (D-7)
+                  </span>
                 </p>
+                <form th:if="${projectOwner}" th:action="@{/project/{id}/deadline(id=${project.id})}" method="post"
+                  style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap">
+                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                  <input class="azit-input" type="date" name="deadline"
+                    th:value="${project.deadline != null ? #temporals.format(project.deadline, 'yyyy-MM-dd') : ''}"
+                    style="flex: 1; min-width: 150px" />
+
+                  <button type="submit" class="azit-button">마감일 저장</button>
+                </form>
               </div>
             </div>
 

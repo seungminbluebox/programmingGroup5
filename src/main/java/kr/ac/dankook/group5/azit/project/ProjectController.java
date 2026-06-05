@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -51,6 +53,7 @@ public class ProjectController {
         model.addAttribute("incompleteTaskCount", tasks.stream().filter(task -> !task.isCompleted()).count());
         model.addAttribute("deadlineProgressRate", projectService.getDeadlineProgressRate(email, projectId));
         model.addAttribute("teamTaskCompletionRate", projectService.getTeamTaskCompletionRate(email, projectId));
+        model.addAttribute("deadlineDday", projectService.getDeadlineDday(email, projectId));
 
         return "project_detail";
     }
@@ -197,6 +200,20 @@ public class ProjectController {
             @PathVariable Long projectId) {
         projectService.deleteProject(authentication.getName(), projectId);
         return "redirect:/";
+    }
+
+    @PostMapping("/project/{id}/deadline")
+    public String updateDeadline(
+            Authentication authentication,
+            @PathVariable Long id,
+            @RequestParam("deadline") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate deadline) {
+
+        System.out.println("deadline update called: " + id + ", " + deadline);
+
+        String email = authentication.getName();
+        projectService.updateDeadline(email, id, deadline);
+
+        return "redirect:/project/" + id;
     }
 
 }

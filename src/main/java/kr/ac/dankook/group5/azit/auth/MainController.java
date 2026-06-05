@@ -1,7 +1,6 @@
 package kr.ac.dankook.group5.azit.auth;
 
 import kr.ac.dankook.group5.azit.project.ProjectService;
-import kr.ac.dankook.group5.azit.user.Member;
 import kr.ac.dankook.group5.azit.user.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
