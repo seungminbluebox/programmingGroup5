@@ -22,6 +22,7 @@ public class ProjectService {
     private final MemberRepository memberRepository;
     private final ProjectTaskRepository projectTaskRepository;
     private final ProjectInvitationRepository projectInvitationRepository;
+    private final ProjectJoinRequestRepository projectJoinRequestRepository;
 
     @Transactional
     public Project createProject(String ownerEmail, String title, String description) {
@@ -188,7 +189,7 @@ public class ProjectService {
     }
 
     @Transactional
-    public void sendInvitation(String email, Long projectId, Long receiverId) {
+    public synchronized void sendInvitation(String email, Long projectId, Long receiverId) {
         Member sender = getMemberByEmail(email);
         Project project = getProjectById(projectId);
         assertProjectOwner(project, sender);
@@ -201,7 +202,7 @@ public class ProjectService {
     }
 
     @Transactional
-    public void sendInvitationByEmail(String senderEmail, Long projectId, String receiverEmail) {
+    public synchronized void sendInvitationByEmail(String senderEmail, Long projectId, String receiverEmail) {
         Member sender = getMemberByEmail(senderEmail);
         Project project = getProjectById(projectId);
         assertProjectOwner(project, sender);
@@ -293,6 +294,7 @@ public class ProjectService {
         }
 
         projectInvitationRepository.deleteAllByProject(project);
+        projectJoinRequestRepository.deleteAllByProject(project);
         projectTaskRepository.deleteAllByProject(project);
         projectLinkRepository.deleteAllByProject(project);
         projectMemberRepository.deleteAllByProject(project);

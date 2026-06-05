@@ -21,7 +21,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/home", "/login", "/register", "/css/**", "/js/**", "/images/**",
+                        .requestMatchers("/", "/home", "/main", "/login", "/register", "/css/**", "/js/**", "/images/**",
                                 "/uploads/**", "/h2-console/**")
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN") // 관리자 전용 경로 추가

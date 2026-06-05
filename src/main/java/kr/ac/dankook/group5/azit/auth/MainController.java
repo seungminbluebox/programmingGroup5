@@ -20,6 +20,11 @@ public class MainController {
     public String home(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        if (authentication == null || !authentication.isAuthenticated()
+                || authentication.getPrincipal().equals("anonymousUser")) {
+            return "redirect:/main";
+        }
+
         if (authentication != null && authentication.isAuthenticated()
                 && !authentication.getPrincipal().equals("anonymousUser")) {
             String email = authentication.getName();

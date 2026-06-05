@@ -1,0 +1,471 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Azit Main</title>
+    <link rel="stylesheet" href="/css/common.css" />
+    <link rel="stylesheet" href="/css/fragments/sidebar.css" />
+    <link rel="stylesheet" href="/css/azit.css" />
+    <style>
+      .main-board {
+        max-width: 980px;
+        padding-top: 24px;
+      }
+
+      .main-board-head {
+        display: grid;
+        gap: 12px;
+        justify-items: center;
+        padding: 18px 0 26px;
+        text-align: center;
+      }
+
+      .main-board-head h1 {
+        margin: 0;
+        font-size: 1.65rem;
+        font-weight: 900;
+      }
+
+      .main-board-head p {
+        margin: 0;
+        color: var(--azit-muted);
+        font-size: 0.92rem;
+      }
+
+      .main-search {
+        width: min(720px, 100%);
+        height: 44px;
+        border: 1px solid var(--azit-border);
+        border-radius: 8px;
+        background: #fff;
+        color: var(--azit-text);
+        padding: 0 16px;
+      }
+
+      .main-list-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+        font-size: 0.95rem;
+        font-weight: 900;
+      }
+
+      .main-count {
+        color: var(--azit-primary);
+        font-weight: 900;
+      }
+
+      .project-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .project-card {
+        display: grid;
+        width: 100%;
+        grid-template-columns: 54px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 14px;
+        padding: 16px;
+        border: 1px solid var(--azit-border);
+        border-radius: 8px;
+        background: #fff;
+        color: inherit;
+        text-align: left;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(24, 32, 51, 0.05);
+      }
+
+      .project-card:hover {
+        border-color: rgba(37, 99, 235, 0.32);
+        box-shadow: 0 14px 34px rgba(24, 32, 51, 0.09);
+      }
+
+      .project-icon {
+        display: grid;
+        width: 44px;
+        height: 44px;
+        place-items: center;
+        border-radius: 8px;
+        background: #eef6ff;
+        color: var(--azit-primary);
+        font-weight: 900;
+      }
+
+      .project-card:nth-child(2n) .project-icon { background: #f3e8ff; color: #7c3aed; }
+      .project-card:nth-child(3n) .project-icon { background: #dcfce7; color: #16a34a; }
+      .project-card:nth-child(4n) .project-icon { background: #fff7ed; color: #f59e0b; }
+      .project-card:nth-child(5n) .project-icon { background: #fee2e2; color: #ef4444; }
+
+      .project-title-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .project-title-row strong {
+        font-size: 1rem;
+      }
+
+      .project-desc {
+        display: block;
+        margin: 6px 0 0;
+        color: var(--azit-muted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .project-meta {
+        display: grid;
+        justify-items: end;
+        gap: 8px;
+        color: var(--azit-muted);
+        font-size: 0.9rem;
+        white-space: nowrap;
+      }
+
+      .modal-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .modal-owner-link {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .modal-owner-link:hover {
+        color: var(--azit-primary-dark);
+      }
+
+      .member-avatars {
+        display: inline-flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+      }
+
+      .member-avatar {
+        display: grid;
+        width: 26px;
+        height: 26px;
+        place-items: center;
+        margin-left: -6px;
+        border: 2px solid #fff;
+        border-radius: 999px;
+        background: #eef2ff;
+        color: var(--azit-primary-dark);
+        font-size: 0.72rem;
+        font-weight: 900;
+      }
+
+      .member-avatar:first-child {
+        margin-left: 0;
+      }
+
+      .main-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: rgba(15, 23, 42, 0.42);
+      }
+
+      .main-modal-backdrop.open {
+        display: flex;
+      }
+
+      .main-modal {
+        width: min(640px, 100%);
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 24px 70px rgba(15, 23, 42, 0.24);
+        overflow: hidden;
+      }
+
+      .main-modal-header,
+      .main-modal-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--azit-border);
+      }
+
+      .main-modal-footer {
+        justify-content: flex-end;
+        border-top: 1px solid var(--azit-border);
+        border-bottom: 0;
+      }
+
+      .main-modal-title {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 900;
+      }
+
+      .main-modal-body {
+        display: grid;
+        gap: 16px;
+        padding: 20px;
+      }
+
+      .main-modal-close {
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--azit-border);
+        border-radius: 8px;
+        background: #fff;
+        cursor: pointer;
+        font-weight: 900;
+      }
+
+      #joinRequestButton:disabled {
+        border-color: #d1d5db;
+        background: #e5e7eb;
+        color: #6b7280;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .main-modal-desc {
+        margin: 0;
+        color: var(--azit-muted);
+        line-height: 1.7;
+      }
+
+      @media (max-width: 720px) {
+        .project-card {
+          grid-template-columns: 44px minmax(0, 1fr);
+        }
+
+        .project-meta {
+          grid-column: 2;
+          justify-items: start;
+        }
+      }
+    </style>
+  </head>
+  <body class="azit-app" th:classappend="${loggedIn} ? ' has-sidebar' : ''">
+    <div th:if="${loggedIn}">
+      <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    </div>
+
+    <header class="azit-nav" th:if="${!loggedIn}">
+      <div class="azit-shell azit-nav-inner">
+        <a class="azit-brand" href="/">
+          <span class="azit-brand-mark">AZ</span>
+          <span>Azit</span>
+        </a>
+        <div class="azit-nav-actions">
+          <a href="/login" class="azit-button azit-button-secondary">로그인</a>
+          <a href="/register" class="azit-button">회원가입</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="azit-shell azit-page main-board">
+      <section class="main-board-head">
+        <div class="azit-kicker">Project Main</div>
+        <h1>함께 만들 팀을 찾아보세요</h1>
+        <p th:if="${loggedIn}">내 기술 스택과 가까운 프로젝트가 먼저 표시됩니다.</p>
+        <p th:if="${!loggedIn}">로그인하면 내 기술 스택에 맞춘 프로젝트를 먼저 볼 수 있습니다.</p>
+        <input id="projectSearch" class="main-search" type="search" placeholder="프로젝트 이름, 설명, 만든 사람으로 찾아보세요" />
+      </section>
+
+      <p class="azit-alert-success" th:if="${successMessage}" th:text="${successMessage}" style="margin-bottom: 16px"></p>
+      <p class="azit-alert" th:if="${errorMessage}" th:text="${errorMessage}" style="margin-bottom: 16px"></p>
+
+      <section>
+        <div class="main-list-title">
+          <span>참여 가능한 프로젝트</span>
+          <span id="visibleProjectCount" class="main-count" th:text="${mainProjects == null ? 0 : mainProjects.size()} + '개'">0개</span>
+        </div>
+
+        <div class="project-list" th:if="${mainProjects != null and !mainProjects.isEmpty()}">
+          <button
+            type="button"
+            class="project-card"
+            th:each="projectItem : ${mainProjects}"
+            th:attr="data-title=${projectItem.project().title},
+                     data-description=${projectItem.project().description},
+                     data-owner=${projectItem.ownerName()},
+                     data-owner-url=@{/profile/{ownerId}(ownerId=${projectItem.ownerId()})},
+                     data-member-names=${#strings.listJoin(projectItem.memberNames(), '|')},
+                     data-members=${projectItem.memberCount()},
+                     data-match-count=${projectItem.matchCount()},
+                     data-already-member=${projectItem.alreadyMember()},
+                     data-already-applied=${projectItem.alreadyApplied()},
+                     data-action=@{/main/projects/{projectId}/join-requests(projectId=${projectItem.project().id})}"
+          >
+            <span class="project-icon" th:text="${#strings.substring(projectItem.project().title, 0, 1)}">P</span>
+            <span>
+              <span class="project-title-row">
+                <strong th:text="${projectItem.project().title}">프로젝트 이름</strong>
+                <span
+                  class="azit-stack-badge"
+                  th:if="${loggedIn and projectItem.matchCount() > 0}"
+                  th:text="${projectItem.matchCount()} + '개 일치'"
+                >1개 일치</span>
+                <span class="azit-stack-badge" th:if="${projectItem.alreadyMember()}">참여중</span>
+              </span>
+              <span class="project-desc" th:text="${projectItem.project().description}">프로젝트 설명</span>
+            </span>
+            <span class="project-meta">
+              <span class="member-avatars" th:if="${!projectItem.memberNames().isEmpty()}">
+                <span
+                  class="member-avatar"
+                  th:each="memberName : ${projectItem.memberNames()}"
+                  th:title="${memberName}"
+                  th:text="${#strings.substring(memberName, 0, 1)}"
+                >U</span>
+              </span>
+              <span th:text="${projectItem.memberCount()} + '명 참여중'">0명 참여중</span>
+            </span>
+          </button>
+        </div>
+
+        <p id="searchEmptyMessage" class="azit-empty" style="display: none">
+          검색 결과가 없습니다.
+        </p>
+        <p class="azit-empty" th:if="${mainProjects == null or mainProjects.isEmpty()}">
+          진행 중 프로젝트가 아직 없습니다.
+        </p>
+      </section>
+    </main>
+
+    <div id="projectModal" class="main-modal-backdrop" aria-hidden="true">
+      <section class="main-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <header class="main-modal-header">
+          <h2 id="modalTitle" class="main-modal-title">프로젝트 이름</h2>
+          <button type="button" class="main-modal-close" data-modal-close aria-label="닫기">X</button>
+        </header>
+        <div class="main-modal-body">
+          <div class="modal-summary">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap">
+              <a id="modalOwner" class="azit-stack-badge modal-owner-link" href="#">Owner: 미정</a>
+              <span id="modalMatches" class="azit-stack-badge" th:if="${loggedIn}">0개 일치</span>
+            </div>
+            <span id="modalMemberAvatars" class="member-avatars"></span>
+          </div>
+          <p id="modalDescription" class="main-modal-desc">프로젝트 설명</p>
+        </div>
+        <footer class="main-modal-footer">
+          <a th:if="${!loggedIn}" href="/login" class="azit-button">로그인 후 가입신청</a>
+          <form th:if="${loggedIn}" id="joinRequestForm" method="post">
+            <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button id="joinRequestButton" type="submit" class="azit-button">가입신청하기</button>
+          </form>
+        </footer>
+      </section>
+    </div>
+
+    <script>
+      const modal = document.getElementById("projectModal");
+      const modalTitle = document.getElementById("modalTitle");
+      const modalDescription = document.getElementById("modalDescription");
+      const modalOwner = document.getElementById("modalOwner");
+      const modalMemberAvatars = document.getElementById("modalMemberAvatars");
+      const modalMatches = document.getElementById("modalMatches");
+      const joinForm = document.getElementById("joinRequestForm");
+      const joinButton = document.getElementById("joinRequestButton");
+      const searchInput = document.getElementById("projectSearch");
+      const visibleProjectCount = document.getElementById("visibleProjectCount");
+      const searchEmptyMessage = document.getElementById("searchEmptyMessage");
+      const projectCards = Array.from(document.querySelectorAll(".project-card"));
+
+      function closeModal() {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+      }
+
+      function updateVisibleProjects() {
+        const keyword = searchInput.value.trim().toLowerCase();
+        let visibleCount = 0;
+
+        projectCards.forEach((card) => {
+          const searchableText = `${card.dataset.title || ""} ${card.dataset.description || ""} ${card.dataset.owner || ""}`.toLowerCase();
+          const visible = !keyword || searchableText.includes(keyword);
+
+          card.style.display = visible ? "grid" : "none";
+          if (visible) {
+            visibleCount += 1;
+          }
+        });
+
+        visibleProjectCount.textContent = `${visibleCount}개`;
+        searchEmptyMessage.style.display = projectCards.length > 0 && visibleCount === 0 ? "block" : "none";
+      }
+
+      projectCards.forEach((card) => {
+        card.addEventListener("click", () => {
+          const matchCount = Number(card.dataset.matchCount || 0);
+          const alreadyMember = card.dataset.alreadyMember === "true";
+          const alreadyApplied = card.dataset.alreadyApplied === "true";
+
+          modalTitle.textContent = card.dataset.title || "프로젝트 이름";
+          modalDescription.textContent = card.dataset.description || "프로젝트 설명이 없습니다.";
+          modalOwner.textContent = `Owner: ${card.dataset.owner || "미정"}`;
+          modalOwner.href = card.dataset.ownerUrl || "#";
+          modalMemberAvatars.innerHTML = "";
+          (card.dataset.memberNames || "")
+            .split("|")
+            .filter((name) => name.trim().length > 0)
+            .forEach((name) => {
+              const avatar = document.createElement("span");
+              avatar.className = "member-avatar";
+              avatar.title = name;
+              avatar.textContent = name.trim().charAt(0);
+              modalMemberAvatars.appendChild(avatar);
+            });
+
+          if (modalMatches) {
+            modalMatches.textContent = `${matchCount}개 일치`;
+            modalMatches.style.display = matchCount > 0 ? "inline-flex" : "none";
+          }
+
+          if (joinForm) {
+            joinForm.action = card.dataset.action;
+          }
+
+          if (joinButton) {
+            joinButton.disabled = alreadyMember || alreadyApplied;
+            joinButton.textContent = alreadyMember ? "이미 참여중" : alreadyApplied ? "신청완료" : "가입신청하기";
+          }
+
+          modal.classList.add("open");
+          modal.setAttribute("aria-hidden", "false");
+        });
+      });
+
+      if (joinForm && joinButton) {
+        joinForm.addEventListener("submit", () => {
+          joinButton.disabled = true;
+          joinButton.textContent = "신청 중";
+        });
+      }
+
+      searchInput.addEventListener("input", updateVisibleProjects);
+
+      document.querySelectorAll("[data-modal-close]").forEach((button) => {
+        button.addEventListener("click", closeModal);
+      });
+
+      modal.addEventListener("click", (event) => {
+        if (event.target === modal) {
+          closeModal();
+        }
+      });
+    </script>
+  </body>
+</html>
