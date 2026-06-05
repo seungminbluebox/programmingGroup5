@@ -19,15 +19,15 @@
         <div class="azit-kicker">Project Workspace</div>
         <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
           <h1 th:text="${project.title}">프로젝트 이름</h1>
-          <span class="azit-status-badge" th:classappend="${project.status.cssClass}"
-            th:text="${project.status.label}">
+          <span class="azit-status-badge" th:classappend="${project.status.cssClass}" th:text="${project.status.label}">
             진행중
           </span>
         </div>
         <p th:text="${project.description}">프로젝트 설명</p>
       </div>
       <form th:if="${projectOwner}" th:action="@{/project/{projectId}/status(projectId=${project.id})}" method="post"
-        onsubmit="return confirmProjectStatusChange()" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+        onsubmit="return confirmProjectStatusChange()"
+        style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
         <select id="projectStatusSelect" class="azit-input" name="status" required>
           <option th:each="status : ${projectStatuses}" th:value="${status}" th:text="${status.label}"
             th:selected="${status == project.status}">
@@ -56,13 +56,15 @@
           <div class="azit-card-header"
             style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
             <span>팀원 목록</span>
-            <button th:if="${projectOwner and projectEditable}" type="button" class="azit-button azit-button-secondary" onclick="toggleInvitePanel()">
+            <button th:if="${projectOwner and projectEditable}" type="button" class="azit-button azit-button-secondary"
+              onclick="toggleInvitePanel()">
               팀원 추가
             </button>
           </div>
 
           <div class="azit-card-body">
-            <div th:if="${projectOwner and projectEditable}" id="invitePanel" class="azit-form-section" style="display: none; margin-bottom: 16px">
+            <div th:if="${projectOwner and projectEditable}" id="invitePanel" class="azit-form-section"
+              style="display: none; margin-bottom: 16px">
               <strong>팀원 초대</strong>
               <div th:if="${inviteCandidates != null and !inviteCandidates.isEmpty()}"
                 style="display: grid; gap: 10px; margin-top: 12px">
@@ -119,7 +121,8 @@
               style="margin-bottom: 18px">
               GitHub, Figma 같은 작업 링크를 추가하세요.
             </p>
-            <form th:if="${projectEditable}" th:action="@{/project/{id}/links(id=${project.id})}" method="post" style="display: grid; gap: 12px">
+            <form th:if="${projectEditable}" th:action="@{/project/{id}/links(id=${project.id})}" method="post"
+              style="display: grid; gap: 12px">
               <input class="azit-input" type="text" name="label" placeholder="링크 이름: GitHub" required />
               <input class="azit-input" type="url" name="url" placeholder="https://github.com/team/repo" required />
               <button type="submit" class="azit-button">링크 추가</button>
@@ -145,25 +148,61 @@
       <aside class="azit-card">
         <div class="azit-card-header">태스크 관리</div>
         <div class="azit-card-body">
-          <div class="azit-form-section" style="margin-bottom: 16px">
-            <strong>나에게 할당된 태스크 완료율</strong>
+          <div class="azit-form-section" style="margin-bottom: 16px; display: grid; gap: 16px">
+            <div>
+              <strong>마감 기한</strong>
 
-            <div style="margin-top: 12px">
-              <div style="height: 12px; background: #e5e7eb; border-radius: 999px; overflow: hidden">
-                <div style="height: 100%; background: #2563eb; border-radius: 999px"
-                  th:style="'width:' + ${myTaskCompletionRate} + '%; height: 100%; background: #2563eb; border-radius: 999px'">
+              <div style="margin-top: 12px">
+                <div style="height: 12px; background: #e5e7eb; border-radius: 999px; overflow: hidden">
+                  <div
+                    th:style="'width:' + ${deadlineProgressRate} + '%; height: 100%; background: #f59e0b; border-radius: 999px'">
+                  </div>
                 </div>
-              </div>
 
-              <p class="azit-empty" style="margin-top: 8px">
-                완료율
-                <strong th:text="${myTaskCompletionRate} + '%'">0%</strong>
-                <span>
-                  /
-                  <span th:text="${myCompletedTaskCount}">0</span>
-                  개 완료
-                </span>
-              </p>
+                <p class="azit-empty" style="margin-top: 8px">
+                  마감일
+                  <strong th:text="${project.deadline != null ? project.deadline : '미설정'}">미설정</strong>
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <strong>팀원 평균 태스크 완료율</strong>
+
+              <div style="margin-top: 12px">
+                <div style="height: 12px; background: #e5e7eb; border-radius: 999px; overflow: hidden">
+                  <div
+                    th:style="'width:' + ${teamTaskCompletionRate} + '%; height: 100%; background: #16a34a; border-radius: 999px'">
+                  </div>
+                </div>
+
+                <p class="azit-empty" style="margin-top: 8px">
+                  완료율
+                  <strong th:text="${teamTaskCompletionRate} + '%'">0%</strong>
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <strong>나에게 할당된 태스크 완료율</strong>
+
+              <div style="margin-top: 12px">
+                <div style="height: 12px; background: #e5e7eb; border-radius: 999px; overflow: hidden">
+                  <div
+                    th:style="'width:' + ${myTaskCompletionRate} + '%; height: 100%; background: #2563eb; border-radius: 999px'">
+                  </div>
+                </div>
+
+                <p class="azit-empty" style="margin-top: 8px">
+                  완료율
+                  <strong th:text="${myTaskCompletionRate} + '%'">0%</strong>
+                  <span>
+                    /
+                    <span th:text="${myCompletedTaskCount}">0</span>
+                    개 완료
+                  </span>
+                </p>
+              </div>
             </div>
           </div>
 
@@ -201,8 +240,7 @@
                     </p>
                   </div>
 
-                  <form
-                    th:if="${projectEditable}"
+                  <form th:if="${projectEditable}"
                     th:action="@{/project/{projectId}/tasks/{taskId}/toggle(projectId=${project.id}, taskId=${task.id})}"
                     method="post" class="azit-task-check-form">
                     <label class="azit-task-check">

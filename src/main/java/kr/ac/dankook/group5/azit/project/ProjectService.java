@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 
@@ -308,5 +310,40 @@ public class ProjectService {
 
     private ProjectMember addProjectMember(Project project, Member member) {
         return projectMemberRepository.save(new ProjectMember(project, member, ProjectMemberRole.MEMBER));
+    }
+
+    public int getTeamTaskCompletionRate(String email, Long projectId) {
+        List<ProjectTask> tasks = getTasks(email, projectId);
+
+        if (tasks.isEmpty()) {
+            return 0;
+        }
+
+        long completedTaskCount = tasks.stream()
+                .filter(ProjectTask::isCompleted)
+                .count();
+
+        return (int) Math.round((completedTaskCount * 100.0) / tasks.size());
+    }
+
+    public int getDeadlineProgressRate(String email, Long projectId) {
+        Project project = getProjectForMember(email, projectId);
+
+        if (project.getDeadline() == null || project.getCreatedAt() == null) {
+            return 0;
+        }
+
+        LocalDate startDate = project.getCreatedAt().toLocalDate();
+        LocalDate today = LocalDate.now();
+        LocalDate deadline = project.getDeadline();
+
+        long totalDays = ChronoUnit.DAYS.between(startDate, deadline);
+        long passedDays = ChronoUnit.DAYS.between(startDate, today);
+
+        if (totalDays <= 0) {
+            return 0;
+        }
+
+        return (int) Math.min(100, Math.max(0, passedDays * 100 / totalDays));
     }
 }

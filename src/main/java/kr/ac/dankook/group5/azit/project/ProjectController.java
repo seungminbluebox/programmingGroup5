@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 import java.util.List;
 
@@ -47,6 +49,8 @@ public class ProjectController {
         model.addAttribute("projectStatuses", ProjectStatus.values());
         model.addAttribute("projectEditable", project.getStatus() == ProjectStatus.IN_PROGRESS);
         model.addAttribute("incompleteTaskCount", tasks.stream().filter(task -> !task.isCompleted()).count());
+        model.addAttribute("deadlineProgressRate", projectService.getDeadlineProgressRate(email, projectId));
+        model.addAttribute("teamTaskCompletionRate", projectService.getTeamTaskCompletionRate(email, projectId));
 
         return "project_detail";
     }
