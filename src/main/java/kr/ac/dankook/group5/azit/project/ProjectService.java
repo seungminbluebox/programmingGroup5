@@ -47,6 +47,17 @@ public class ProjectService {
         return project;
     }
 
+    public List<ProjectMember> getProjectMembers(String email, Long projectId) {
+        Member member = getMemberByEmail(email);
+        Project project = getProjectById(projectId);
+        assertProjectMember(project, member);
+
+        return projectMemberRepository.findAllByProject(project).stream()
+                .sorted(Comparator.comparing((ProjectMember projectMember) -> projectMember.getRole() != ProjectMemberRole.OWNER)
+                        .thenComparing(projectMember -> projectMember.getJoinedAt(), Comparator.nullsLast(Comparator.naturalOrder())))
+                .toList();
+    }
+
     @Transactional
     public ProjectLink addProjectLink(String email, Long projectId, String label, String url) {
         Member member = getMemberByEmail(email);

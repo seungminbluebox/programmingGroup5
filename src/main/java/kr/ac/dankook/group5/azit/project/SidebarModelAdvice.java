@@ -61,6 +61,16 @@ public class SidebarModelAdvice {
         return projectJoinRequestService.getPendingRequestsForOwner(authentication.getName());
     }
 
+    @ModelAttribute("sidebarNotificationCount")
+    public int sidebarNotificationCount(Authentication authentication) {
+        if (!isSignedIn(authentication)) {
+            return 0;
+        }
+
+        return projectService.getPendingInvitations(authentication.getName()).size()
+                + projectJoinRequestService.getPendingRequestsForOwner(authentication.getName()).size();
+    }
+
     private boolean isSignedIn(Authentication authentication) {
         return authentication != null
                 && authentication.isAuthenticated()

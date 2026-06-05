@@ -92,15 +92,15 @@
               </p>
             </div>
 
-            <div th:if="${project.members != null and !project.members.isEmpty()}" style="display: grid; gap: 12px">
-              <div class="azit-form-section" th:each="projectMember : ${project.members}">
+            <div th:if="${projectMembers != null and !projectMembers.isEmpty()}" style="display: grid; gap: 12px">
+              <div class="azit-form-section" th:each="projectMember : ${projectMembers}">
                 <strong th:text="${projectMember.member.name}">팀원 이름</strong>
                 <span class="azit-stack-badge" th:text="${projectMember.role}">OWNER</span>
                 <p class="azit-empty" th:text="${projectMember.member.email}">email@example.com</p>
               </div>
             </div>
 
-            <p class="azit-empty" th:if="${project.members == null or project.members.isEmpty()}">
+            <p class="azit-empty" th:if="${projectMembers == null or projectMembers.isEmpty()}">
               아직 등록된 팀원이 없습니다.
             </p>
           </div>

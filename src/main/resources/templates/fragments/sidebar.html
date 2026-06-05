@@ -28,7 +28,9 @@
 						type="button"
 						aria-label="알림 목록"
 						data-notification-open
-					></button>
+					>
+						<span class="notification-badge" th:if="${sidebarNotificationCount > 0}" th:text="${sidebarNotificationCount}">1</span>
+					</button>
 				</div>
 			</div>
 			<nav id="sidebar-menu">

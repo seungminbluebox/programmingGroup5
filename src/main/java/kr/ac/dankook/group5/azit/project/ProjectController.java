@@ -42,6 +42,7 @@ public class ProjectController {
         List<ProjectTask> tasks = projectService.getTasks(email, projectId);
 
         model.addAttribute("project", project);
+        model.addAttribute("projectMembers", projectService.getProjectMembers(email, projectId));
         model.addAttribute("tasks", tasks);
         model.addAttribute("myTaskCompletionRate", projectService.getMyTaskCompletionRate(email, projectId));
         model.addAttribute("myCompletedTaskCount", projectService.getMyCompletedTaskCount(email, projectId));

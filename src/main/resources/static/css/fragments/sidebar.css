@@ -50,23 +50,36 @@
 }
 
 #sidebar-notification {
-	display: block;
-	width: 22px;
-	height: 22px;
+	position: relative;
+	display: inline-grid;
+	width: 28px;
+	height: 28px;
+	place-items: center;
+	border: 0;
+	padding: 0;
+	background: transparent;
 	color: var(--color-text-muted);
 	cursor: pointer;
 	flex-shrink: 0;
+	transition: color 0.15s;
+}
+
+#sidebar-notification::before {
+	content: '';
+	display: block;
+	width: 22px;
+	height: 22px;
+	background-color: currentColor;
 	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/bell.svg')
 		no-repeat center / contain;
 	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/bell.svg')
 		no-repeat center / contain;
-	background-color: currentColor;
-	transition: color 0.15s;
 }
 
 #sidebar-notification:hover {
 	color: var(--color-text);
 }
+
 
 /* ============================================================
    Nav Menu — 페이지 목록
@@ -383,9 +396,23 @@
 	white-space: nowrap;
 }
 
-#sidebar-notification {
-	border: 0;
-	padding: 0;
+.notification-badge {
+	position: absolute;
+	top: -2px;
+	right: -2px;
+	z-index: 1;
+	display: grid;
+	min-width: 16px;
+	height: 16px;
+	place-items: center;
+	padding: 0 4px;
+	border: 2px solid #fff;
+	border-radius: 999px;
+	background: #dc2626;
+	color: #fff;
+	font-size: 10px;
+	font-weight: 800;
+	line-height: 1;
 }
 
 .notification-modal-backdrop {
