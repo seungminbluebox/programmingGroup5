@@ -76,7 +76,7 @@ public class ScheduleController {
 		model.addAttribute("timetableRowEnd", 2 + (TIMETABLE_END_HOUR - TIMETABLE_START_HOUR) * SLOTS_PER_HOUR);
 	}
 
-	@GetMapping(value = "/schedule/S{id}", headers = "Accept=text/html")
+	@GetMapping(value = "/schedule/S{id}", produces = "text/html")
 	public String viewScheduleInfo(
 			@AuthenticationPrincipal UserDetails userDetails,
 			@PathVariable long id,
@@ -102,7 +102,7 @@ public class ScheduleController {
 		return ScheduleInfoResponse.from(scheduleService.getSchedule(member, id));
 	}
 
-	@GetMapping(value = "/schedule/R{id}", headers = "Accept=text/html")
+	@GetMapping(value = "/schedule/R{id}", produces = "text/html")
 	public String viewRoutineInfo(
 			@AuthenticationPrincipal UserDetails userDetails,
 			@PathVariable long id,
@@ -128,7 +128,7 @@ public class ScheduleController {
 		return RoutineInfoResponse.from(scheduleService.getRoutine(member, id));
 	}
 
-	@PostMapping(value = "/schedule", params = "scheduleType=SCHEDULE", headers = "Accept=text/html")
+	@PostMapping(value = "/schedule", params = "scheduleType=SCHEDULE", produces = "text/html")
 	public String createSchedule(
 			@AuthenticationPrincipal UserDetails userDetails,
 			@ModelAttribute ScheduleSaveRequest request,
@@ -140,7 +140,7 @@ public class ScheduleController {
 		return "schedule";
 	}
 
-	@PostMapping(value = "/schedule", params = "scheduleType=ROUTINE", headers = "Accept=text/html")
+	@PostMapping(value = "/schedule", params = "scheduleType=ROUTINE", produces = "text/html")
 	public String createRoutine(
 			@AuthenticationPrincipal UserDetails userDetails,
 			@ModelAttribute RoutineSaveRequest request,
@@ -152,7 +152,7 @@ public class ScheduleController {
 		return "schedule";
 	}
 
-	@PostMapping(value = "/schedule", params = "scheduleType=SCHEDULE")
+	@PostMapping(value = "/schedule", params = "scheduleType=SCHEDULE", produces = "application/json")
 	@ResponseBody
 	public ScheduleInfoResponse createScheduleJson(
 			@AuthenticationPrincipal UserDetails userDetails,
@@ -161,7 +161,7 @@ public class ScheduleController {
 		return ScheduleInfoResponse.from(scheduleService.createSchedule(member, request));
 	}
 
-	@PostMapping(value = "/schedule", params = "scheduleType=ROUTINE")
+	@PostMapping(value = "/schedule", params = "scheduleType=ROUTINE", produces = "application/json")
 	@ResponseBody
 	public RoutineInfoResponse createRoutineJson(
 			@AuthenticationPrincipal UserDetails userDetails,
@@ -170,7 +170,7 @@ public class ScheduleController {
 		return RoutineInfoResponse.from(scheduleService.createRoutine(member, request));
 	}
 
-	@PutMapping(value = "/schedule/S{id}", headers = "Accept=text/html")
+	@PutMapping(value = "/schedule/S{id}", produces = "text/html")
 	public String updateSchedule(
 			@AuthenticationPrincipal UserDetails userDetails,
 			@PathVariable long id,
@@ -183,7 +183,7 @@ public class ScheduleController {
 		return "schedule";
 	}
 
-	@PutMapping(value = "/schedule/R{id}", headers = "Accept=text/html")
+	@PutMapping(value = "/schedule/R{id}", produces = "text/html")
 	public String updateRoutine(
 			@AuthenticationPrincipal UserDetails userDetails,
 			@PathVariable long id,
