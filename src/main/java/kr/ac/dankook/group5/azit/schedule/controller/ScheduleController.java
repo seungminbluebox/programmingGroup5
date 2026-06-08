@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -131,7 +132,7 @@ public class ScheduleController {
 	@PostMapping(value = "/schedule", params = "scheduleType=SCHEDULE", produces = "text/html")
 	public String createSchedule(
 			@AuthenticationPrincipal UserDetails userDetails,
-			@ModelAttribute ScheduleSaveRequest request,
+			@Valid @ModelAttribute ScheduleSaveRequest request,
 			Model model) {
 		Member member = profileService.getMemberByEmail(userDetails.getUsername());
 		Schedule schedule = scheduleService.createSchedule(member, request);
@@ -143,7 +144,7 @@ public class ScheduleController {
 	@PostMapping(value = "/schedule", params = "scheduleType=ROUTINE", produces = "text/html")
 	public String createRoutine(
 			@AuthenticationPrincipal UserDetails userDetails,
-			@ModelAttribute RoutineSaveRequest request,
+			@Valid @ModelAttribute RoutineSaveRequest request,
 			Model model) {
 		Member member = profileService.getMemberByEmail(userDetails.getUsername());
 		Routine routine = scheduleService.createRoutine(member, request);
@@ -174,7 +175,7 @@ public class ScheduleController {
 	public String updateSchedule(
 			@AuthenticationPrincipal UserDetails userDetails,
 			@PathVariable long id,
-			@ModelAttribute ScheduleSaveRequest request,
+			@Valid @ModelAttribute ScheduleSaveRequest request,
 			Model model) {
 		Member member = profileService.getMemberByEmail(userDetails.getUsername());
 		Schedule schedule = scheduleService.updateSchedule(member, id, request);
@@ -187,7 +188,7 @@ public class ScheduleController {
 	public String updateRoutine(
 			@AuthenticationPrincipal UserDetails userDetails,
 			@PathVariable long id,
-			@ModelAttribute RoutineSaveRequest request,
+			@Valid @ModelAttribute RoutineSaveRequest request,
 			Model model) {
 		Member member = profileService.getMemberByEmail(userDetails.getUsername());
 		Routine routine = scheduleService.updateRoutine(member, id, request);
