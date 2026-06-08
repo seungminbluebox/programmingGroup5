@@ -155,7 +155,7 @@ class TimeRangeTest {
     }
 
     @Test
-    void isAfter_range_touching_false() {
+    void isAfter_range_touching_true() {
         // base startTime(10:00) == range endTime(10:00) → true [start, end)
         TimeRange range = new TimeRange(LocalTime.of(8, 0), LocalTime.of(10, 0));
         assertThat(base.isAfter(range)).isTrue();
@@ -176,7 +176,7 @@ class TimeRangeTest {
     }
 
     @Test
-    void isBetween_timeAtStart_false() {
+    void isBetween_timeAtStart_true() {
         // startTime 경계는 포함 [start, end)
         assertThat(base.contains(LocalTime.of(10, 0))).isTrue();
     }
