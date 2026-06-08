@@ -6,9 +6,7 @@ import java.time.LocalTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import kr.ac.dankook.group5.azit.schedule.entity.Schedule;
-import lombok.Getter;
 import lombok.AllArgsConstructor;
-import lombok.Setter;
 import lombok.Value;
 import lombok.With;
 

@@ -1,8 +1,6 @@
 package kr.ac.dankook.group5.azit.schedule.entity;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import kr.ac.dankook.group5.azit.schedule.dto.DailySchedule;
 import kr.ac.dankook.group5.azit.schedule.dto.TimeRange;
 import kr.ac.dankook.group5.azit.user.Member;
 import lombok.AllArgsConstructor;
