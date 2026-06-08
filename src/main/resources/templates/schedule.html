@@ -18,8 +18,19 @@
 			crossorigin="anonymous"
 		></script>
 	</head>
-	<body hx-ext="route-layout" hx-headers='{"Accept": "text/html"}'>
+	<body
+		hx-ext="route-layout"
+		hx-headers='{"Accept": "text/html"}'
+		hx-indicator="#schedule-loading-indicator"
+	>
 		<header th:replace="~{fragments/sidebar :: sidebar}"></header>
+		<div
+			id="schedule-loading-indicator"
+			class="schedule-loading-indicator htmx-indicator"
+			role="status"
+			aria-label="로딩 중"
+			aria-live="polite"
+		></div>
 		<main>
 			<section
 				id="schedule-page"
