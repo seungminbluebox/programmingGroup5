@@ -1,6 +1,7 @@
 package kr.ac.dankook.group5.azit.user;
 
 import jakarta.persistence.*;
+import kr.ac.dankook.group5.azit.schedule.entity.Routine;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -52,5 +53,5 @@ public class Member {
     private java.util.List<Career> careers = new java.util.ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private java.util.List<Availability> availabilities = new java.util.ArrayList<>();
+    private java.util.List<Routine> availabilities = new java.util.ArrayList<>();
 }

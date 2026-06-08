@@ -5,13 +5,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.ac.dankook.group5.azit.schedule.entity.DayOfWeek;
+import kr.ac.dankook.group5.azit.schedule.entity.Routine;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -127,10 +129,10 @@ public class ProfileService {
                 if (availEnds.get(i) == null || availEnds.get(i).trim().isEmpty())
                     continue;
 
-                Availability availability = new Availability();
+                Routine availability = new Routine();
                 availability.setMember(member);
                 try {
-                    availability.setDayOfWeek(Availability.DayOfWeek.valueOf(availDays.get(i)));
+                    availability.setDayOfWeek(DayOfWeek.valueOf(availDays.get(i)));
                     availability.setStartTime(LocalTime.parse(availStarts.get(i)));
                     availability.setEndTime(LocalTime.parse(availEnds.get(i)));
                     member.getAvailabilities().add(availability);
