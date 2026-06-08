@@ -152,6 +152,15 @@ public class ScheduleController {
 		return "schedule";
 	}
 
+	@PostMapping(value = "/schedule", params = "scheduleType=SCHEDULE")
+	@ResponseBody
+	public ScheduleInfoResponse createScheduleJson(
+			@AuthenticationPrincipal UserDetails userDetails,
+			@ModelAttribute ScheduleSaveRequest request) {
+		Member member = profileService.getMemberByEmail(userDetails.getUsername());
+		return ScheduleInfoResponse.from(scheduleService.createSchedule(member, request));
+	}
+
 	@PostMapping(value = "/schedule", params = "scheduleType=ROUTINE")
 	@ResponseBody
 	public RoutineInfoResponse createRoutineJson(
