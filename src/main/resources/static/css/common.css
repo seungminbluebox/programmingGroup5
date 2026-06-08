@@ -18,9 +18,13 @@
 
 	/* Surface & Border */
 	--color-surface: #ffffff;
+	--color-surface-muted: #f9fafb;
 	--color-border: #e5e7eb;
 	--color-border-indigo: #c7d2fe;
 	--color-border-green: #bbf7d0;
+
+	/* Overlay */
+	--overlay-black-5: rgba(0, 0, 0, 0.05);
 
 	/* Background */
 	--color-bg: #eef2ff;
@@ -181,7 +185,7 @@ ol {
 	display: inline-flex;
 	align-items: center;
 	gap: var(--space-3xs);
-	padding: var(--space-3xs) var(--space-sm);
+	padding: var(--space-2xs) var(--space-sm);
 	border-radius: var(--radius-sm);
 	font-size: var(--font-size-md\+);
 	font-weight: var(--font-weight-semibold);
