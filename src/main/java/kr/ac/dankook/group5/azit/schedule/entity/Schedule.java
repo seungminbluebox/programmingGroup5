@@ -20,27 +20,27 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Schedule {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(length = 80)
-    private String name;
+	@Column(length = 80)
+	private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
 
-    @Column(nullable = false)
-    private LocalDate date;
+	@Column(nullable = false)
+	private LocalDate date;
 
-    @Column(nullable = false)
-    private LocalTime startTime;
+	@Column(nullable = false)
+	private LocalTime startTime;
 
-    @Column(nullable = false)
-    private LocalTime endTime;
+	@Column(nullable = false)
+	private LocalTime endTime;
 
-    public TimeRange toTimeRange() {
-        return new TimeRange(startTime, endTime);
-    }
+	public TimeRange toTimeRange() {
+		return new TimeRange(startTime, endTime);
+	}
 }

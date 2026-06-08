@@ -20,31 +20,31 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Routine {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(length = 80)
-    private String name;
+	@Column(length = 80)
+	private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
+	private LocalDate startDate;
+	private LocalDate endDate;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private DayOfWeek dayOfWeek;
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, length = 20)
+	private DayOfWeek dayOfWeek;
 
-    @Column(nullable = false)
-    private LocalTime startTime;
+	@Column(nullable = false)
+	private LocalTime startTime;
 
-    @Column(nullable = false)
-    private LocalTime endTime;
+	@Column(nullable = false)
+	private LocalTime endTime;
 
-    public TimeRange toTimeRange() {
-        return new TimeRange(startTime, endTime);
-    }
+	public TimeRange toTimeRange() {
+		return new TimeRange(startTime, endTime);
+	}
 }
