@@ -1,152 +1,186 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Azit</title>
-    <link rel="stylesheet" href="/css/common.css" />
-    <link rel="stylesheet" href="/css/fragments/sidebar.css" />
-    <link rel="stylesheet" href="/css/azit.css" />
-  </head>
-  <body class="azit-app" th:classappend="${nickname != null} ? ' has-sidebar' : ''">
-    <div th:if="${nickname != null}">
-      <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    </div>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Azit</title>
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="stylesheet" href="/css/common.css" />
+		<link rel="stylesheet" href="/css/fragments/sidebar.css" />
+		<link rel="stylesheet" href="/css/azit.css" />
+	</head>
+	<body class="azit-app" th:classappend="${nickname != null} ? ' has-sidebar' : ''">
+		<div th:if="${nickname != null}">
+			<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+		</div>
 
-    <header class="azit-nav" th:if="${nickname == null}">
-      <div class="azit-shell azit-nav-inner">
-        <a class="azit-brand" href="/">
-          <span class="azit-brand-mark">AZ</span>
-          <span>Azit</span>
-        </a>
-        <div class="azit-nav-actions">
-          <a href="/login" class="azit-button azit-button-secondary">로그인</a>
-          <a href="/register" class="azit-button">회원가입</a>
-        </div>
-      </div>
-    </header>
+		<header class="azit-nav" th:if="${nickname == null}">
+			<div class="azit-shell azit-nav-inner">
+				<a class="azit-brand" href="/">
+					<span class="azit-brand-mark">AZ</span>
+					<span>Azit</span>
+				</a>
+				<div class="azit-nav-actions">
+					<a href="/login" class="azit-button azit-button-secondary">로그인</a>
+					<a href="/register" class="azit-button">회원가입</a>
+				</div>
+			</div>
+		</header>
 
-    <main class="azit-shell azit-hero" th:if="${nickname == null}">
-      <section class="azit-hero-copy">
-        <div class="azit-kicker">팀 빌딩과 구직 프로필을 한 곳에서</div>
-        <h1>함께 일할 사람을 더 정확하게 찾는 공간</h1>
-        <p>
-          Azit은 기술 스택, 경력, 가능 시간대를 기반으로 팀원을 탐색하고
-          프로필을 관리하는 협업 매칭 플랫폼입니다.
-        </p>
-        <div class="azit-nav-actions" style="margin-top: 28px">
-          <a
-            th:if="${nickname != null}"
-            href="/profile/me"
-            class="azit-button"
-            >내 프로필 관리</a
-          >
-          <a
-            th:if="${nickname == null}"
-            href="/register"
-            class="azit-button"
-            >프로필 만들기</a
-          >
-          <a
-            th:if="${nickname == null}"
-            href="/login"
-            class="azit-button azit-button-secondary"
-            >로그인</a
-          >
-        </div>
-      </section>
+		<main class="azit-shell azit-hero" th:if="${nickname == null}">
+			<section class="azit-hero-copy">
+				<div class="azit-kicker">팀 빌딩과 구직 프로필을 한 곳에서</div>
+				<h1>함께 일할 사람을 더 정확하게 찾는 공간</h1>
+				<p>
+					Azit은 기술 스택, 경력, 가능 시간대를 기반으로 팀원을 탐색하고
+					프로필을 관리하는 협업 매칭 플랫폼입니다.
+				</p>
+				<div class="azit-nav-actions" style="margin-top: 28px">
+					<a th:if="${nickname != null}" href="/profile/me" class="azit-button"
+						>내 프로필 관리</a
+					>
+					<a th:if="${nickname == null}" href="/register" class="azit-button"
+						>프로필 만들기</a
+					>
+					<a
+						th:if="${nickname == null}"
+						href="/login"
+						class="azit-button azit-button-secondary"
+						>로그인</a
+					>
+				</div>
+			</section>
 
-      <aside class="azit-panel azit-panel-pad">
-        <div class="azit-kicker">Profile Snapshot</div>
-        <h2 style="margin: 0; font-size: 2rem; font-weight: 900">
-          검증된 정보로 팀 매칭을 시작하세요
-        </h2>
-        <p style="color: var(--azit-muted); line-height: 1.7">
-          기술 스택, 포트폴리오 링크, 활동 가능 시간대를 한 화면에서 정리해
-          팀원이 빠르게 판단할 수 있게 합니다.
-        </p>
-        <div class="azit-form-section" style="margin-top: 24px">
-          <strong>현재 제공 기능</strong>
-          <div style="margin-top: 14px">
-            <span class="azit-stack-badge">프로필</span>
-            <span class="azit-stack-badge">기술 스택</span>
-            <span class="azit-stack-badge">경력</span>
-            <span class="azit-stack-badge">가능 시간</span>
-          </div>
-        </div>
-      </aside>
-    </main>
+			<aside class="azit-panel azit-panel-pad">
+				<div class="azit-kicker">Profile Snapshot</div>
+				<h2 style="margin: 0; font-size: 2rem; font-weight: 900">
+					검증된 정보로 팀 매칭을 시작하세요
+				</h2>
+				<p style="color: var(--azit-muted); line-height: 1.7">
+					기술 스택, 포트폴리오 링크, 활동 가능 시간대를 한 화면에서 정리해
+					팀원이 빠르게 판단할 수 있게 합니다.
+				</p>
+				<div class="azit-form-section" style="margin-top: 24px">
+					<strong>현재 제공 기능</strong>
+					<div style="margin-top: 14px">
+						<span class="azit-stack-badge">프로필</span>
+						<span class="azit-stack-badge">기술 스택</span>
+						<span class="azit-stack-badge">경력</span>
+						<span class="azit-stack-badge">가능 시간</span>
+					</div>
+				</div>
+			</aside>
+		</main>
 
-    <main class="azit-shell azit-page" th:if="${nickname != null}">
-      <section class="azit-page-heading">
-        <div>
-          <div class="azit-kicker">Project Dashboard</div>
-          <h1>내 프로젝트</h1>
-          <p>소속된 프로젝트의 기본 정보와 작업 공간으로 바로 이동합니다.</p>
-        </div>
-        <a href="/profile/me" class="azit-button azit-button-secondary">프로필 관리</a>
-      </section>
+		<main class="azit-shell azit-page" th:if="${nickname != null}">
+			<section class="azit-page-heading">
+				<div>
+					<div class="azit-kicker">Project Dashboard</div>
+					<h1>내 프로젝트</h1>
+					<p>소속된 프로젝트의 기본 정보와 작업 공간으로 바로 이동합니다.</p>
+				</div>
+				<a href="/profile/me" class="azit-button azit-button-secondary"
+					>프로필 관리</a
+				>
+			</section>
 
-      <section class="azit-grid">
-        <div class="azit-card">
-          <div class="azit-card-header">소속 프로젝트</div>
-          <div class="azit-card-body">
-            <div th:if="${projects != null and !projects.isEmpty()}" style="display: grid; gap: 14px">
-              <a
-                class="azit-form-section"
-                style="display: block; color: inherit; text-decoration: none"
-                th:each="project : ${projects}"
-                th:href="@{/project/{id}(id=${project.id})}"
-              >
-                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
-                  <strong th:text="${project.title}">프로젝트 이름</strong>
-                  <span class="azit-status-badge" th:classappend="${project.status.cssClass}"
-                    th:text="${project.status.label}">
-                    진행중
-                  </span>
-                </div>
-                <p class="azit-empty" style="margin-top: 8px" th:text="${project.description}">
-                  프로젝트 설명
-                </p>
-              </a>
-            </div>
-            <p class="azit-empty" th:if="${projects == null or projects.isEmpty()}">
-              아직 소속된 프로젝트가 없습니다. 오른쪽에서 첫 프로젝트를 생성하세요.
-            </p>
-          </div>
-        </div>
+			<section class="azit-grid">
+				<div class="azit-card">
+					<div class="azit-card-header">소속 프로젝트</div>
+					<div class="azit-card-body">
+						<div
+							th:if="${projects != null and !projects.isEmpty()}"
+							style="display: grid; gap: 14px"
+						>
+							<a
+								class="azit-form-section"
+								style="
+									display: block;
+									color: inherit;
+									text-decoration: none;
+								"
+								th:each="project : ${projects}"
+								th:href="@{/project/{id}(id=${project.id})}"
+							>
+								<div
+									style="
+										display: flex;
+										align-items: center;
+										gap: 10px;
+										flex-wrap: wrap;
+									"
+								>
+									<strong th:text="${project.title}"
+										>프로젝트 이름</strong
+									>
+									<span
+										class="azit-status-badge"
+										th:classappend="${project.status.cssClass}"
+										th:text="${project.status.label}"
+									>
+										진행중
+									</span>
+								</div>
+								<p
+									class="azit-empty"
+									style="margin-top: 8px"
+									th:text="${project.description}"
+								>
+									프로젝트 설명
+								</p>
+							</a>
+						</div>
+						<p
+							class="azit-empty"
+							th:if="${projects == null or projects.isEmpty()}"
+						>
+							아직 소속된 프로젝트가 없습니다. 오른쪽에서 첫 프로젝트를
+							생성하세요.
+						</p>
+					</div>
+				</div>
 
-        <div class="azit-card">
-          <div class="azit-card-header">당신만의 프로젝트를 생성하세요</div>
-          <div class="azit-card-body">
-            <form th:action="@{/projects}" method="post" style="display: grid; gap: 16px">
-              <div>
-                <label class="azit-form-label" for="projectTitle">프로젝트 이름</label>
-                <input
-                  id="projectTitle"
-                  class="azit-input"
-                  type="text"
-                  name="title"
-                  placeholder="예: 포트폴리오 매칭 서비스"
-                  required
-                />
-              </div>
-              <div>
-                <label class="azit-form-label" for="projectDescription">프로젝트 설명</label>
-                <textarea
-                  id="projectDescription"
-                  class="azit-input"
-                  name="description"
-                  rows="6"
-                  placeholder="프로젝트 목표, 만들 기능, 필요한 협업 방식을 적어주세요."
-                  required
-                ></textarea>
-              </div>
-              <button type="submit" class="azit-button">프로젝트 생성</button>
-            </form>
-          </div>
-        </div>
-      </section>
-    </main>
-  </body>
+				<div class="azit-card">
+					<div class="azit-card-header">당신만의 프로젝트를 생성하세요</div>
+					<div class="azit-card-body">
+						<form
+							th:action="@{/projects}"
+							method="post"
+							style="display: grid; gap: 16px"
+						>
+							<div>
+								<label class="azit-form-label" for="projectTitle"
+									>프로젝트 이름</label
+								>
+								<input
+									id="projectTitle"
+									class="azit-input"
+									type="text"
+									name="title"
+									placeholder="예: 포트폴리오 매칭 서비스"
+									required
+								/>
+							</div>
+							<div>
+								<label class="azit-form-label" for="projectDescription"
+									>프로젝트 설명</label
+								>
+								<textarea
+									id="projectDescription"
+									class="azit-input"
+									name="description"
+									rows="6"
+									placeholder="프로젝트 목표, 만들 기능, 필요한 협업 방식을 적어주세요."
+									required
+								></textarea>
+							</div>
+							<button type="submit" class="azit-button">
+								프로젝트 생성
+							</button>
+						</form>
+					</div>
+				</div>
+			</section>
+		</main>
+	</body>
 </html>
