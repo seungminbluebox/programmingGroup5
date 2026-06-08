@@ -3,6 +3,8 @@ package kr.ac.dankook.group5.azit.schedule.dto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import kr.ac.dankook.group5.azit.schedule.entity.DayOfWeek;
 import kr.ac.dankook.group5.azit.schedule.entity.Routine;
 import kr.ac.dankook.group5.azit.user.Member;
@@ -17,13 +19,17 @@ import lombok.With;
 @With
 @AllArgsConstructor
 public class RoutineSaveRequest {
+	@NotBlank
 	private String name;
 
+	@NotNull
 	private DayOfWeek dayOfWeek;
 
+	@NotNull
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalTime startTime;
 
+	@NotNull
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalTime endTime;
 
