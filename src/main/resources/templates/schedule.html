@@ -234,16 +234,17 @@
 						<div>
 							<h2 id="schedule-create-title">일정 생성</h2>
 						</div>
-						<a
+						<button
+							type="button"
 							class="schedule-modal-close"
 							aria-label="닫기"
-							th:href="@{/schedule}"
+							onclick="document.querySelector('#modal-create-schedule').close();"
 						>
 							<span
 								class="schedule-icon schedule-icon-x"
 								aria-hidden="true"
 							></span>
-						</a>
+						</button>
 					</div>
 
 					<form
@@ -411,7 +412,13 @@
 						</div>
 
 						<div class="schedule-modal-actions">
-							<a class="btn btn-outline" th:href="@{/schedule}"> 취소 </a>
+							<button
+								class="btn btn-outline"
+								type="button"
+								onclick="document.querySelector('#modal-create-schedule').close();"
+							>
+								취소
+							</button>
 							<button class="btn btn-primary" type="submit">생성</button>
 						</div>
 					</form>
