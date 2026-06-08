@@ -3,8 +3,6 @@ package kr.ac.dankook.group5.azit.schedule.dto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import kr.ac.dankook.group5.azit.schedule.entity.Schedule;
 import lombok.AllArgsConstructor;
 import lombok.Value;
@@ -18,13 +16,10 @@ public class ScheduleInfoResponse {
 
 	private String name;
 
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	private LocalDate date;
 
-	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalTime startTime;
 
-	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalTime endTime;
 
 	public static ScheduleInfoResponse from(Schedule schedule) {

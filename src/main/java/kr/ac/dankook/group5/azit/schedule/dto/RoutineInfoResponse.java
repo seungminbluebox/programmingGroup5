@@ -6,8 +6,6 @@ import java.time.LocalTime;
 import kr.ac.dankook.group5.azit.schedule.entity.DayOfWeek;
 import kr.ac.dankook.group5.azit.schedule.entity.Routine;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.With;
@@ -22,16 +20,12 @@ public class RoutineInfoResponse {
 
 	private DayOfWeek dayOfWeek;
 
-	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalTime startTime;
 
-	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalTime endTime;
 
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	private LocalDate startDate;
 
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	private LocalDate endDate;
 
 	public static RoutineInfoResponse from(Routine routine) {
