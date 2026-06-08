@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import kr.ac.dankook.group5.azit.schedule.TimeRangeCompactor;
@@ -30,6 +31,7 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class ScheduleService {
 	private final RoutineRepository routineRepository;
 	private final ScheduleRepository scheduleRepository;
@@ -73,24 +75,29 @@ public class ScheduleService {
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 	}
 
+	@Transactional
 	public void deleteSchedule(Member member, long id) {
 		scheduleRepository.delete(getSchedule(member, id));
 	}
 
+	@Transactional
 	public void deleteRoutine(Member member, long id) {
 		routineRepository.delete(getRoutine(member, id));
 	}
 
+	@Transactional
 	public Schedule createSchedule(Member member, ScheduleSaveRequest request) {
 		Schedule schedule = request.toSchedule(member);
 		return scheduleRepository.save(schedule);
 	}
 
+	@Transactional
 	public Routine createRoutine(Member member, RoutineSaveRequest request) {
 		Routine routine = request.toRoutine(member);
 		return routineRepository.save(routine);
 	}
 
+	@Transactional
 	public Schedule updateSchedule(Member member, long id, ScheduleSaveRequest request) {
 		Schedule schedule = getSchedule(member, id);
 		schedule.setName(request.getName());
@@ -100,6 +107,7 @@ public class ScheduleService {
 		return scheduleRepository.save(schedule);
 	}
 
+	@Transactional
 	public Routine updateRoutine(Member member, long id, RoutineSaveRequest request) {
 		Routine routine = getRoutine(member, id);
 		routine.setName(request.getName());
