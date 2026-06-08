@@ -2,6 +2,7 @@ package kr.ac.dankook.group5.azit.schedule.repository;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,9 @@ import kr.ac.dankook.group5.azit.schedule.entity.Routine;
 import kr.ac.dankook.group5.azit.user.Member;
 
 public interface RoutineRepository extends JpaRepository<Routine, Long> {
+
+	Optional<Routine> findByIdAndMember(Long id, Member member);
+
 	@Query("SELECT r FROM Routine r WHERE (r.member = :member) AND ((:date BETWEEN r.startDate AND r.endDate) OR (r.startDate IS NULL) OR (r.endDate IS NULL)) AND (:dayOfWeek = r.dayOfWeek)")
 	<T> Set<T> findByMemberAndDate(Member member, LocalDate date, DayOfWeek dayOfWeek, Class<T> type);
 

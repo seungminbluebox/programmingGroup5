@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import kr.ac.dankook.group5.azit.schedule.TimeRangeCompactor;
 import kr.ac.dankook.group5.azit.schedule.dto.DailySchedule;
+import kr.ac.dankook.group5.azit.schedule.dto.RoutineSaveRequest;
+import kr.ac.dankook.group5.azit.schedule.dto.ScheduleSaveRequest;
 import kr.ac.dankook.group5.azit.schedule.dto.TimeRange;
 import kr.ac.dankook.group5.azit.schedule.entity.DayOfWeek;
 import kr.ac.dankook.group5.azit.schedule.entity.Routine;
@@ -58,31 +60,61 @@ public class ScheduleService {
 		return schedules;
 	}
 
-	public Schedule createSchedule(Member member, String name, LocalDate date, TimeRange timeRange) {
+	public Schedule getSchedule(Member member, long id) {
+		return scheduleRepository.findByIdAndMember(id, member).orElseThrow();
+	}
+
+	public Routine getRoutine(Member member, long id) {
+		return routineRepository.findByIdAndMember(id, member).orElseThrow();
+	}
+
+	public void deleteSchedule(Member member, long id) {
+		scheduleRepository.delete(getSchedule(member, id));
+	}
+
+	public void deleteRoutine(Member member, long id) {
+		routineRepository.delete(getRoutine(member, id));
+	}
+
+	public Schedule createSchedule(Member member, ScheduleSaveRequest request) {
 		Schedule schedule = new Schedule();
 		schedule.setMember(member);
-		schedule.setName(name);
-		schedule.setDate(date);
-		schedule.setStartTime(timeRange.getStartTime());
-		schedule.setEndTime(timeRange.getEndTime());
+		schedule.setName(request.getName());
+		schedule.setDate(request.getDate());
+		schedule.setStartTime(request.getStartTime());
+		schedule.setEndTime(request.getEndTime());
 		return scheduleRepository.save(schedule);
 	}
 
-	public Routine createRoutine(
-			Member member,
-			String name,
-			DayOfWeek dayOfWeek,
-			TimeRange timeRange,
-			LocalDate startDate,
-			LocalDate endDate) {
+	public Routine createRoutine(Member member, RoutineSaveRequest request) {
 		Routine routine = new Routine();
 		routine.setMember(member);
-		routine.setName(name);
-		routine.setDayOfWeek(dayOfWeek);
-		routine.setStartTime(timeRange.getStartTime());
-		routine.setEndTime(timeRange.getEndTime());
-		routine.setStartDate(startDate);
-		routine.setEndDate(endDate);
+		routine.setName(request.getName());
+		routine.setDayOfWeek(request.getDayOfWeek());
+		routine.setStartTime(request.getStartTime());
+		routine.setEndTime(request.getEndTime());
+		routine.setStartDate(request.getStartDate());
+		routine.setEndDate(request.getEndDate());
+		return routineRepository.save(routine);
+	}
+
+	public Schedule updateSchedule(Member member, long id, ScheduleSaveRequest request) {
+		Schedule schedule = getSchedule(member, id);
+		schedule.setName(request.getName());
+		schedule.setDate(request.getDate());
+		schedule.setStartTime(request.getStartTime());
+		schedule.setEndTime(request.getEndTime());
+		return scheduleRepository.save(schedule);
+	}
+
+	public Routine updateRoutine(Member member, long id, RoutineSaveRequest request) {
+		Routine routine = getRoutine(member, id);
+		routine.setName(request.getName());
+		routine.setDayOfWeek(request.getDayOfWeek());
+		routine.setStartTime(request.getStartTime());
+		routine.setEndTime(request.getEndTime());
+		routine.setStartDate(request.getStartDate());
+		routine.setEndDate(request.getEndDate());
 		return routineRepository.save(routine);
 	}
 

@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import kr.ac.dankook.group5.azit.schedule.dto.DailySchedule;
 import kr.ac.dankook.group5.azit.schedule.dto.TimeRange;
 import kr.ac.dankook.group5.azit.user.Member;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +18,8 @@ import java.time.LocalTime;
 @Table(name = "routines")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class Routine {
     @Id

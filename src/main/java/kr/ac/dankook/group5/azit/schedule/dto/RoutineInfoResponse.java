@@ -15,7 +15,9 @@ import lombok.With;
 @Value
 @With
 @AllArgsConstructor
-public class RoutineSaveRequest {
+public class RoutineInfoResponse {
+	private String id;
+
 	private String name;
 
 	private DayOfWeek dayOfWeek;
@@ -32,12 +34,14 @@ public class RoutineSaveRequest {
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	private LocalDate endDate;
 
-	public Routine toRoutine() {
-		return Routine.builder()
-				.name(name)
-				.dayOfWeek(dayOfWeek)
-				.startTime(startTime).endTime(endTime)
-				.startDate(startDate).endDate(endDate)
-				.build();
+	public static RoutineInfoResponse from(Routine routine) {
+		return new RoutineInfoResponse(
+				"R" + routine.getId(),
+				routine.getName(),
+				routine.getDayOfWeek(),
+				routine.getStartTime(),
+				routine.getEndTime(),
+				routine.getStartDate(),
+				routine.getEndDate());
 	}
 }

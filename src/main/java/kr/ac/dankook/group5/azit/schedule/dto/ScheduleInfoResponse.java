@@ -6,16 +6,16 @@ import java.time.LocalTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import kr.ac.dankook.group5.azit.schedule.entity.Schedule;
-import lombok.Getter;
 import lombok.AllArgsConstructor;
-import lombok.Setter;
 import lombok.Value;
 import lombok.With;
 
 @Value
 @With
 @AllArgsConstructor
-public class ScheduleSaveRequest {
+public class ScheduleInfoResponse {
+	private String id;
+
 	private String name;
 
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -27,12 +27,12 @@ public class ScheduleSaveRequest {
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalTime endTime;
 
-	public Schedule toSchedule() {
-		return Schedule.builder()
-				.name(name)
-				.date(date)
-				.startTime(startTime)
-				.endTime(endTime)
-				.build();
+	public static ScheduleInfoResponse from(Schedule schedule) {
+		return new ScheduleInfoResponse(
+				"S" + schedule.getId(),
+				schedule.getName(),
+				schedule.getDate(),
+				schedule.getStartTime(),
+				schedule.getEndTime());
 	}
 }

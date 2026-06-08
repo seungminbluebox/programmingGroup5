@@ -1,25 +1,33 @@
 package kr.ac.dankook.group5.azit.schedule.controller;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import kr.ac.dankook.group5.azit.schedule.dto.DailySchedule;
-import kr.ac.dankook.group5.azit.schedule.dto.TimeRange;
-import kr.ac.dankook.group5.azit.schedule.entity.DayOfWeek;
+import kr.ac.dankook.group5.azit.schedule.dto.RoutineInfoResponse;
+import kr.ac.dankook.group5.azit.schedule.dto.RoutineSaveRequest;
+import kr.ac.dankook.group5.azit.schedule.dto.ScheduleInfoResponse;
+import kr.ac.dankook.group5.azit.schedule.dto.ScheduleSaveRequest;
+import kr.ac.dankook.group5.azit.schedule.entity.Routine;
+import kr.ac.dankook.group5.azit.schedule.entity.Schedule;
 import kr.ac.dankook.group5.azit.schedule.service.ScheduleService;
 import kr.ac.dankook.group5.azit.user.Member;
 import kr.ac.dankook.group5.azit.user.ProfileService;
@@ -68,57 +76,151 @@ public class ScheduleController {
 		model.addAttribute("timetableRowEnd", 2 + (TIMETABLE_END_HOUR - TIMETABLE_START_HOUR) * SLOTS_PER_HOUR);
 	}
 
-	@GetMapping("/schedule/S{id}")
-	public String viewScheduleInfo(@PathVariable("id") long id) {
-
+	@GetMapping(value = "/schedule/S{id}", headers = "Accept=text/html")
+	public String viewScheduleInfo(
+			@AuthenticationPrincipal UserDetails userDetails,
+			@PathVariable long id,
+			@RequestHeader(name="Hx-Target", required=false) String hxSelect,
+					@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+			Model model) {
+		Member member = profileService.getMemberByEmail(userDetails.getUsername());
+		Schedule schedule = scheduleService.getSchedule(member, id);
+		addScheduleDetailModel(model, ScheduleInfoResponse.from(schedule));
+		if (hxSelect == null) {
+			addSchedulePageModel(userDetails, date != null ? date : schedule.getDate(), model);
+			return "schedule";
+		}
+		return "schedule :: #" + hxSelect;
 	}
 
-	@GetMapping("/scheudle/R{id}")
-	public String viewRoutineInfo(@PathVariable("id") long id) {
-
+	@GetMapping(value = "/schedule/S{id}")
+	@ResponseBody
+	public ScheduleInfoResponse getScheduleInfo(
+			@AuthenticationPrincipal UserDetails userDetails,
+			@PathVariable long id) {
+		Member member = profileService.getMemberByEmail(userDetails.getUsername());
+		return ScheduleInfoResponse.from(scheduleService.getSchedule(member, id));
 	}
 
-	@PostMapping(value = "/schedule", params = "scheduleType=SCHEDULE")
+	@GetMapping(value = "/schedule/R{id}", headers = "Accept=text/html")
+	public String viewRoutineInfo(
+			@AuthenticationPrincipal UserDetails userDetails,
+			@PathVariable long id,
+			@RequestHeader(name="Hx-Target", required=false) String hxSelect,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+			Model model) {
+		Member member = profileService.getMemberByEmail(userDetails.getUsername());
+		Routine routine = scheduleService.getRoutine(member, id);
+		addRoutineDetailModel(model, RoutineInfoResponse.from(routine));
+		if (hxSelect == null) {
+			addSchedulePageModel(userDetails, date != null ? date : LocalDate.now(), model);
+			return "schedule";
+		}
+		return "schedule :: #" + hxSelect;
+	}
+
+	@GetMapping("/schedule/R{id}")
+	@ResponseBody
+	public RoutineInfoResponse getRoutineInfo(
+			@AuthenticationPrincipal UserDetails userDetails,
+			@PathVariable long id) {
+		Member member = profileService.getMemberByEmail(userDetails.getUsername());
+		return RoutineInfoResponse.from(scheduleService.getRoutine(member, id));
+	}
+
+	@PostMapping(value = "/schedule", params = "scheduleType=SCHEDULE", headers = "Accept=text/html")
 	public String createSchedule(
 			@AuthenticationPrincipal UserDetails userDetails,
-			@RequestParam String scheduleType,
-			@RequestParam String name,
-			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate scheduleDate,
-			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
-			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime,
-			RedirectAttributes redirectAttributes) {
+			@ModelAttribute ScheduleSaveRequest request,
+			Model model) {
 		Member member = profileService.getMemberByEmail(userDetails.getUsername());
-		TimeRange timeRange = new TimeRange(startTime, endTime);
-		scheduleService.createSchedule(member, name, scheduleDate, timeRange);
-		redirectAttributes.addAttribute("date", scheduleDate.toString());
-		return "redirect:/schedule";
+		Schedule schedule = scheduleService.createSchedule(member, request);
+		addSchedulePageModel(userDetails, schedule.getDate(), model);
+		addScheduleDetailModel(model, ScheduleInfoResponse.from(schedule));
+		return "schedule";
+	}
+
+	@PostMapping(value = "/schedule", params = "scheduleType=ROUTINE", headers = "Accept=text/html")
+	public String createRoutine(
+			@AuthenticationPrincipal UserDetails userDetails,
+			@ModelAttribute RoutineSaveRequest request,
+			Model model) {
+		Member member = profileService.getMemberByEmail(userDetails.getUsername());
+		Routine routine = scheduleService.createRoutine(member, request);
+		addSchedulePageModel(userDetails, request.getStartDate(), model);
+		addRoutineDetailModel(model, RoutineInfoResponse.from(routine));
+		return "schedule";
 	}
 
 	@PostMapping(value = "/schedule", params = "scheduleType=ROUTINE")
-	public String createRoutine(
+	@ResponseBody
+	public RoutineInfoResponse createRoutineJson(
 			@AuthenticationPrincipal UserDetails userDetails,
-			@RequestParam String scheduleType,
-			@RequestParam String name,
-			@RequestParam DayOfWeek dayOfWeek,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
-			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime,
-			RedirectAttributes redirectAttributes) {
+			@ModelAttribute RoutineSaveRequest request) {
 		Member member = profileService.getMemberByEmail(userDetails.getUsername());
-		TimeRange timeRange = new TimeRange(startTime, endTime);
-		scheduleService.createRoutine(member, name, dayOfWeek, timeRange, startDate, endDate);
+		return RoutineInfoResponse.from(scheduleService.createRoutine(member, request));
+	}
+
+	@PutMapping(value = "/schedule/S{id}", headers = "Accept=text/html")
+	public String updateSchedule(
+			@AuthenticationPrincipal UserDetails userDetails,
+			@PathVariable long id,
+			@ModelAttribute ScheduleSaveRequest request,
+			Model model) {
+		Member member = profileService.getMemberByEmail(userDetails.getUsername());
+		Schedule schedule = scheduleService.updateSchedule(member, id, request);
+		addSchedulePageModel(userDetails, schedule.getDate(), model);
+		addScheduleDetailModel(model, ScheduleInfoResponse.from(schedule));
+		return "schedule";
+	}
+
+	@PutMapping(value = "/schedule/R{id}", headers = "Accept=text/html")
+	public String updateRoutine(
+			@AuthenticationPrincipal UserDetails userDetails,
+			@PathVariable long id,
+			@ModelAttribute RoutineSaveRequest request,
+			Model model) {
+		Member member = profileService.getMemberByEmail(userDetails.getUsername());
+		Routine routine = scheduleService.updateRoutine(member, id, request);
+		addSchedulePageModel(userDetails, routine.getStartDate(), model);
+		addRoutineDetailModel(model, RoutineInfoResponse.from(routine));
+		return "schedule";
+	}
+
+	@DeleteMapping("/schedule/S{id}")
+	@ResponseStatus(HttpStatus.SEE_OTHER)
+	public String deleteSchedule(
+			@AuthenticationPrincipal UserDetails userDetails,
+			@PathVariable long id) {
+		Member member = profileService.getMemberByEmail(userDetails.getUsername());
+		scheduleService.deleteSchedule(member, id);
 		return "redirect:/schedule";
 	}
 
-	@PatchMapping("/schedule/S{id}")
-	public String updateSchedule(@PathVariable("id") long id) {
-
+	@DeleteMapping("/schedule/R{id}")
+	@ResponseStatus(HttpStatus.SEE_OTHER)
+	public String deleteRoutine(
+			@AuthenticationPrincipal UserDetails userDetails,
+			@PathVariable long id) {
+		Member member = profileService.getMemberByEmail(userDetails.getUsername());
+		scheduleService.deleteRoutine(member, id);
+		return "redirect:/schedule";
 	}
 
-	@PatchMapping("/schedule/R{id}")
-	public String updateRoutine(@PathVariable("id") long id) {
+	private void addScheduleDetailModel(Model model, ScheduleInfoResponse schedule) {
+		model.addAttribute("selectedSchedule", schedule);
+		model.addAttribute("selectedScheduleType", "SCHEDULE");
+		model.addAttribute("selectedScheduleTypeLabel", "개인 일정");
+		model.addAttribute("selectedScheduleEditLabel", "개인 일정 수정");
+		model.addAttribute("selectedScheduleId", schedule.getId());
+	}
 
+	private void addRoutineDetailModel(Model model, RoutineInfoResponse routine) {
+		model.addAttribute("selectedSchedule", routine);
+		model.addAttribute("selectedScheduleType", "ROUTINE");
+		model.addAttribute("selectedScheduleTypeLabel", "개인 반복 일정");
+		model.addAttribute("selectedScheduleEditLabel", "개인 반복 일정 수정");
+		model.addAttribute("selectedScheduleId", routine.getId());
 	}
 
 }

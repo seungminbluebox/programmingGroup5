@@ -13,19 +13,19 @@
 			crossorigin="anonymous"
 		></script>
 		<script
-			src="https://cdn.jsdelivr.net/npm/htmx-ext-route-layout@0.1.1/dist/index.min.js"
-			integrity="sha256-fKdYCHjV9na8ZuCDQMPS14lE2ofK5nhTF9lQDE+eESw="
+			src="https://cdn.jsdelivr.net/npm/htmx-ext-route-layout@0.1.4/dist/index.min.js"
+			integrity="sha256-X7Tg/54td+irTN7upx+rWIRXE/pBynhrmfsJn7Da/Eo="
 			crossorigin="anonymous"
 		></script>
 	</head>
-	<body hx-ext="route-layout">
+	<body hx-ext="route-layout" hx-headers='{"Accept": "text/html"}'>
 		<header th:replace="~{fragments/sidebar :: sidebar}"></header>
 		<main>
 			<section
 				id="schedule-page"
 				class="schedule-page"
 				aria-labelledby="schedule-title"
-				hx-outlet="/schedule"
+				hx-outlet="/schedule{/*}?"
 			>
 				<div class="schedule-header">
 					<div>
@@ -205,11 +205,14 @@
 						></div>
 
 						<th:block th:each="daySchedule, dayStat : ${schedule}">
-							<article
+							<a
 								class="schedule-event schedule-event-primary"
 								th:each="item : ${daySchedule}"
+								th:href="@{/schedule/{id}(id=${item.id})}"
+								th:attr="data-schedule-id=${item.id}"
 								th:id="|schedule-${item.id}|"
 								th:style="|--event-column: ${dayStat.index + 2}; --event-row-start: ${2 + ((item.startTime.hour - timetableStartHour) * 6) + (item.startTime.minute / 10)}; --event-row-end: ${2 + ((item.endTime.hour - timetableStartHour) * 6) + (item.endTime.minute / 10)}|"
+								hx-target="#modal-schedule-detail"
 							>
 								<h3 th:text="${item.name}">일정 이름</h3>
 								<p
@@ -217,7 +220,7 @@
 								>
 									09:00 - 10:30
 								</p>
-							</article>
+							</a>
 						</th:block>
 					</div>
 				</div>
@@ -234,7 +237,7 @@
 						<a
 							class="schedule-modal-close"
 							aria-label="닫기"
-							th:href="@{/schedule(date=${weekStart})}"
+							th:href="@{/schedule}"
 						>
 							<span
 								class="schedule-icon schedule-icon-x"
@@ -311,7 +314,7 @@
 								id="schedule-date"
 								class="input"
 								type="date"
-								name="scheduleDate"
+								name="date"
 								th:value="${#temporals.format(today, 'yyyy-MM-dd')}"
 								required
 							/>
@@ -354,7 +357,7 @@
 										id="schedule-routine-start-date"
 										class="input"
 										type="date"
-										name="routineStartDate"
+										name="startDate"
 									/>
 								</div>
 								<div class="schedule-form-field">
@@ -368,7 +371,7 @@
 										id="schedule-routine-end-date"
 										class="input"
 										type="date"
-										name="routineEndDate"
+										name="endDate"
 									/>
 								</div>
 							</div>
@@ -408,30 +411,360 @@
 						</div>
 
 						<div class="schedule-modal-actions">
-							<a
-								class="btn btn-outline"
-								th:href="@{/schedule(date=${weekStart})}"
-							>
-								취소
-							</a>
+							<a class="btn btn-outline" th:href="@{/schedule}"> 취소 </a>
 							<button class="btn btn-primary" type="submit">생성</button>
 						</div>
 					</form>
 				</dialog>
+				<dialog
+					id="modal-schedule-detail"
+					class="schedule-modal schedule-detail-modal"
+					aria-labelledby="schedule-detail-title"
+				>
+					<div class="schedule-modal-header">
+						<div>
+							<p
+								class="schedule-modal-kicker"
+								id="schedule-detail-type"
+								th:text="${selectedScheduleTypeLabel}"
+							>
+								개인 일정
+							</p>
+							<h2
+								id="schedule-detail-title"
+								th:text="${selectedSchedule?.name}"
+							>
+								일정 이름
+							</h2>
+						</div>
+						<button
+							type="button"
+							class="schedule-modal-close"
+							aria-label="닫기"
+							onclick="
+								history.pushState(null, '', '/schedule');
+								document.querySelector('#modal-schedule-detail').close();
+							"
+						>
+							<span
+								class="schedule-icon schedule-icon-x"
+								aria-hidden="true"
+							></span>
+						</button>
+					</div>
+
+					<div class="schedule-detail-content">
+						<div id="schedule-detail-view">
+							<dl class="schedule-detail-list">
+								<div class="schedule-detail-row">
+									<dt>시간</dt>
+									<dd
+										th:text="${selectedSchedule != null ? #temporals.format(selectedSchedule.startTime, 'HH:mm') + ' - ' + #temporals.format(selectedSchedule.endTime, 'HH:mm') : ''}"
+									>
+										09:00 - 10:00
+									</dd>
+								</div>
+								<div
+									class="schedule-detail-row"
+									th:if="${selectedScheduleType == 'SCHEDULE'}"
+								>
+									<dt>날짜</dt>
+									<dd
+										th:text="${selectedSchedule != null ? #temporals.format(selectedSchedule.date, 'yyyy년 M월 d일') : ''}"
+									>
+										2026년 6월 8일
+									</dd>
+								</div>
+								<div
+									class="schedule-detail-row"
+									th:if="${selectedScheduleType == 'ROUTINE'}"
+								>
+									<dt>요일</dt>
+									<dd th:text="${selectedSchedule?.dayOfWeek?.label}">
+										월요일
+									</dd>
+								</div>
+								<div
+									class="schedule-detail-row"
+									th:if="${selectedScheduleType == 'ROUTINE'}"
+								>
+									<dt>시작 날짜</dt>
+									<dd
+										th:text="${selectedSchedule?.startDate != null ? #temporals.format(selectedSchedule.startDate, 'yyyy년 M월 d일') : '없음'}"
+									>
+										없음
+									</dd>
+								</div>
+								<div
+									class="schedule-detail-row"
+									th:if="${selectedScheduleType == 'ROUTINE'}"
+								>
+									<dt>종료 날짜</dt>
+									<dd
+										th:text="${selectedSchedule?.endDate != null ? #temporals.format(selectedSchedule.endDate, 'yyyy년 M월 d일') : '없음'}"
+									>
+										없음
+									</dd>
+								</div>
+							</dl>
+
+							<div class="schedule-modal-actions">
+								<form
+									id="schedule-delete-form"
+									th:hx-delete="@{/schedule/{id}(id=${selectedScheduleId})}"
+									hx-confirm="일정을 삭제할까요?"
+								>
+									<button class="btn btn-danger" type="submit">
+										삭제
+									</button>
+									<input
+										type="hidden"
+										th:name="${_csrf.parameterName}"
+										th:value="${_csrf.token}"
+									/>
+								</form>
+								<button
+									class="btn btn-primary"
+									type="button"
+									onclick="
+										document.querySelector(
+											'#schedule-detail-view',
+										).hidden = true;
+										document.querySelector(
+											'#schedule-edit-form',
+										).hidden = false;
+									"
+								>
+									수정
+								</button>
+							</div>
+						</div>
+
+						<form
+							id="schedule-edit-form"
+							class="schedule-create-form schedule-edit-form"
+							th:hx-put="@{/schedule/{id}(id=${selectedScheduleId})}"
+							hidden
+						>
+							<input
+								type="hidden"
+								th:name="${_csrf.parameterName}"
+								th:value="${_csrf.token}"
+							/>
+
+							<div class="schedule-form-field">
+								<label class="label" for="schedule-edit-name">
+									일정 이름
+									<span class="schedule-required-mark">*</span>
+								</label>
+								<input
+									id="schedule-edit-name"
+									class="input"
+									type="text"
+									name="name"
+									th:value="${selectedSchedule?.name}"
+									required
+								/>
+							</div>
+
+							<div
+								class="schedule-form-field"
+								th:if="${selectedScheduleType == 'SCHEDULE'}"
+							>
+								<label class="label" for="schedule-edit-date">
+									날짜 <span class="schedule-required-mark">*</span>
+								</label>
+								<input
+									id="schedule-edit-date"
+									class="input"
+									type="date"
+									name="date"
+									th:value="${selectedSchedule?.date}"
+									required
+								/>
+							</div>
+
+							<div
+								class="schedule-routine-fields"
+								th:if="${selectedScheduleType == 'ROUTINE'}"
+							>
+								<div class="schedule-form-field">
+									<label class="label" for="schedule-edit-day-of-week">
+										요일
+										<span class="schedule-required-mark">*</span>
+									</label>
+									<select
+										id="schedule-edit-day-of-week"
+										class="input"
+										name="dayOfWeek"
+										required
+									>
+										<option
+											value="SUN"
+											th:selected="${selectedSchedule?.dayOfWeek?.name() == 'SUN'}"
+										>
+											일요일
+										</option>
+										<option
+											value="MON"
+											th:selected="${selectedSchedule?.dayOfWeek?.name() == 'MON'}"
+										>
+											월요일
+										</option>
+										<option
+											value="TUE"
+											th:selected="${selectedSchedule?.dayOfWeek?.name() == 'TUE'}"
+										>
+											화요일
+										</option>
+										<option
+											value="WED"
+											th:selected="${selectedSchedule?.dayOfWeek?.name() == 'WED'}"
+										>
+											수요일
+										</option>
+										<option
+											value="THU"
+											th:selected="${selectedSchedule?.dayOfWeek?.name() == 'THU'}"
+										>
+											목요일
+										</option>
+										<option
+											value="FRI"
+											th:selected="${selectedSchedule?.dayOfWeek?.name() == 'FRI'}"
+										>
+											금요일
+										</option>
+										<option
+											value="SAT"
+											th:selected="${selectedSchedule?.dayOfWeek?.name() == 'SAT'}"
+										>
+											토요일
+										</option>
+									</select>
+								</div>
+
+								<div class="schedule-form-row">
+									<div class="schedule-form-field">
+										<label
+											class="label"
+											for="schedule-edit-start-date"
+										>
+											시작 날짜
+											<span class="schedule-optional-mark"
+												>(선택)</span
+											>
+										</label>
+										<input
+											id="schedule-edit-start-date"
+											class="input"
+											type="date"
+											name="startDate"
+											th:value="${selectedSchedule?.startDate}"
+										/>
+									</div>
+									<div class="schedule-form-field">
+										<label class="label" for="schedule-edit-end-date">
+											종료 날짜
+											<span class="schedule-optional-mark"
+												>(선택)</span
+											>
+										</label>
+										<input
+											id="schedule-edit-end-date"
+											class="input"
+											type="date"
+											name="endDate"
+											th:value="${selectedSchedule?.endDate}"
+										/>
+									</div>
+								</div>
+							</div>
+
+							<div class="schedule-form-row">
+								<div class="schedule-form-field">
+									<label class="label" for="schedule-edit-start-time">
+										시작 시간
+										<span class="schedule-required-mark">*</span>
+									</label>
+									<input
+										id="schedule-edit-start-time"
+										class="input"
+										type="time"
+										name="startTime"
+										th:value="${selectedSchedule?.startTime}"
+										step="60"
+										required
+									/>
+								</div>
+								<div class="schedule-form-field">
+									<label class="label" for="schedule-edit-end-time">
+										종료 시간
+										<span class="schedule-required-mark">*</span>
+									</label>
+									<input
+										id="schedule-edit-end-time"
+										class="input"
+										type="time"
+										name="endTime"
+										th:value="${selectedSchedule?.endTime}"
+										step="60"
+										required
+									/>
+								</div>
+							</div>
+
+							<div class="schedule-modal-actions">
+								<button
+									class="btn btn-outline"
+									type="button"
+									onclick="
+										document.querySelector(
+											'#schedule-edit-form',
+										).hidden = true;
+										document.querySelector(
+											'#schedule-detail-view',
+										).hidden = false;
+									"
+								>
+									취소
+								</button>
+								<button class="btn btn-primary" type="submit">
+									저장
+								</button>
+							</div>
+						</form>
+					</div>
+					<script th:if="${selectedSchedule != null}">
+						document.querySelector('#modal-schedule-detail').showModal();
+					</script>
+				</dialog>
 				<script>
-					(() => {
-						const form = document.querySelector('.schedule-create-form');
-						if (!form) return;
+					function openScheduleFormModal(form, options = {}) {
+						const { hideGroups = false, selectedType: fixedType = null } =
+							options;
+
+						if (!form) {
+							return;
+						}
 
 						function syncScheduleTypeFields() {
 							const selectedType =
+								fixedType ||
 								form.querySelector('input[name="scheduleType"]:checked')
-									?.value || 'SCHEDULE';
+									?.value ||
+								'SCHEDULE';
 
+							sync(selectedType);
+						}
+
+						function sync(type) {
 							form.querySelectorAll('[data-schedule-fields]').forEach(
 								(group) => {
-									const enabled =
-										group.dataset.scheduleFields === selectedType;
+									const enabled = group.dataset.scheduleFields === type;
+									if (hideGroups) {
+										group.hidden = !enabled;
+									}
 									group
 										.querySelectorAll('input, select, textarea')
 										.forEach((field) => {
@@ -448,7 +781,11 @@
 						);
 
 						syncScheduleTypeFields();
-					})();
+					}
+
+					openScheduleFormModal(
+						document.querySelector('#schedule-create-form'),
+					);
 				</script>
 			</section>
 		</main>
