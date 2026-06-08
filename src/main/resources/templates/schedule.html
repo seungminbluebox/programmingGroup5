@@ -211,7 +211,7 @@
 								th:href="@{/schedule/{id}(id=${item.id})}"
 								th:attr="data-schedule-id=${item.id}"
 								th:id="|schedule-${item.id}|"
-								th:style="|--event-column: ${dayStat.index + 2}; --event-row-start: ${2 + ((item.startTime.hour - timetableStartHour) * 6) + (item.startTime.minute / 10)}; --event-row-end: ${2 + ((item.endTime.hour - timetableStartHour) * 6) + (item.endTime.minute / 10)}|"
+								th:style="|--event-column: ${dayStat.index + 2}; --event-row-start: ${2 + ((item.startTime.hour - timetableStartHour) * 6) + #numbers.formatDecimal(item.startTime.minute / 10, 1, 0)}; --event-row-end: ${2 + ((item.endTime.hour - timetableStartHour) * 6) + #numbers.formatDecimal(item.endTime.minute / 10, 1, 0)}|"
 								hx-target="#modal-schedule-detail"
 							>
 								<h3 th:text="${item.name}">일정 이름</h3>
