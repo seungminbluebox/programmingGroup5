@@ -16,19 +16,19 @@ public interface RoutineRepository extends JpaRepository<Routine, Long> {
 
 	Optional<Routine> findByIdAndMember(Long id, Member member);
 
-	@Query("SELECT r FROM Routine r WHERE (r.member = :member) AND ((:date BETWEEN r.startDate AND r.endDate) OR (r.startDate IS NULL) OR (r.endDate IS NULL)) AND (:dayOfWeek = r.dayOfWeek)")
+	@Query("SELECT r FROM Routine r WHERE (r.member = :member) AND ((r.startDate IS NULL) OR (:date >= r.startDate)) AND ((r.endDate IS NULL) OR (:date <= r.endDate)) AND (:dayOfWeek = r.dayOfWeek)")
 	<T> Set<T> findByMemberAndDate(Member member, LocalDate date, DayOfWeek dayOfWeek, Class<T> type);
 
-	@Query("SELECT r FROM Routine r WHERE (r.member = :member) AND ((:date BETWEEN r.startDate AND r.endDate) OR (r.startDate IS NULL) OR (r.endDate IS NULL)) AND (:dayOfWeek = r.dayOfWeek)")
+	@Query("SELECT r FROM Routine r WHERE (r.member = :member) AND ((r.startDate IS NULL) OR (:date >= r.startDate)) AND ((r.endDate IS NULL) OR (:date <= r.endDate)) AND (:dayOfWeek = r.dayOfWeek)")
 	Set<Routine> findByMemberAndDate(Member member, LocalDate date, DayOfWeek dayOfWeek);
 
-	@Query("SELECT r FROM Routine r WHERE (r.member IN :members) AND ((:date BETWEEN r.startDate AND r.endDate) OR (r.startDate IS NULL) OR (r.endDate IS NULL)) AND (:dayOfWeek = r.dayOfWeek)")
+	@Query("SELECT r FROM Routine r WHERE (r.member IN :members) AND ((r.startDate IS NULL) OR (:date >= r.startDate)) AND ((r.endDate IS NULL) OR (:date <= r.endDate)) AND (:dayOfWeek = r.dayOfWeek)")
 	<T> Set<T> findByMemberInAndDate(Collection<Member> members, LocalDate date,
 			DayOfWeek fromBuiltin, Class<T> type);
 
-	@Query("SELECT r FROM Routine r WHERE (r.member = :member) AND (((:startDate <= r.startDate) AND (r.endDate <= :endDate)) OR (r.startDate IS NULL) OR (r.endDate IS NULL))")
+	@Query("SELECT r FROM Routine r WHERE (r.member = :member) AND ((r.startDate IS NULL) OR (:startDate <= r.startDate)) AND ((r.endDate IS NULL) OR (r.endDate <= :endDate))")
 	Set<Routine> findByMemberAndDateBetween(Member member, LocalDate startDate, LocalDate endDate);
 
-	@Query("SELECT r FROM Routine r WHERE (r.member IN :members) AND (((:startDate <= r.startDate) AND (r.endDate <= :endDate)) OR (r.startDate IS NULL) OR (r.endDate IS NULL))")
+	@Query("SELECT r FROM Routine r WHERE (r.member IN :members) AND ((r.startDate IS NULL) OR (:startDate <= r.startDate)) AND ((r.endDate IS NULL) OR (r.endDate <= :endDate))")
 	Set<Routine> findByMemberInAndDateBetween(Collection<Member> members, LocalDate startDate, LocalDate endDate);
 }
