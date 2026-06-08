@@ -2,6 +2,8 @@ package kr.ac.dankook.group5.azit.schedule;
 
 import org.junit.jupiter.api.Test;
 
+import kr.ac.dankook.group5.azit.schedule.dto.TimeRange;
+
 import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.assertThat;

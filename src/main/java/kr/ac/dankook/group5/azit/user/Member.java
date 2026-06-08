@@ -1,7 +1,7 @@
 package kr.ac.dankook.group5.azit.user;
 
 import jakarta.persistence.*;
-import kr.ac.dankook.group5.azit.schedule.Routine;
+import kr.ac.dankook.group5.azit.schedule.entity.Routine;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

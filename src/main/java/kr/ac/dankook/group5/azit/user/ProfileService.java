@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import kr.ac.dankook.group5.azit.schedule.Routine;
-import kr.ac.dankook.group5.azit.schedule.DayOfWeek;
+import kr.ac.dankook.group5.azit.schedule.entity.DayOfWeek;
+import kr.ac.dankook.group5.azit.schedule.entity.Routine;
 
 import java.io.IOException;
 import java.nio.file.Files;

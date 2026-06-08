@@ -8,6 +8,8 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
+import kr.ac.dankook.group5.azit.schedule.dto.TimeRange;
+
 @Component
 public class MergeIntervalsTimeRangeCompactor implements TimeRangeCompactor {
 	/**

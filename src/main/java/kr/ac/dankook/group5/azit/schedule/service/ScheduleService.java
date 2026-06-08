@@ -1,6 +1,7 @@
-package kr.ac.dankook.group5.azit.schedule;
+package kr.ac.dankook.group5.azit.schedule.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -12,13 +13,23 @@ import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 
+import kr.ac.dankook.group5.azit.schedule.TimeRangeCompactor;
+import kr.ac.dankook.group5.azit.schedule.dto.DailySchedule;
+import kr.ac.dankook.group5.azit.schedule.dto.TimeRange;
+import kr.ac.dankook.group5.azit.schedule.entity.DayOfWeek;
+import kr.ac.dankook.group5.azit.schedule.entity.Routine;
+import kr.ac.dankook.group5.azit.schedule.entity.Schedule;
+import kr.ac.dankook.group5.azit.schedule.repository.RoutineRepository;
+import kr.ac.dankook.group5.azit.schedule.repository.ScheduleRepository;
 import kr.ac.dankook.group5.azit.user.Member;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class ScheduleService {
-	RoutineRepository routineRepository;
-	ScheduleRepository scheduleRepository;
-	TimeRangeCompactor timeRangeCompactor;
+	private final RoutineRepository routineRepository;
+	private final ScheduleRepository scheduleRepository;
+	private final TimeRangeCompactor timeRangeCompactor;
 
 	public List<TimeRange> getMyAvailableTimeOnDate(Member member, LocalDate date) {
 		Set<TimeRange> occupied = new HashSet<>();
@@ -28,6 +39,51 @@ public class ScheduleService {
 		occupied.addAll(scheduleRepository.findByMemberAndDate(member, date, TimeRange.class));
 
 		return timeRangeCompactor.findAvailableSchedules(occupied);
+	}
+
+	public List<DailySchedule> getMyDailySchedule(Member member, LocalDate date) {
+		List<DailySchedule> schedules = new ArrayList<>();
+
+		schedules.addAll(
+				routineRepository.findByMemberAndDate(member, date, DayOfWeek.fromBuiltin(date.getDayOfWeek()))
+						.stream()
+						.map(DailySchedule::from)
+						.toList());
+		schedules.addAll(
+				scheduleRepository.findByMemberAndDate(member, date)
+						.stream()
+						.map(DailySchedule::from)
+						.toList());
+
+		return schedules;
+	}
+
+	public Schedule createSchedule(Member member, String name, LocalDate date, TimeRange timeRange) {
+		Schedule schedule = new Schedule();
+		schedule.setMember(member);
+		schedule.setName(name);
+		schedule.setDate(date);
+		schedule.setStartTime(timeRange.getStartTime());
+		schedule.setEndTime(timeRange.getEndTime());
+		return scheduleRepository.save(schedule);
+	}
+
+	public Routine createRoutine(
+			Member member,
+			String name,
+			DayOfWeek dayOfWeek,
+			TimeRange timeRange,
+			LocalDate startDate,
+			LocalDate endDate) {
+		Routine routine = new Routine();
+		routine.setMember(member);
+		routine.setName(name);
+		routine.setDayOfWeek(dayOfWeek);
+		routine.setStartTime(timeRange.getStartTime());
+		routine.setEndTime(timeRange.getEndTime());
+		routine.setStartDate(startDate);
+		routine.setEndDate(endDate);
+		return routineRepository.save(routine);
 	}
 
 	public List<TimeRange> getGroupAvailableTimeOnDate(Collection<Member> members, LocalDate date) {
@@ -101,8 +157,7 @@ public class ScheduleService {
 				Collectors.toMap(
 						Map.Entry::getKey,
 						entry -> timeRangeCompactor.findAvailableSchedules(entry.getValue()),
-								(a, b) -> a,
+						(a, b) -> a,
 						() -> new EnumMap<>(DayOfWeek.class)));
 	}
-
 }

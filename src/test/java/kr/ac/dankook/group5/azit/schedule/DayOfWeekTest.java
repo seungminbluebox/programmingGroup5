@@ -2,6 +2,8 @@ package kr.ac.dankook.group5.azit.schedule;
 
 import org.junit.jupiter.api.Test;
 
+import kr.ac.dankook.group5.azit.schedule.entity.DayOfWeek;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DayOfWeekTest {

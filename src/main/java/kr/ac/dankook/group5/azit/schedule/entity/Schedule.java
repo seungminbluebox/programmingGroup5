@@ -1,7 +1,8 @@
-package kr.ac.dankook.group5.azit.schedule;
+package kr.ac.dankook.group5.azit.schedule.entity;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import kr.ac.dankook.group5.azit.schedule.dto.DailySchedule;
+import kr.ac.dankook.group5.azit.schedule.dto.TimeRange;
 import kr.ac.dankook.group5.azit.user.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,25 +12,24 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "routines")
+@Table(name = "schedules")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Routine {
+public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(length = 80)
+    private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private DayOfWeek dayOfWeek;
+    @Column(nullable = false)
+    private LocalDate date;
 
     @Column(nullable = false)
     private LocalTime startTime;

@@ -1,6 +1,9 @@
 package kr.ac.dankook.group5.azit.schedule;
 
 import org.junit.jupiter.api.Test;
+
+import kr.ac.dankook.group5.azit.schedule.dto.TimeRange;
+
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;

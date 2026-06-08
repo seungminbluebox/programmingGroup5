@@ -1,4 +1,4 @@
-package kr.ac.dankook.group5.azit.schedule;
+package kr.ac.dankook.group5.azit.schedule.dto;
 
 import lombok.Value;
 import lombok.With;
