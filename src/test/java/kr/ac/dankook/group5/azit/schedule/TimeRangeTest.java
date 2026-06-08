@@ -92,7 +92,7 @@ class TimeRangeTest {
     }
 
     @Test
-    void isBefore_localTime_endTimeEqual_false() {
+    void isBefore_localTime_endTimeEqual_true() {
         // endTime(12:00) == 12:00 → true [start, end)
         assertThat(base.isBefore(LocalTime.of(12, 0))).isTrue();
     }
@@ -113,7 +113,7 @@ class TimeRangeTest {
     }
 
     @Test
-    void isBefore_range_touching_false() {
+    void isBefore_range_touching_true() {
         // base endTime(12:00) == range startTime(12:00) → true [start, end)
         TimeRange range = new TimeRange(LocalTime.of(12, 0), LocalTime.of(14, 0));
         assertThat(base.isBefore(range)).isTrue();
