@@ -4,6 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>일정 - AZIT</title>
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 		<link rel="stylesheet" th:href="@{/css/common.css}" />
 		<link rel="stylesheet" th:href="@{/css/page/schedule.css}" />
 		<link th:replace="~{fragments/sidebar :: stylesheet}" />
@@ -249,7 +250,9 @@
 							type="button"
 							class="schedule-modal-close"
 							aria-label="닫기"
-							onclick="document.querySelector('#modal-create-schedule').close();"
+							onclick="
+								document.querySelector('#modal-create-schedule').close()
+							"
 						>
 							<span
 								class="schedule-icon schedule-icon-x"
@@ -426,7 +429,11 @@
 							<button
 								class="btn btn-outline"
 								type="button"
-								onclick="document.querySelector('#modal-create-schedule').close();"
+								onclick="
+									document
+										.querySelector('#modal-create-schedule')
+										.close()
+								"
 							>
 								취소
 							</button>
