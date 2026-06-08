@@ -5,6 +5,7 @@ import java.time.LocalTime;
 
 import kr.ac.dankook.group5.azit.schedule.entity.DayOfWeek;
 import kr.ac.dankook.group5.azit.schedule.entity.Routine;
+import kr.ac.dankook.group5.azit.user.Member;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -32,8 +33,9 @@ public class RoutineSaveRequest {
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	private LocalDate endDate;
 
-	public Routine toRoutine() {
+	public Routine toRoutine(Member member) {
 		return Routine.builder()
+				.member(member)
 				.name(name)
 				.dayOfWeek(dayOfWeek)
 				.startTime(startTime).endTime(endTime)

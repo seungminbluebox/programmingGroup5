@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import kr.ac.dankook.group5.azit.schedule.entity.Schedule;
+import kr.ac.dankook.group5.azit.user.Member;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.With;
@@ -25,8 +26,9 @@ public class ScheduleSaveRequest {
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalTime endTime;
 
-	public Schedule toSchedule() {
+	public Schedule toSchedule(Member member) {
 		return Schedule.builder()
+				.member(member)
 				.name(name)
 				.date(date)
 				.startTime(startTime)

@@ -11,7 +11,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import kr.ac.dankook.group5.azit.schedule.TimeRangeCompactor;
 import kr.ac.dankook.group5.azit.schedule.dto.DailySchedule;
@@ -34,11 +36,12 @@ public class ScheduleService {
 	private final TimeRangeCompactor timeRangeCompactor;
 
 	public List<TimeRange> getMyAvailableTimeOnDate(Member member, LocalDate date) {
-		Set<TimeRange> occupied = new HashSet<>();
-
-		occupied.addAll(routineRepository.findByMemberAndDate(member, date, DayOfWeek.fromBuiltin(date.getDayOfWeek()),
-				TimeRange.class));
-		occupied.addAll(scheduleRepository.findByMemberAndDate(member, date, TimeRange.class));
+		Set<TimeRange> occupied = Stream.concat(
+				routineRepository.findByMemberAndDate(member, date, DayOfWeek.fromBuiltin(date.getDayOfWeek()))
+						.stream().map(Routine::toTimeRange),
+				scheduleRepository.findByMemberAndDate(member, date)
+						.stream().map(Schedule::toTimeRange))
+				.collect(Collectors.toSet());
 
 		return timeRangeCompactor.findAvailableSchedules(occupied);
 	}
@@ -61,11 +64,13 @@ public class ScheduleService {
 	}
 
 	public Schedule getSchedule(Member member, long id) {
-		return scheduleRepository.findByIdAndMember(id, member).orElseThrow();
+		return scheduleRepository.findByIdAndMember(id, member)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 	}
 
 	public Routine getRoutine(Member member, long id) {
-		return routineRepository.findByIdAndMember(id, member).orElseThrow();
+		return routineRepository.findByIdAndMember(id, member)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 	}
 
 	public void deleteSchedule(Member member, long id) {
@@ -77,24 +82,12 @@ public class ScheduleService {
 	}
 
 	public Schedule createSchedule(Member member, ScheduleSaveRequest request) {
-		Schedule schedule = new Schedule();
-		schedule.setMember(member);
-		schedule.setName(request.getName());
-		schedule.setDate(request.getDate());
-		schedule.setStartTime(request.getStartTime());
-		schedule.setEndTime(request.getEndTime());
+		Schedule schedule = request.toSchedule(member);
 		return scheduleRepository.save(schedule);
 	}
 
 	public Routine createRoutine(Member member, RoutineSaveRequest request) {
-		Routine routine = new Routine();
-		routine.setMember(member);
-		routine.setName(request.getName());
-		routine.setDayOfWeek(request.getDayOfWeek());
-		routine.setStartTime(request.getStartTime());
-		routine.setEndTime(request.getEndTime());
-		routine.setStartDate(request.getStartDate());
-		routine.setEndDate(request.getEndDate());
+		Routine routine = request.toRoutine(member);
 		return routineRepository.save(routine);
 	}
 
@@ -119,11 +112,14 @@ public class ScheduleService {
 	}
 
 	public List<TimeRange> getGroupAvailableTimeOnDate(Collection<Member> members, LocalDate date) {
-		Set<TimeRange> occupied = new HashSet<>();
-
-		occupied.addAll(routineRepository.findByMemberInAndDate(members, date,
-				DayOfWeek.fromBuiltin(date.getDayOfWeek()), TimeRange.class));
-		occupied.addAll(scheduleRepository.findByMemberInAndDate(members, date, TimeRange.class));
+		Set<TimeRange> occupied = Stream.concat(
+				routineRepository
+						.findByMemberInAndDate(members, date, DayOfWeek.fromBuiltin(date.getDayOfWeek()), Routine.class)
+						.stream().map(Routine::toTimeRange),
+				scheduleRepository
+						.findByMemberInAndDate(members, date, Schedule.class)
+						.stream().map(Schedule::toTimeRange))
+				.collect(Collectors.toSet());
 
 		return timeRangeCompactor.findAvailableSchedules(occupied);
 	}
