@@ -26,9 +26,9 @@ public interface RoutineRepository extends JpaRepository<Routine, Long> {
 	<T> Set<T> findByMemberInAndDate(Collection<Member> members, LocalDate date,
 			DayOfWeek fromBuiltin, Class<T> type);
 
-	@Query("SELECT r FROM Routine r WHERE (r.member = :member) AND ((r.startDate IS NULL) OR (:startDate <= r.startDate)) AND ((r.endDate IS NULL) OR (r.endDate <= :endDate))")
+	@Query("SELECT r FROM Routine r WHERE (r.member = :member) AND ((r.startDate IS NULL) OR (r.startDate <= :endDate)) AND ((r.endDate IS NULL) OR (r.endDate >= :startDate))")
 	Set<Routine> findByMemberAndDateBetween(Member member, LocalDate startDate, LocalDate endDate);
 
-	@Query("SELECT r FROM Routine r WHERE (r.member IN :members) AND ((r.startDate IS NULL) OR (:startDate <= r.startDate)) AND ((r.endDate IS NULL) OR (r.endDate <= :endDate))")
+	@Query("SELECT r FROM Routine r WHERE (r.member IN :members) AND ((r.startDate IS NULL) OR (r.startDate <= :endDate)) AND ((r.endDate IS NULL) OR (r.endDate >= :startDate))")
 	Set<Routine> findByMemberInAndDateBetween(Collection<Member> members, LocalDate startDate, LocalDate endDate);
 }
