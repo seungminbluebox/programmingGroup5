@@ -146,7 +146,7 @@
 			var(--schedule-slot-count),
 			var(--schedule-slot-height)
 		);
-	background: var(--color-surface-muted);
+	background: var(--color-surface);
 }
 
 .schedule-corner {
