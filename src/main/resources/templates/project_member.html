@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 	<head th:replace="~{fragments/project_layout :: head}"></head>
 
-	<body class="has-sidebar">
+	<body>
 		<div th:replace="~{fragments/sidebar :: sidebar}"></div>
 		<main>
 			<div class="project-detail-page">
@@ -27,12 +27,7 @@
 									th:href="@{/profile/{id}(id=${projectMember.member.id})}"
 									th:each="projectMember : ${project.members}"
 								>
-									<div
-										class="project-detail-member-avatar"
-										th:text="${#strings.substring(projectMember.member.name, 0, 1)}"
-									>
-										김
-									</div>
+									<th:block th:replace="~{fragments/avatar :: avatar(${projectMember.member.profileUrl}, ${projectMember.member.name}, 'project-detail-member-avatar')}"></th:block>
 									<div>
 										<strong th:text="${projectMember.member.name}">팀원 이름</strong>
 										<p th:text="${projectMember.role}">OWNER</p>

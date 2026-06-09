@@ -210,7 +210,7 @@
 .project-detail-card {
 	padding: var(--space-xl);
 	border-color: rgba(229, 231, 235, 0.86);
-	box-shadow: 0 12px 30px var(--overlay-black-5);
+	box-shadow: var(--shadow-md);
 }
 
 .project-detail-settings-grid {
@@ -429,6 +429,7 @@
 .project-detail-task-content {
 	display: flex;
 	flex-direction: column;
+	align-items: flex-start;
 	gap: var(--space-2xs);
 	min-width: 0;
 }
