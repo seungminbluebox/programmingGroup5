@@ -1,0 +1,105 @@
+/* ============================================================
+   Auth Layout — login.html / register.html
+   ============================================================ */
+
+body {
+	min-height: 100vh;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-lg);
+	background: var(--color-bg);
+}
+
+/* ============================================================
+   Hero — logo only
+   ============================================================ */
+
+.auth-hero {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.logo {
+	font-size: var(--font-size-9xl);
+}
+
+/* ============================================================
+   Card
+   ============================================================ */
+
+.auth-form-wrap {
+	position: static;
+	width: 100%;
+	max-width: 440px;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	padding: var(--space-2xl) var(--space-2xl);
+	border: none;
+	box-shadow: var(--shadow-xl);
+}
+
+.auth-card-title {
+	font-size: var(--font-size-5xl);
+	font-weight: var(--font-weight-extrabold);
+	letter-spacing: var(--letter-spacing-tight-md);
+	color: var(--color-text-dark);
+}
+
+.auth-card-hint {
+	font-size: var(--font-size-md\+);
+	color: var(--color-text-muted);
+	margin-top: calc(var(--space-4xs) * -1);
+}
+
+/* ============================================================
+   Form
+   ============================================================ */
+
+form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	margin: var(--space-sm) 0;
+}
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-4xs);
+}
+
+/* ============================================================
+   Alert
+   ============================================================ */
+
+.auth-alert {
+	padding: var(--space-2xs) var(--space-xs);
+	background: var(--chip-red);
+	border: var(--stroke-thin) solid var(--color-accent-red-light);
+	border-radius: var(--radius-sm);
+	color: var(--color-accent-red);
+	font-size: var(--font-size-sm\+);
+	font-weight: var(--font-weight-medium);
+}
+
+/* ============================================================
+   Footer link
+   ============================================================ */
+
+.auth-card-footer {
+	font-size: var(--font-size-md);
+	color: var(--color-text-muted);
+	text-align: center;
+}
+
+.auth-card-footer a {
+	color: var(--color-primary);
+	font-weight: var(--font-weight-semibold);
+}
+
+.auth-card-footer a:hover {
+	text-decoration: underline;
+}
