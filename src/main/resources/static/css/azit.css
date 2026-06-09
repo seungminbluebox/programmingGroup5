@@ -1,4 +1,8 @@
-/* @deprecated */
+/*
+  @deprecated
+  
+  common.css를 대신 사용하세요.
+*/
 
 :root {
   --azit-bg: #f5f7fb;
