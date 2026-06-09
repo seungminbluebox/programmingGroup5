@@ -1,6 +1,12 @@
 package kr.ac.dankook.group5.azit.project;
 
+import kr.ac.dankook.group5.azit.schedule.dto.DateTimeRange;
+import kr.ac.dankook.group5.azit.schedule.dto.TimeRange;
+import kr.ac.dankook.group5.azit.schedule.entity.DayOfWeek;
+import kr.ac.dankook.group5.azit.schedule.service.ScheduleService;
+import kr.ac.dankook.group5.azit.user.Member;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,13 +16,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final ScheduleService scheduleService;
 
     @PostMapping("/projects")
     public String createProject(
@@ -32,22 +46,113 @@ public class ProjectController {
             Authentication authentication,
             @PathVariable Long projectId,
             Model model) {
-        return detailPage(authentication, projectId, "overview", "project_detail", model);
+        String view = detailPage(authentication, projectId, "overview", "project_detail", model);
+
+        LocalDate today = LocalDate.now();
+        LocalDate weekStart = today.minusDays(today.getDayOfWeek().getValue() % 7L);
+        Project project = (Project) model.getAttribute("project");
+        List<Member> allMembers = project.getMembers().stream()
+                .map(ProjectMember::getMember).toList();
+
+        Map<DayOfWeek, List<TimeRange>> availableMap =
+                scheduleService.getGroupAvailableTimeOnDate(allMembers, weekStart, weekStart.plusDays(6));
+        DayOfWeek[] dayOrder = {DayOfWeek.SUN, DayOfWeek.MON, DayOfWeek.TUE,
+                DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT};
+        List<List<TimeRange>> available = new ArrayList<>();
+        for (DayOfWeek day : dayOrder) {
+            available.add(availableMap.containsKey(day)
+                    ? availableMap.get(day)
+                    : List.of(new TimeRange(LocalTime.MIN, LocalTime.MAX)));
+        }
+        model.addAttribute("topAvailableSlots", computeTopSlots(available, weekStart));
+        return view;
     }
 
-    @GetMapping("/project/{projectId}/{page}")
-    public String detailByPage(
+    @GetMapping("/project/{projectId}/task")
+    public String task(
             Authentication authentication,
             @PathVariable Long projectId,
-            @PathVariable String page,
             Model model) {
-        return switch (page) {
-            case "task" -> detailPage(authentication, projectId, page, "project_task", model);
-            case "schedule" -> detailPage(authentication, projectId, page, "project_schedule", model);
-            case "member" -> detailPage(authentication, projectId, page, "project_member", model);
-            case "settings" -> detailPage(authentication, projectId, page, "project_settings", model);
-            default -> "redirect:/project/" + projectId;
-        };
+        return detailPage(authentication, projectId, "task", "project_task", model);
+    }
+
+    @GetMapping("/project/{projectId}/schedule")
+    public String schedule(
+            Authentication authentication,
+            @PathVariable Long projectId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) List<Long> memberIds,
+            Model model) {
+        LocalDate today = LocalDate.now();
+        LocalDate base = date != null ? date : today;
+        LocalDate weekStart = base.minusDays(base.getDayOfWeek().getValue() % 7L);
+
+        detailPage(authentication, projectId, "schedule", "project_schedule", model);
+
+        Project project = (Project) model.getAttribute("project");
+        List<Member> allMembers = project.getMembers().stream()
+                .map(ProjectMember::getMember)
+                .toList();
+
+        boolean filtered = memberIds != null && !memberIds.isEmpty();
+        List<Member> members = filtered
+                ? allMembers.stream().filter(m -> memberIds.contains(m.getId())).toList()
+                : allMembers;
+
+        Set<Long> selectedMemberIds = filtered
+                ? new HashSet<>(memberIds)
+                : allMembers.stream().map(Member::getId).collect(java.util.stream.Collectors.toSet());
+        model.addAttribute("selectedMemberIds", selectedMemberIds);
+        Map<DayOfWeek, List<TimeRange>> availableMap =
+                scheduleService.getGroupAvailableTimeOnDate(members, weekStart, weekStart.plusDays(6));
+
+        DayOfWeek[] dayOrder = {DayOfWeek.SUN, DayOfWeek.MON, DayOfWeek.TUE,
+                DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT};
+        List<List<TimeRange>> available = new ArrayList<>();
+        for (DayOfWeek day : dayOrder) {
+            available.add(availableMap.containsKey(day)
+                    ? availableMap.get(day)
+                    : List.of(new TimeRange(LocalTime.MIN, LocalTime.MAX)));
+        }
+
+        model.addAttribute("weekStart", weekStart);
+        model.addAttribute("today", today);
+        model.addAttribute("available", available);
+        model.addAttribute("topAvailableSlots", computeTopSlots(available, weekStart));
+        return "project_schedule";
+    }
+
+    private static List<DateTimeRange> computeTopSlots(List<List<TimeRange>> available, LocalDate weekStart) {
+        List<DateTimeRange> all = new ArrayList<>();
+        for (int i = 0; i < available.size(); i++) {
+            LocalDate date = weekStart.plusDays(i);
+            for (TimeRange r : available.get(i)) {
+                if (java.time.temporal.ChronoUnit.MINUTES.between(r.getStartTime(), r.getEndTime()) < 30)
+                    continue;
+                all.add(new DateTimeRange(r.getStartTime(), r.getEndTime(), date));
+            }
+        }
+        return all.stream()
+                .sorted(Comparator.comparingLong((DateTimeRange r) -> java.time.temporal.ChronoUnit.MINUTES
+                        .between(r.getStartTime(), r.getEndTime())).reversed())
+                .limit(5)
+                .toList();
+    }
+
+    @GetMapping("/project/{projectId}/member")
+    public String member(
+            Authentication authentication,
+            @PathVariable Long projectId,
+            Model model) {
+        return detailPage(authentication, projectId, "member", "project_member", model);
+    }
+
+    @GetMapping("/project/{projectId}/settings")
+    public String settings(
+            Authentication authentication,
+            @PathVariable Long projectId,
+            Model model) {
+        return detailPage(authentication, projectId, "settings", "project_settings", model);
     }
 
     private String detailPage(

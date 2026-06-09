@@ -142,24 +142,7 @@
 									aria-hidden="true"
 								></span>
 							</div>
-							<div class="project-detail-rhythm-grid" aria-hidden="true">
-								<span></span>
-								<span></span>
-								<span></span>
-								<span></span>
-								<span></span>
-								<span></span>
-								<span></span>
-								<span></span>
-								<span></span>
-								<span class="active"></span>
-								<span class="active"></span>
-								<span class="active"></span>
-							</div>
-							<div class="project-detail-rhythm-summary">
-								<span>최적 동기화 시간:</span>
-								<strong>14:30 - 16:00</strong>
-							</div>
+							<th:block th:replace="~{project_schedule :: topSlots(${topAvailableSlots}, 3)}"></th:block>
 							<a
 								class="btn btn-outline project-detail-wide-button"
 								th:href="@{/project/{projectId}/schedule(projectId=${project.id})}"
