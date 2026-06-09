@@ -105,7 +105,9 @@
 							th:href="@{/project/{projectId}(projectId=${project.id})}"
 							th:classappend="${currentPath == #strings.concat('/project/', project.id)} ? 'active'"
 						>
-							<div class="sidebar-project-icon"></div>
+							<div
+								th:replace="~{fragments/project_icon :: projectIcon(${project.title}, 'sidebar-project-icon')}"
+							></div>
 							<div
 								class="sidebar-project-name"
 								th:text="${project.title}"

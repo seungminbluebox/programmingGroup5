@@ -13,9 +13,9 @@
 	<div th:fragment="header(activePage)">
 		<section class="project-detail-hero">
 			<div class="project-detail-identity">
-				<div class="project-detail-icon" aria-hidden="true">
-					<span th:text="${#strings.substring(project.title, 0, 1)}">A</span>
-				</div>
+				<div
+					th:replace="~{fragments/project_icon :: projectIcon(${project.title}, 'project-detail-icon')}"
+				></div>
 
 				<div class="project-detail-title-group">
 					<div class="project-detail-title-row">

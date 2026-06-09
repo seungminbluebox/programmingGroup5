@@ -151,13 +151,20 @@
 }
 
 .sidebar-project-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	width: 32px;
 	height: 32px;
+	border: var(--stroke-thin) solid var(--color-border);
 	border-radius: var(--radius-sm);
-	background: var(--chip-indigo);
+	background: var(--color-surface);
+	color: var(--color-primary);
+	font-size: var(--font-size-md\+);
+	font-weight: var(--font-weight-extrabold);
 	flex-shrink: 0;
 	overflow: hidden;
-	/* 서버에서 이미지/이모지로 채워짐 */
+	box-shadow: var(--shadow-sm);
 }
 
 .sidebar-project-name {
