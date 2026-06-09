@@ -33,6 +33,17 @@ public class SidebarModelAdvice {
                 .orElse(authentication.getName());
     }
 
+    @ModelAttribute("sidebarMemberProfileUrl")
+    public String sidebarMemberProfileUrl(Authentication authentication) {
+        if (!isSignedIn(authentication)) {
+            return null;
+        }
+
+        return memberRepository.findByEmail(authentication.getName())
+                .map(member -> member.getProfileUrl())
+                .orElse(null);
+    }
+
     @ModelAttribute("sidebarProjects")
     public List<Project> sidebarProjects(Authentication authentication) {
         if (!isSignedIn(authentication)) {

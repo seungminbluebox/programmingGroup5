@@ -16,19 +16,9 @@
 			<!-- ── Profile Header Card ── -->
 			<section class="card profile-header">
 				<!-- Avatar -->
-				<img
-					th:if="${member.profileUrl != null}"
-					th:src="${member.profileUrl}"
-					class="profile-avatar"
-					alt="프로필 사진"
-				/>
-				<div
-					th:unless="${member.profileUrl != null}"
-					class="profile-avatar profile-avatar-initials"
-					aria-hidden="true"
-				>
-					<span th:text="${#strings.substring(member.name, 0, 1)}">U</span>
-				</div>
+				<th:block
+					th:replace="~{fragments/avatar :: avatar(${member.profileUrl}, ${member.name}, 'profile-avatar')}"
+				></th:block>
 
 				<!-- Info -->
 				<div class="profile-info">

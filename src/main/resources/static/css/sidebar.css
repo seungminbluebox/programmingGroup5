@@ -236,20 +236,34 @@
 	background: var(--color-bg);
 }
 
-/* 아바타 원 — 로그인 상태일 때만 표시 */
-#sidebar-user:has(#sidebar-userpage)::before {
-	content: attr(data-initial);
+#sidebar-userpage {
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	gap: var(--space-10);
+}
+
+.sidebar-avatar {
 	width: 36px;
 	height: 36px;
 	border-radius: var(--radius-full);
-	background: var(--color-primary);
-	color: #fff;
+	object-fit: cover;
+	flex-shrink: 0;
+}
+
+.sidebar-avatar.profile-avatar-initials {
+	background: var(--chip-indigo);
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	font-size: var(--font-size-md\+);
 	font-weight: var(--font-weight-bold);
-	flex-shrink: 0;
+	color: var(--color-primary);
+}
+
+.sidebar-user-name {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 #sidebar-user > :first-child {

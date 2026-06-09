@@ -119,10 +119,17 @@
 						<a
 							id="sidebar-userpage"
 							th:if="${sidebarMemberName != null}"
-							th:text="${sidebarMemberName}"
 							th:href="@{/profile/me}"
 							th:classappend="${currentPath == '/profile/me'} ? 'active'"
-						></a>
+						>
+							<th:block
+								th:replace="~{fragments/avatar :: avatar(${sidebarMemberProfileUrl}, ${sidebarMemberName}, 'sidebar-avatar')}"
+							></th:block>
+							<span
+								class="sidebar-user-name"
+								th:text="${sidebarMemberName}"
+							></span>
+						</a>
 						<a
 							id="sidebar-login"
 							th:unless="${sidebarMemberName != null}"

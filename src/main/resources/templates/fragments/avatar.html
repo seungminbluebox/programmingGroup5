@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<body>
+		<th:block th:fragment="avatar(profileUrl, name, className)">
+			<img
+				th:if="${profileUrl != null}"
+				th:src="${profileUrl}"
+				th:class="${className}"
+				th:alt="|${name} 프로필 사진|"
+			/>
+			<div
+				th:unless="${profileUrl != null}"
+				th:class="${className + ' profile-avatar-initials'}"
+				aria-hidden="true"
+			>
+				<span th:text="${#strings.substring(name, 0, 1)}">U</span>
+			</div>
+		</th:block>
+	</body>
+</html>
