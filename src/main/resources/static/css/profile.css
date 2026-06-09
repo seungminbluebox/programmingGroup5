@@ -75,6 +75,7 @@
 .card {
 	padding: 0;
 	overflow: hidden;
+	box-shadow: var(--shadow-md);
 }
 
 .card-header {
@@ -91,7 +92,7 @@
 	font-weight: var(--font-weight-extrabold);
 	display: flex;
 	align-items: center;
-	gap: var(--space-3xs);
+	gap: var(--space-xs);
 }
 
 .card-body {
