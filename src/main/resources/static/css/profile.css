@@ -64,7 +64,7 @@
 }
 
 .profile-page {
-	max-width: 1000px;
+	max-width: 1100px;
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-lg);
@@ -108,18 +108,16 @@
 }
 
 .profile-avatar {
-	width: 80px;
-	height: 80px;
+	width: 120px;
+	height: 120px;
 	border-radius: var(--radius-full);
 	object-fit: cover;
 	display: block;
 	flex-shrink: 0;
+	align-self: center;
 }
 
 .profile-avatar-initials {
-	width: 80px;
-	height: 80px;
-	border-radius: var(--radius-full);
 	background: var(--chip-indigo);
 	display: flex;
 	align-items: center;
@@ -127,13 +125,14 @@
 	font-size: var(--font-size-5xl);
 	font-weight: var(--font-weight-bold);
 	color: var(--color-primary);
-	flex-shrink: 0;
 }
 
 .profile-info {
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-2xs);
+	align-self: stretch;
+	justify-content: space-around;
 }
 
 .profile-title-row {
