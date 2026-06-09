@@ -8,6 +8,43 @@
 			<div class="project-detail-page">
 				<div th:replace="~{fragments/project_layout :: header('task')}"></div>
 				<section class="project-detail-panel active">
+					<article class="card project-detail-card">
+						<div class="project-detail-card-heading">
+							<div>
+								<h2>스프린트 개요</h2>
+								<p>현재 태스크 진행 상황</p>
+							</div>
+						</div>
+
+						<div class="project-detail-progress-list">
+							<div class="project-detail-progress-row">
+								<div class="project-detail-progress-label">
+									<strong>나의 진행도</strong>
+									<span th:text="${myTaskCompletionRate} + '%'">85%</span>
+								</div>
+								<div class="progress">
+									<div
+										class="progress-fill"
+										th:style="'width: ' + ${myTaskCompletionRate} + '%'"
+									></div>
+								</div>
+							</div>
+
+							<div class="project-detail-progress-row">
+								<div class="project-detail-progress-label">
+									<strong>팀 평균 진행도</strong>
+									<span th:text="${myTaskCompletionRate} + '%'">68%</span>
+								</div>
+								<div class="progress">
+									<div
+										class="progress-fill"
+										th:style="'width: ' + ${myTaskCompletionRate} + '%'"
+									></div>
+								</div>
+							</div>
+						</div>
+					</article>
+
 					<article class="card project-detail-card" id="project-tasks">
 						<div class="project-detail-card-heading">
 							<div>
