@@ -181,8 +181,9 @@
 								class="project-detail-member-list"
 								th:if="${project.members != null and !project.members.isEmpty()}"
 							>
-								<div
+								<a
 									class="project-detail-member"
+									th:href="@{/profile/{id}(id=${projectMember.member.id})}"
 									th:each="projectMember : ${project.members}"
 								>
 									<div
@@ -197,11 +198,7 @@
 										>
 										<p th:text="${projectMember.role}">OWNER</p>
 									</div>
-									<span
-										class="project-detail-member-menu icon icon-more-horizontal"
-										aria-hidden="true"
-									></span>
-								</div>
+								</a>
 							</div>
 							<a
 								class="btn btn-outline project-detail-wide-button"

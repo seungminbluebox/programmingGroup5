@@ -22,8 +22,9 @@
 								class="project-detail-member-list"
 								th:if="${project.members != null and !project.members.isEmpty()}"
 							>
-								<div
+								<a
 									class="project-detail-member"
+									th:href="@{/profile/{id}(id=${projectMember.member.id})}"
 									th:each="projectMember : ${project.members}"
 								>
 									<div
@@ -35,9 +36,10 @@
 									<div>
 										<strong th:text="${projectMember.member.name}">팀원 이름</strong>
 										<p th:text="${projectMember.role}">OWNER</p>
+										<p th:text="${projectMember.member.email}" class="project-detail-member-email">email@example.com</p>
 									</div>
-									<span class="project-detail-member-menu icon icon-more-horizontal" aria-hidden="true"></span>
-								</div>
+									<!-- <span class="project-detail-member-menu icon icon-more-horizontal" aria-hidden="true"></span> -->
+								</a>
 							</div>
 							<p
 								class="project-detail-empty"
@@ -48,42 +50,6 @@
 						</article>
 					</div>
 					<aside class="project-detail-side">
-						<article
-							class="card project-detail-card"
-							th:if="${projectOwner and projectEditable}"
-						>
-							<div class="project-detail-card-heading">
-								<h2>초대 후보</h2>
-							</div>
-							<div
-								class="project-detail-candidate-list"
-								th:if="${inviteCandidates != null and !inviteCandidates.isEmpty()}"
-							>
-								<div
-									class="project-detail-candidate"
-									th:each="member : ${inviteCandidates}"
-								>
-									<div>
-										<strong th:text="${member.name}">사용자 이름</strong>
-										<p th:text="${member.email}">email@example.com</p>
-									</div>
-									<form
-										th:action="@{/project/{projectId}/invitations(projectId=${project.id})}"
-										method="post"
-									>
-										<input type="hidden" name="receiverId" th:value="${member.id}" />
-										<button type="submit" class="btn btn-outline btn-sm">초대</button>
-									</form>
-								</div>
-							</div>
-							<p
-								class="project-detail-empty"
-								th:if="${inviteCandidates == null or inviteCandidates.isEmpty()}"
-							>
-								초대할 수 있는 사용자가 없습니다.
-							</p>
-						</article>
-
 						<article
 							class="card project-detail-card"
 							th:if="${projectOwner and projectEditable}"
