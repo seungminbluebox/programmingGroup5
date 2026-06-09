@@ -542,3 +542,57 @@ ol {
 	cursor: pointer;
 	user-select: none;
 }
+
+/* ============================================================
+   Modal
+   ============================================================ */
+
+.modal::backdrop {
+	background: var(--overlay-black-5);
+	backdrop-filter: blur(2px);
+}
+
+.modal:modal {
+    position: absolute;
+    justify-self: center;
+    align-self: center;
+}
+
+.modal-close {
+	display: none;
+	position: absolute;
+	top: var(--space-sm);
+	right: var(--space-sm);
+	width: 32px;
+	height: 32px;
+	align-items: center;
+	justify-content: center;
+	background: transparent;
+	border: var(--stroke-thin) solid transparent;
+	border-radius: var(--radius-sm);
+	color: var(--color-text-light);
+	cursor: pointer;
+	transition: background 0.15s, border-color 0.15s, color 0.15s;
+	flex-shrink: 0;
+}
+
+:modal .modal-close {
+	display: inline-flex;
+}
+
+.modal-close:hover {
+	background: var(--color-surface-muted);
+	border-color: var(--color-border);
+	color: var(--color-text);
+}
+
+.modal-close-icon {
+	display: block;
+	width: 16px;
+	height: 16px;
+	background-color: currentColor;
+	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/x.svg')
+		no-repeat center / contain;
+	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/x.svg')
+		no-repeat center / contain;
+}

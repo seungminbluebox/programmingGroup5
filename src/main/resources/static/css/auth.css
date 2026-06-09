@@ -30,7 +30,7 @@ body {
    ============================================================ */
 
 .auth-form-wrap {
-	position: static;
+	position: relative;
 	width: 100%;
 	max-width: 440px;
 	display: flex;
@@ -76,12 +76,12 @@ form {
    ============================================================ */
 
 .auth-alert {
-	padding: var(--space-2xs) var(--space-xs);
+	padding: var(--space-xs) var(--space-md);
 	background: var(--chip-red);
 	border: var(--stroke-thin) solid var(--color-accent-red-light);
 	border-radius: var(--radius-sm);
 	color: var(--color-accent-red);
-	font-size: var(--font-size-sm\+);
+	font-size: var(--font-size-md);
 	font-weight: var(--font-weight-medium);
 }
 
