@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 	<head>
 		<th:block th:replace="~{fragments/project_layout :: head}"></th:block>
+		<link th:replace="~{fragments/timetable :: stylesheet}" />
 		<script
 		src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js"
 		integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V"
@@ -28,30 +29,13 @@
 									<h2>만날 수 있는 시간</h2>
 									<p>일정이 없는 시간대를 확인하세요.</p>
 								</div>
-								<nav class="project-schedule-nav" aria-label="주간 이동" hx-replace-url="true" hx-push-url="false">
-									<a
-										class="project-schedule-nav-btn"
-										aria-label="이전 주"
-										th:href="@{/project/{id}/schedule(id=${project.id}, date=${weekStart.minusWeeks(1)})}"
-									>
-										<span class="icon icon-chevron-left" aria-hidden="true"></span>
-									</a>
-									<strong
-										class="project-schedule-range"
-										th:text="|${#temporals.format(weekStart, 'M월 d일')} – ${#temporals.format(weekStart.plusDays(6), 'M월 d일')}|"
-									>6월 1일 – 7일</strong>
-									<a
-										class="project-schedule-nav-btn"
-										aria-label="다음 주"
-										th:href="@{/project/{id}/schedule(id=${project.id}, date=${weekStart.plusWeeks(1)})}"
-									>
-										<span class="icon icon-chevron-right" aria-hidden="true"></span>
-									</a>
-									<a
-										class="project-schedule-today-btn"
-										th:href="@{/project/{id}/schedule(id=${project.id})}"
-									>오늘</a>
-								</nav>
+								<th:block th:replace="~{fragments/timetable :: weekNav(
+									@{/project/{id}/schedule(id=${project.id},date=${weekStart.minusWeeks(1)})},
+									@{/project/{id}/schedule(id=${project.id},date=${weekStart.plusWeeks(1)})},
+									@{/project/{id}/schedule(id=${project.id})},
+									${weekStart},
+									'M월 d일'
+								)}"></th:block>
 							</div>
 
 							<div class="project-schedule-legend" aria-label="범례">
@@ -65,66 +49,18 @@
 								</div>
 							</div>
 
-							<div class="project-schedule-scroll">
+							<div class="timetable-scroll">
 								<div
-									class="project-schedule-grid"
-									style="--ps-slot-count: 144; --ps-row-end: 146;"
+									class="timetable-grid"
+									style="--timetable-min-width: 720px; --timetable-label-col: 56px; --timetable-col-width: minmax(88px, 1fr); --timetable-header-height: 52px; --timetable-slot-count: 144; --timetable-row-end: 146;"
 								>
-									<!-- 코너 -->
-									<div class="project-schedule-corner" aria-hidden="true"></div>
-
-									<!-- 요일 헤더 -->
-									<div class="project-schedule-day"
-										th:classappend="${today.equals(weekStart)} ? ' project-schedule-day-today'"
-										style="grid-column: 2">
-										<span>일</span>
-										<strong th:text="${#temporals.format(weekStart, 'M/d')}">6/1</strong>
-									</div>
-									<div class="project-schedule-day"
-										th:classappend="${today.equals(weekStart.plusDays(1))} ? ' project-schedule-day-today'"
-										style="grid-column: 3">
-										<span>월</span>
-										<strong th:text="${#temporals.format(weekStart.plusDays(1), 'M/d')}">6/2</strong>
-									</div>
-									<div class="project-schedule-day"
-										th:classappend="${today.equals(weekStart.plusDays(2))} ? ' project-schedule-day-today'"
-										style="grid-column: 4">
-										<span>화</span>
-										<strong th:text="${#temporals.format(weekStart.plusDays(2), 'M/d')}">6/3</strong>
-									</div>
-									<div class="project-schedule-day"
-										th:classappend="${today.equals(weekStart.plusDays(3))} ? ' project-schedule-day-today'"
-										style="grid-column: 5">
-										<span>수</span>
-										<strong th:text="${#temporals.format(weekStart.plusDays(3), 'M/d')}">6/4</strong>
-									</div>
-									<div class="project-schedule-day"
-										th:classappend="${today.equals(weekStart.plusDays(4))} ? ' project-schedule-day-today'"
-										style="grid-column: 6">
-										<span>목</span>
-										<strong th:text="${#temporals.format(weekStart.plusDays(4), 'M/d')}">6/5</strong>
-									</div>
-									<div class="project-schedule-day"
-										th:classappend="${today.equals(weekStart.plusDays(5))} ? ' project-schedule-day-today'"
-										style="grid-column: 7">
-										<span>금</span>
-										<strong th:text="${#temporals.format(weekStart.plusDays(5), 'M/d')}">6/6</strong>
-									</div>
-									<div class="project-schedule-day"
-										th:classappend="${today.equals(weekStart.plusDays(6))} ? ' project-schedule-day-today'"
-										style="grid-column: 8">
-										<span>토</span>
-										<strong th:text="${#temporals.format(weekStart.plusDays(6), 'M/d')}">6/7</strong>
-									</div>
-
-									<!-- 열 배경 (기본=회색, CSS) -->
-									<div class="project-schedule-col-shade" style="grid-column: 2" aria-hidden="true"></div>
-									<div class="project-schedule-col-shade" style="grid-column: 3" aria-hidden="true"></div>
-									<div class="project-schedule-col-shade" style="grid-column: 4" aria-hidden="true"></div>
-									<div class="project-schedule-col-shade" style="grid-column: 5" aria-hidden="true"></div>
-									<div class="project-schedule-col-shade" style="grid-column: 6" aria-hidden="true"></div>
-									<div class="project-schedule-col-shade" style="grid-column: 7" aria-hidden="true"></div>
-									<div class="project-schedule-col-shade" style="grid-column: 8" aria-hidden="true"></div>
+									<th:block th:replace="~{fragments/timetable :: gridSkeleton(
+										${weekStart},
+										${today},
+										${#numbers.sequence(0, 23)},
+										0,
+										'timetable-col-shade--busy'
+									)}"></th:block>
 
 									<!-- 가용 슬롯 (10분 그리드 스냅: 1분이라도 걸치면 회색) -->
 									<th:block th:each="daySlots, dayStat : ${available}">
@@ -144,25 +80,7 @@
 										</th:block>
 									</th:block>
 
-									<!-- 시간 레이블 -->
-									<div
-										class="project-schedule-time"
-										th:each="hour : ${#numbers.sequence(0, 23)}"
-										th:classappend="${hour == 0} ? ' project-schedule-time-start'"
-										th:style="|--ps-time-row: ${2 + hour * 6}|"
-										th:text="|${hour < 10 ? '0' : ''}${hour}:00|"
-										aria-hidden="true"
-									>00:00</div>
-
-									<!-- 매시 구분선 -->
-									<div
-										class="project-schedule-hour-line"
-										th:each="hour : ${#numbers.sequence(1, 23)}"
-										th:style="|--ps-time-row: ${2 + hour * 6}|"
-										aria-hidden="true"
-									></div>
-
-									</div>
+								</div>
 							</div>
 
 						</article>

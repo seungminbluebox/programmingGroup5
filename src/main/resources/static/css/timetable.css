@@ -1,0 +1,186 @@
+/* ================================================================
+   timetable.css — 주간 타임테이블 공통 스타일
+   schedule.html / project_schedule.html 에서 공유합니다.
+   ================================================================ */
+
+/* --- 네비게이션 바 --- */
+
+.timetable-nav {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	padding: var(--space-2xs);
+	border: var(--stroke-thin) solid var(--color-border);
+	border-radius: var(--radius-md);
+	background: var(--color-surface);
+	flex: 0 0 auto;
+}
+
+.timetable-range {
+	padding: 0 var(--space-2xs);
+	color: var(--color-text);
+	font-size: var(--font-size-md);
+	font-weight: var(--font-weight-semibold);
+	white-space: nowrap;
+}
+
+.timetable-nav-btn,
+.timetable-today-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: 32px;
+	border: var(--stroke-thin) solid transparent;
+	border-radius: var(--radius-sm);
+	color: var(--color-primary);
+	text-decoration: none;
+	transition:
+		background 0.15s,
+		border-color 0.15s;
+}
+
+.timetable-nav-btn {
+	width: 32px;
+	font-size: 16px;
+}
+
+.timetable-today-btn {
+	padding: 0 var(--space-xs);
+	font-size: var(--font-size-md);
+	font-weight: var(--font-weight-semibold);
+}
+
+.timetable-nav-btn:hover,
+.timetable-today-btn:hover {
+	border-color: var(--color-border-indigo);
+	background: var(--chip-indigo);
+}
+
+/* --- 스크롤 컨테이너 --- */
+
+.timetable-scroll {
+	overflow-x: auto;
+	border-top: var(--stroke-thin) solid var(--color-border);
+	border-radius: var(--radius-md);
+	background: var(--color-surface-muted);
+	box-shadow: var(--shadow-sm);
+}
+
+/* --- 그리드 --- */
+
+.timetable-grid {
+	--timetable-slot-height: 12px;
+	--timetable-min-width: 920px;
+	--timetable-label-col: 64px;
+	--timetable-col-width: minmax(112px, 1fr);
+	--timetable-header-height: 58px;
+
+	position: relative;
+	display: grid;
+	min-width: var(--timetable-min-width);
+	grid-template-columns: var(--timetable-label-col) repeat(7, var(--timetable-col-width));
+	grid-template-rows: var(--timetable-header-height) repeat(
+			var(--timetable-slot-count),
+			var(--timetable-slot-height)
+		);
+	background: var(--color-surface);
+}
+
+/* --- 코너 셀 --- */
+
+.timetable-corner {
+	position: sticky;
+	left: 0;
+	z-index: 4;
+	grid-column: 1;
+	grid-row: 1;
+	border-bottom: var(--stroke-thin) solid var(--color-border);
+	background: var(--color-surface);
+}
+
+/* --- 요일 헤더 셀 --- */
+
+.timetable-day {
+	z-index: 3;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-3xs);
+	grid-row: 1;
+	border-bottom: var(--stroke-thin) solid var(--color-border);
+	border-left: var(--stroke-thin) solid var(--color-border);
+	background: var(--color-surface);
+	color: var(--color-text-muted);
+}
+
+.timetable-day span {
+	font-size: var(--font-size-md);
+	font-weight: var(--font-weight-medium);
+}
+
+.timetable-day strong {
+	color: var(--color-text);
+	font-size: var(--font-size-md);
+	font-weight: var(--font-weight-semibold);
+}
+
+.timetable-day-today {
+	background: var(--chip-indigo);
+	color: var(--color-primary);
+}
+
+.timetable-day-today strong {
+	color: var(--color-primary);
+}
+
+/* --- 열 음영 --- */
+
+.timetable-col-shade {
+	z-index: 1;
+	grid-row: 2 / var(--timetable-row-end);
+	border-left: var(--stroke-thin) solid var(--color-border);
+	pointer-events: none;
+}
+
+/* schedule.html: 오늘 열만 파란 배경 */
+.timetable-col-shade.today {
+	background: var(--chip-indigo);
+}
+
+/* --busy가 today보다 뒤에 위치해 동일 명시도에서 cascade로 우선함 */
+.timetable-col-shade.timetable-col-shade--busy {
+	background: rgb(238, 239, 243);
+}
+
+/* --- 시간 레이블 --- */
+
+.timetable-time {
+	position: sticky;
+	left: 0;
+	z-index: 3;
+	grid-column: 1;
+	grid-row: var(--timetable-time-row);
+	align-self: start;
+	padding: var(--space-3xs) var(--space-2xs) 0 0;
+	border-top: var(--stroke-thin) solid var(--color-border);
+	background: var(--color-surface);
+	color: var(--color-text-light);
+	font-size: var(--font-size-xs);
+	font-weight: var(--font-weight-medium);
+	text-align: right;
+}
+
+.timetable-time-start {
+	border-top: none;
+}
+
+/* --- 매시 구분선 --- */
+
+.timetable-hour-line {
+	z-index: 1;
+	grid-column: 2 / 9;
+	grid-row: var(--timetable-time-row);
+	border-top: var(--stroke-thin) solid var(--color-border);
+	pointer-events: none;
+}
