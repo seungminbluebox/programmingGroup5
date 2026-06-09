@@ -148,6 +148,7 @@
 .project-detail-link-button {
 	height: 42px;
 	background: var(--color-surface);
+	box-shadow: var(--shadow-sm);
 }
 
 .project-detail-icon-link {
