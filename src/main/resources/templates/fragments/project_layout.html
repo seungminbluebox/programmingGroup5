@@ -20,9 +20,9 @@
 				<div class="project-detail-title-group">
 					<div class="project-detail-title-row">
 						<h1 th:text="${project.title}">프로젝트 이름</h1>
-						<span class="chip chip-green" th:text="${project.status.label}">
-							진행중
-						</span>
+						<span class="chip chip-green" th:if="${project.status.name() == 'IN_PROGRESS'}" th:text="${project.status.label}">진행중</span>
+						<span class="chip chip-orange" th:if="${project.status.name() == 'COMPLETED'}" th:text="${project.status.label}">완료</span>
+						<span class="chip chip-red" th:if="${project.status.name() == 'PAUSED'}" th:text="${project.status.label}">중단</span>
 					</div>
 					<p th:text="${project.description}">프로젝트 설명</p>
 					<div class="project-detail-meta"></div>
