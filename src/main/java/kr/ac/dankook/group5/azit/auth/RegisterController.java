@@ -15,8 +15,8 @@ public class RegisterController {
 
     @GetMapping("/register")
     public String registerForm(Model model) {
-        model.addAttribute("isModal", false);
-        return "register";
+        model.addAttribute("view", "register");
+        return "auth";
     }
 
     @PostMapping("/register")

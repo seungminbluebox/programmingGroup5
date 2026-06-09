@@ -16,9 +16,25 @@
 			href="/src/main/resources/static/css/fragments/sidebar.css"
 			th:href="@{/css/fragments/sidebar.css}"
 		/>
+		<link rel="stylesheet" th:href="@{/css/auth.css}" />
+		<script
+			src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js"
+			integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/htmx-ext-head-support@2.0.5"
+			integrity="sha384-cvMqHzjCJsOHgGuyB3sWXaUSv/Krm0BdzjuI1rtkjCbL1l1oHJx+cHyVRJhyuEz0"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/htmx-ext-route-layout@0.1.4/dist/index.min.js"
+			integrity="sha256-X7Tg/54td+irTN7upx+rWIRXE/pBynhrmfsJn7Da/Eo="
+			crossorigin="anonymous"
+		></script>
 	</head>
 	<body>
-		<header id="sidebar" th:fragment="sidebar">
+		<header id="sidebar" th:fragment="sidebar" hx-ext="head-support">
 			<div id="sidebar-header">
 				<div>
 					<a id="sidebar-home" class="logo" th:href="@{/}">AZIT</a>
@@ -112,8 +128,11 @@
 							th:unless="${sidebarMemberName != null}"
 							th:href="@{/login}"
 							th:classappend="${currentPath == '/login'} ? 'active'"
-							>로그인</a
-						>
+							onclick="authSwitch('login');event.preventDefault();"
+							>
+							<div class="sidebar-login-icon"></div>
+							<span>로그인</span>
+						</a>
 						<input
 							id="sidebar-usermenu-toggle-input"
 							class="toggle-input"
@@ -123,12 +142,15 @@
 							id="sidebar-usermenu-toggle-button"
 							class="toggle-button"
 							for="sidebar-usermenu-toggle-input"
-							th:if="${sidebarMemberName != null}"
 						></label>
 						<nav id="sidebar-usermenu">
 							<ul>
 								<li th:unless="${sidebarMemberName != null}">
-									<a id="sidebar-register" th:href="@{/register}">
+									<a
+										id="sidebar-register"
+										th:href="@{/register}"
+										onclick="authSwitch('register');event.preventDefault();"
+									>
 										<div class="sidebar-usermenu-icon"></div>
 										<div class="sidebar-usermenu-label">회원가입</div>
 									</a>
@@ -148,6 +170,7 @@
 					</li>
 				</ul>
 			</nav>
+			<dialog th:if="${sidebarMemberName != null}" th:replace="~{auth :: modal}"></dialog>
 		</header>
 		<main>
 			<h1>본문</h1>

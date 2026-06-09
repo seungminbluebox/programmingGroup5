@@ -9,7 +9,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public String login(Model model) {
-        model.addAttribute("isModal", false);
-        return "login";
+        model.addAttribute("view", "login");
+        return "auth";
     }
 }

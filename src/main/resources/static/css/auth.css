@@ -2,13 +2,12 @@
    Auth Layout — login.html / register.html
    ============================================================ */
 
-body {
+.page-auth {
 	min-height: 100vh;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	gap: var(--space-lg);
-	background: var(--color-bg);
 }
 
 /* ============================================================
@@ -21,15 +20,47 @@ body {
 	align-items: center;
 }
 
-.logo {
+.auth-hero .logo {
 	font-size: var(--font-size-9xl);
+}
+
+/* ============================================================
+   Auth section toggle
+   ============================================================ */
+
+.auth-section {
+	display: none;
+}
+
+.auth-section.active {
+	display: contents;
 }
 
 /* ============================================================
    Card
    ============================================================ */
 
-.auth-form-wrap {
+#modal-auth:not(:open):not(.page-auth *) {
+	display: none;
+}
+
+
+#modal-auth:open:not(.page-auth *) {
+	position: fixed;
+	inset: 0;
+	margin: auto;
+	z-index: 100;
+}
+
+.page-auth #modal-auth .modal-close {
+	display: none;
+}
+
+.page-auth #modal-auth::backdrop {
+	display: none;
+}
+
+#modal-auth {
 	position: relative;
 	width: 100%;
 	max-width: 440px;
