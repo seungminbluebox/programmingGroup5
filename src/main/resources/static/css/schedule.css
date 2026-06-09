@@ -33,7 +33,7 @@
 	width: 40%;
 	height: 100%;
 	background: var(--color-primary);
-	box-shadow: 0 0 10px var(--color-primary);
+	box-shadow: var(--shadow-md);
 	content: "";
 	transform: translateX(-100%);
 }
@@ -182,7 +182,7 @@
 	border-top: var(--stroke-thin) solid var(--color-border);
 	border-radius: var(--radius-md);
 	background: var(--color-surface-muted);
-	box-shadow: 0 10px 24px var(--overlay-black-5);
+	box-shadow: var(--shadow-sm);
 }
 
 .schedule-grid {
@@ -385,7 +385,7 @@
 	border: var(--stroke-thin) solid var(--color-border);
 	border-radius: var(--radius-md);
 	background: var(--color-surface);
-	box-shadow: 0 10px 24px var(--overlay-black-5);
+	box-shadow: var(--shadow-lg);
 	color: var(--color-text);
 }
 

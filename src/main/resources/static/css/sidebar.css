@@ -12,7 +12,7 @@
 	z-index: 10;
 	background: rgba(255, 255, 255, 0.94);
 	border-right: 1px solid rgba(229, 231, 235, 0.72);
-	box-shadow: 14px 0 34px rgba(17, 24, 39, 0.06);
+	box-shadow: var(--shadow-xs);
 	backdrop-filter: blur(14px);
 	display: flex;
 	flex-direction: column;
@@ -317,7 +317,7 @@
 	border: var(--stroke-thin) solid var(--color-border);
 	border-radius: var(--radius-sm);
 	background: var(--color-surface);
-	box-shadow: 0 10px 30px rgb(15 23 42 / 0.12);
+	box-shadow: var(--shadow-lg);
 	z-index: 20;
 }
 
