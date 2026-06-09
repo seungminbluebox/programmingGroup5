@@ -3,6 +3,7 @@ package kr.ac.dankook.group5.azit.auth;
 import kr.ac.dankook.group5.azit.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,8 +14,9 @@ public class RegisterController {
     private final UserService userService;
 
     @GetMapping("/register")
-    public String registerForm() {
-        return "register";
+    public String registerForm(Model model) {
+        model.addAttribute("view", "register");
+        return "auth";
     }
 
     @PostMapping("/register")

@@ -5,223 +5,223 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>프로필 - Azit</title>
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-		<link
-			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-			rel="stylesheet"
-		/>
 		<link rel="stylesheet" href="/css/common.css" />
 		<link rel="stylesheet" href="/css/fragments/sidebar.css" />
-		<link rel="stylesheet" href="/css/azit.css" />
-		<style>
-			.edit-mode {
-				display: none;
-			}
-			.profile-preview-image {
-				width: 150px;
-				height: 150px;
-				object-fit: cover;
-			}
-		</style>
+		<link rel="stylesheet" href="/css/profile.css" />
 	</head>
-	<body class="azit-app has-sidebar">
+	<body>
 		<div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
-		<main class="azit-shell azit-page">
-			<section class="azit-panel azit-profile-header" style="margin-bottom: 24px">
-				<div>
-					<img
-						th:src="${member.profileUrl != null ? member.profileUrl : 'https://via.placeholder.com/150'}"
-						class="azit-avatar"
-						alt="Profile"
-					/>
+		<main class="profile-page">
+			<!-- ── Profile Header Card ── -->
+			<section class="card profile-header">
+				<!-- Avatar -->
+				<img
+					th:if="${member.profileUrl != null}"
+					th:src="${member.profileUrl}"
+					class="profile-avatar"
+					alt="프로필 사진"
+				/>
+				<div
+					th:unless="${member.profileUrl != null}"
+					class="profile-avatar profile-avatar-initials"
+					aria-hidden="true"
+				>
+					<span th:text="${#strings.substring(member.name, 0, 1)}">U</span>
 				</div>
-				<div>
-					<div class="azit-kicker">Member Profile</div>
-					<h1 class="azit-profile-name" th:text="${member.name}">User Name</h1>
-					<p class="azit-profile-meta" th:text="${member.email}">
-						email@example.com
-					</p>
-					<p class="azit-profile-bio" th:text="${member.bio}">
+
+				<!-- Info -->
+				<div class="profile-info">
+					<div class="profile-title-row">
+						<h1 class="profile-name" th:text="${member.name}">User Name</h1>
+						<span class="chip chip-green">탐색중</span>
+					</div>
+					<p class="profile-bio" th:text="${member.bio}">
 						Short bio goes here...
 					</p>
+					<div class="profile-meta">
+						<span class="profile-meta-item">
+							<span class="icon icon-mail" aria-hidden="true"></span>
+							<span th:text="${member.email}">email@example.com</span>
+						</span>
+						<!-- <span class="profile-meta-item" th:if="${member.age != null}">
+							<span class="icon icon-user" aria-hidden="true"></span>
+							<span th:text="${member.age + '세'}">25세</span>
+						</span> -->
+					</div>
 				</div>
+
+				<!-- Edit button (owner only) -->
 				<div th:if="${isOwnProfile}">
-					<button id="editBtn" class="azit-button" onclick="toggleEdit()">
+					<button id="editBtn" class="btn btn-outline" onclick="toggleEdit()">
+						<span class="icon icon-pencil" aria-hidden="true"></span>
 						프로필 수정
 					</button>
 				</div>
 			</section>
 
-			<!-- View Mode -->
-			<div id="viewMode">
-				<div class="azit-grid">
-					<div>
-						<div class="azit-card mb-4">
-							<div class="azit-card-header">기술 스택</div>
-							<div class="azit-card-body">
-								<span
-									th:each="ms : ${member.memberStacks}"
-									class="azit-stack-badge"
-								>
-									<img
-										th:if="${ms.techStack.iconUrl != null}"
-										th:src="${ms.techStack.iconUrl}"
-										alt=""
-									/>
-									<span th:text="${ms.techStack.stackName}">Java</span>
-								</span>
-								<p
-									th:if="${#lists.isEmpty(member.memberStacks)}"
-									class="azit-empty"
-								>
-									선택된 기술 스택이 없습니다.
-								</p>
+			<!-- ── View Mode ── -->
+			<section id="viewMode">
+				<!-- Tech Stack Card -->
+				<section class="card" style="margin-bottom: var(--space-lg)">
+					<div class="card-header">
+						<span class="card-title">
+							<span class="icon icon-code-2" aria-hidden="true"></span>
+							기술 스택
+						</span>
+						<button
+							th:if="${isOwnProfile}"
+							class="btn btn-ghost btn-sm"
+							onclick="toggleEdit()"
+						>
+							<span class="icon icon-square-pen" aria-hidden="true"></span>
+							수정
+						</button>
+					</div>
+					<div class="card-body">
+						<div class="stack-chips">
+							<span
+								th:each="ms : ${member.memberStacks}"
+								class="stack-chip"
+							>
+								<img
+									th:if="${ms.techStack.iconUrl != null}"
+									th:src="${ms.techStack.iconUrl}"
+									alt=""
+								/>
+								<span th:text="${ms.techStack.stackName}">Java</span>
+							</span>
+						</div>
+						<p
+							th:if="${#lists.isEmpty(member.memberStacks)}"
+							class="empty-state"
+						>
+							선택된 기술 스택이 없습니다.
+						</p>
+					</div>
+				</section>
+
+				<!-- Career Card -->
+				<section class="card" style="margin-bottom: var(--space-lg)">
+					<div class="card-header">
+						<span class="card-title">
+							<span class="icon icon-folder" aria-hidden="true"></span>
+							프로젝트 경험
+						</span>
+						<button
+							th:if="${isOwnProfile}"
+							class="btn btn-ghost btn-sm"
+							onclick="toggleEdit()"
+						>
+							<span class="icon icon-square-pen" aria-hidden="true"></span>
+							수정
+						</button>
+					</div>
+					<div class="career-list" th:if="${!#lists.isEmpty(member.careers)}">
+						<div th:each="career : ${member.careers}" class="career-row">
+							<div class="career-icon">
+								<span class="icon icon-folder" aria-hidden="true"></span>
 							</div>
+							<div class="career-info">
+								<div class="career-title" th:text="${career.title}">
+									Project Title
+								</div>
+								<div class="career-desc" th:text="${career.description}">
+									Description
+								</div>
+							</div>
+							<a
+								th:if="${career.linkUrl != null and career.linkUrl != ''}"
+								th:href="${career.linkUrl}"
+								target="_blank"
+								class="btn btn-ghost btn-sm career-link"
+								>링크 →</a
+							>
 						</div>
 					</div>
-					<div>
-						<div class="azit-card mb-4">
-							<div class="azit-card-header">경력 및 프로젝트</div>
-							<ul class="list-group list-group-flush">
-								<li
-									th:each="career : ${member.careers}"
-									class="list-group-item"
-								>
-									<strong th:text="${career.title}">Title</strong>
-									<br /><small
-										class="text-muted"
-										th:text="${career.description}"
-										>Description</small
-									>
-									<div
-										th:if="${career.linkUrl != null and career.linkUrl != ''}"
-									>
-										<small
-											><a
-												th:href="${career.linkUrl}"
-												target="_blank"
-												class="text-decoration-none"
-												>Link</a
-											></small
-										>
-									</div>
-								</li>
-								<li
-									th:if="${#lists.isEmpty(member.careers)}"
-									class="list-group-item text-muted"
-								>
-									등록된 경력이 없습니다.
-								</li>
-							</ul>
-						</div>
-
-						<div class="azit-card">
-							<div class="azit-card-header">활동 가능 시간</div>
-							<div class="azit-card-body">
-								<table class="table table-sm azit-table">
-									<thead>
-										<tr>
-											<th>Day</th>
-											<th>Time Range</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr th:each="avail : ${member.availabilities}">
-											<td th:text="${avail.dayOfWeek}">Monday</td>
-											<td
-												th:text="${avail.startTime + ' - ' + avail.endTime}"
-											>
-												09:00 - 18:00
-											</td>
-										</tr>
-									</tbody>
-								</table>
-								<p
-									th:if="${#lists.isEmpty(member.availabilities)}"
-									class="azit-empty text-center"
-								>
-									등록된 시간이 없습니다.
-								</p>
-							</div>
-						</div>
+					<div class="card-body" th:if="${#lists.isEmpty(member.careers)}">
+						<p class="empty-state">등록된 경력이 없습니다.</p>
 					</div>
-				</div>
-			</div>
+				</section>
+			</section>
 
-			<!-- Edit Mode (Owner Only) -->
-			<div id="editMode" class="edit-mode" th:if="${isOwnProfile}">
+			<!-- ── Edit Mode (Owner Only) ── -->
+			<section id="editMode" class="edit-mode" th:if="${isOwnProfile}">
 				<form
 					th:action="@{/profile/update}"
 					method="post"
 					enctype="multipart/form-data"
-					class="azit-card azit-card-body"
+					class="card edit-form"
 				>
-					<div class="row">
-						<!-- Profile Image Upload -->
-						<div class="col-12 mb-3 text-center">
-							<label class="azit-form-label d-block">프로필 사진</label>
+					<!-- Profile Image -->
+					<div>
+						<span class="label">프로필 사진</span>
+						<div class="image-preview-wrap">
 							<img
 								id="profileImagePreview"
-								th:src="${member.profileUrl != null ? member.profileUrl : 'https://via.placeholder.com/150'}"
-								th:attr="data-original-src=${member.profileUrl != null ? member.profileUrl : 'https://via.placeholder.com/150'}"
-								class="rounded-circle profile-preview-image shadow-sm mb-3"
-								alt="Profile preview"
+								th:src="${member.profileUrl != null ? member.profileUrl : 'https://via.placeholder.com/100'}"
+								th:attr="data-original-src=${member.profileUrl != null ? member.profileUrl : 'https://via.placeholder.com/100'}"
+								class="image-preview"
+								alt="프로필 미리보기"
 							/>
 							<input
 								id="profileImageInput"
 								type="file"
 								name="profileImage"
-								class="form-control azit-input mx-auto"
-								style="max-width: 420px"
+								class="input"
+								style="max-width: 360px"
 								accept="image/*"
 							/>
 							<small class="text-muted"
 								>5MB 이하의 이미지를 선택하세요.</small
 							>
-							<div
-								id="profileImageError"
-								class="text-danger small mt-2"
-							></div>
+							<div id="profileImageError" class="field-error"></div>
 						</div>
+					</div>
 
-						<div class="col-md-6 mb-3">
-							<label class="azit-form-label">이름</label>
+					<!-- Name & Age -->
+					<div class="form-row">
+						<div class="form-col">
+							<label class="label" for="edit-name">이름</label>
 							<input
+								id="edit-name"
 								type="text"
 								name="name"
-								class="form-control azit-input"
+								class="input"
 								th:value="${member.name}"
 							/>
 						</div>
-						<div class="col-md-6 mb-3">
-							<label class="azit-form-label">나이</label>
+						<div class="form-col">
+							<label class="label" for="edit-age">나이</label>
 							<input
+								id="edit-age"
 								type="number"
 								name="age"
-								class="form-control azit-input"
+								class="input"
 								th:value="${member.age}"
 							/>
 						</div>
-						<div class="col-12 mb-3">
-							<label class="azit-form-label">자기소개</label>
-							<textarea
-								name="bio"
-								class="form-control azit-input"
-								rows="3"
-								th:text="${member.bio}"
-							></textarea>
-						</div>
+					</div>
 
-						<!-- Tech Stack Choices -->
-						<div class="col-12 mb-3">
-							<label class="azit-form-label">기술 스택</label>
-							<div class="azit-form-section">
-								<div
-									th:each="stack : ${allStacks}"
-									class="form-check form-check-inline"
-								>
+					<!-- Bio -->
+					<div>
+						<label class="label" for="edit-bio">자기소개</label>
+						<textarea
+							id="edit-bio"
+							name="bio"
+							class="input"
+							rows="3"
+							th:text="${member.bio}"
+						></textarea>
+					</div>
+
+					<!-- Tech Stack -->
+					<div>
+						<span class="label">기술 스택</span>
+						<div class="form-section">
+							<div class="checkbox-group">
+								<div th:each="stack : ${allStacks}" class="checkbox-item">
 									<input
-										class="form-check-input"
 										type="checkbox"
 										name="stackIds"
 										th:value="${stack.id}"
@@ -229,7 +229,6 @@
 										th:checked="${selectedStackIds != null && #lists.contains(selectedStackIds, stack.id)}"
 									/>
 									<label
-										class="form-check-item"
 										th:for="${'stack-' + stack.id}"
 										th:text="${stack.stackName}"
 										>Java</label
@@ -237,176 +236,75 @@
 								</div>
 							</div>
 						</div>
+					</div>
 
-						<!-- Edit Careers -->
-						<div class="col-12 mb-4">
-							<label class="azit-form-label">경력 및 프로젝트</label>
-							<div id="careerContainer" class="azit-form-section">
-								<div
-									th:each="career, stat : ${member.careers}"
-									class="career-item row g-2 mb-2 align-items-end"
-								>
-									<div class="col-md-3">
-										<input
-											type="text"
-											name="careerTitle"
-											class="form-control form-control-sm azit-input"
-											placeholder="Title / Company"
-											th:value="${career.title}"
-											required
-										/>
-									</div>
-									<div class="col-md-5">
-										<input
-											type="text"
-											name="careerDesc"
-											class="form-control form-control-sm azit-input"
-											placeholder="Description / Role"
-											th:value="${career.description}"
-										/>
-									</div>
-									<div class="col-md-3">
-										<input
-											type="url"
-											name="careerLink"
-											class="form-control form-control-sm azit-input"
-											placeholder="URL (Optional)"
-											th:value="${career.linkUrl}"
-										/>
-									</div>
-									<div class="col-md-1 text-end">
-										<button
-											type="button"
-											class="azit-button azit-button-danger"
-											style="min-height: 34px; padding: 0 12px"
-											onclick="
-												this.closest('.career-item').remove()
-											"
-										>
-											X
-										</button>
-									</div>
+					<!-- Careers -->
+					<div>
+						<span class="label">경력 및 프로젝트</span>
+						<div id="careerContainer" class="form-section">
+							<div
+								th:each="career, stat : ${member.careers}"
+								class="dynamic-row"
+							>
+								<div class="dynamic-row-fields">
+									<input
+										type="text"
+										name="careerTitle"
+										class="input"
+										placeholder="타이틀 / 회사명"
+										th:value="${career.title}"
+										required
+									/>
+									<input
+										type="text"
+										name="careerDesc"
+										class="input"
+										placeholder="설명 / 역할"
+										th:value="${career.description}"
+									/>
+									<input
+										type="url"
+										name="careerLink"
+										class="input"
+										placeholder="URL (선택)"
+										th:value="${career.linkUrl}"
+									/>
 								</div>
-							</div>
-							<button
-								type="button"
-								class="azit-button azit-button-secondary mt-2"
-								onclick="addCareer()"
-							>
-								경력 추가
-							</button>
-						</div>
-
-						<!-- Edit Availabilities -->
-						<div class="col-12 mb-4">
-							<label class="azit-form-label">활동 가능 시간</label>
-							<div id="availContainer" class="azit-form-section">
-								<div
-									th:each="avail : ${member.availabilities}"
-									class="avail-item row g-2 mb-2 align-items-end"
+								<button
+									type="button"
+									class="btn btn-danger btn-sm"
+									onclick="this.closest('.dynamic-row').remove()"
 								>
-									<div class="col-md-3">
-										<select
-											name="availDay"
-											class="form-select form-select-sm azit-input"
-										>
-											<option
-												value="MON"
-												th:selected="${avail.dayOfWeek.name() == 'MON'}"
-											>
-												Monday
-											</option>
-											<option
-												value="TUE"
-												th:selected="${avail.dayOfWeek.name() == 'TUE'}"
-											>
-												Tuesday
-											</option>
-											<option
-												value="WED"
-												th:selected="${avail.dayOfWeek.name() == 'WED'}"
-											>
-												Wednesday
-											</option>
-											<option
-												value="THU"
-												th:selected="${avail.dayOfWeek.name() == 'THU'}"
-											>
-												Thursday
-											</option>
-											<option
-												value="FRI"
-												th:selected="${avail.dayOfWeek.name() == 'FRI'}"
-											>
-												Friday
-											</option>
-											<option
-												value="SAT"
-												th:selected="${avail.dayOfWeek.name() == 'SAT'}"
-											>
-												Saturday
-											</option>
-											<option
-												value="SUN"
-												th:selected="${avail.dayOfWeek.name() == 'SUN'}"
-											>
-												Sunday
-											</option>
-										</select>
-									</div>
-									<div class="col-md-4">
-										<input
-											type="time"
-											name="availStart"
-											class="form-control form-control-sm azit-input"
-											th:value="${avail.startTime}"
-											required
-										/>
-									</div>
-									<div class="col-md-4">
-										<input
-											type="time"
-											name="availEnd"
-											class="form-control form-control-sm azit-input"
-											th:value="${avail.endTime}"
-											required
-										/>
-									</div>
-									<div class="col-md-1 text-end">
-										<button
-											type="button"
-											class="azit-button azit-button-danger"
-											style="min-height: 34px; padding: 0 12px"
-											onclick="this.closest('.avail-item').remove()"
-										>
-											X
-										</button>
-									</div>
-								</div>
+									삭제
+								</button>
 							</div>
-							<button
-								type="button"
-								class="azit-button azit-button-secondary mt-2"
-								onclick="addAvailability()"
-							>
-								시간 추가
-							</button>
 						</div>
+						<button
+							type="button"
+							class="btn btn-outline btn-sm"
+							style="margin-top: var(--space-2xs)"
+							onclick="addCareer()"
+						>
+							+ 경력 추가
+						</button>
+					</div>
 
-						<div class="col-12 text-end">
-							<button
-								type="button"
-								class="azit-button azit-button-secondary"
-								onclick="toggleEdit()"
-							>
-								취소
-							</button>
-							<button type="submit" class="azit-button">저장</button>
-						</div>
+					<!-- Form Actions -->
+					<div class="form-actions">
+						<button
+							type="button"
+							class="btn btn-outline"
+							onclick="toggleEdit()"
+						>
+							취소
+						</button>
+						<button type="submit" class="btn btn-primary">저장</button>
 					</div>
 				</form>
-			</div>
+			</section>
+			<!-- /editMode -->
 		</main>
+		<!-- /profile-page -->
 
 		<script>
 			let activeProfilePreviewUrl = null;
@@ -420,11 +318,11 @@
 				if (editMode.style.display === 'none' || editMode.style.display === '') {
 					editMode.style.display = 'block';
 					viewMode.style.display = 'none';
-					editBtn.innerText = '프로필 보기';
+					if (editBtn) editBtn.textContent = '프로필 보기';
 				} else {
 					editMode.style.display = 'none';
 					viewMode.style.display = 'block';
-					editBtn.innerText = '프로필 수정';
+					if (editBtn) editBtn.textContent = '프로필 수정';
 					resetProfileImagePreview();
 				}
 			}
@@ -442,7 +340,7 @@
 
 				imageInput.value = '';
 				imagePreview.src = imagePreview.dataset.originalSrc;
-				if (imageError) imageError.innerText = '';
+				if (imageError) imageError.textContent = '';
 			}
 
 			function setupProfileImagePreview() {
@@ -460,64 +358,63 @@
 
 					if (selectedFile.size > maxProfileImageSize) {
 						resetProfileImagePreview();
-						if (imageError) {
-							imageError.innerText = '프로필 이미지는 5MB 이하여야 합니다.';
-						}
+						if (imageError)
+							imageError.textContent =
+								'프로필 이미지는 5MB 이하여야 합니다.';
 						return;
 					}
 
 					if (!selectedFile.type.startsWith('image/')) {
 						resetProfileImagePreview();
-						if (imageError) {
-							imageError.innerText = '이미지 파일을 선택하세요.';
-						}
+						if (imageError)
+							imageError.textContent = '이미지 파일을 선택하세요.';
 						return;
 					}
 
-					if (activeProfilePreviewUrl) {
+					if (activeProfilePreviewUrl)
 						URL.revokeObjectURL(activeProfilePreviewUrl);
-					}
-
 					activeProfilePreviewUrl = URL.createObjectURL(selectedFile);
 					imagePreview.src = activeProfilePreviewUrl;
-					if (imageError) imageError.innerText = '';
+					if (imageError) imageError.textContent = '';
 				});
 			}
 
 			function addCareer() {
 				const container = document.getElementById('careerContainer');
-				const newRow = document.createElement('div');
-				newRow.className = 'career-item row g-2 mb-2 align-items-end';
-				newRow.innerHTML = `
-            <div class="col-md-3"><input type="text" name="careerTitle" class="form-control form-control-sm azit-input" placeholder="Title / Company" required></div>
-            <div class="col-md-5"><input type="text" name="careerDesc" class="form-control form-control-sm azit-input" placeholder="Description / Role"></div>
-            <div class="col-md-3"><input type="url" name="careerLink" class="form-control form-control-sm azit-input" placeholder="URL (Optional)"></div>
-            <div class="col-md-1 text-end"><button type="button" class="azit-button azit-button-danger" style="min-height: 34px; padding: 0 12px" onclick="this.closest('.career-item').remove()">X</button></div>
-        `;
-				container.appendChild(newRow);
+				const row = document.createElement('div');
+				row.className = 'dynamic-row';
+				row.innerHTML = `
+					<div class="dynamic-row-fields">
+						<input type="text" name="careerTitle" class="input" placeholder="타이틀 / 회사명" required />
+						<input type="text" name="careerDesc" class="input" placeholder="설명 / 역할" />
+						<input type="url" name="careerLink" class="input" placeholder="URL (선택)" />
+					</div>
+					<button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.dynamic-row').remove()">삭제</button>
+				`;
+				container.appendChild(row);
 			}
 
 			function addAvailability() {
 				const container = document.getElementById('availContainer');
-				const newRow = document.createElement('div');
-				newRow.className = 'avail-item row g-2 mb-2 align-items-end';
-				newRow.innerHTML = `
-            <div class="col-md-3">
-                <select name="availDay" class="form-select form-select-sm azit-input">
-                    <option value="MON">Monday</option>
-                    <option value="TUE">Tuesday</option>
-                    <option value="WED">Wednesday</option>
-                    <option value="THU">Thursday</option>
-                    <option value="FRI">Friday</option>
-                    <option value="SAT">Saturday</option>
-                    <option value="SUN">Sunday</option>
-                </select>
-            </div>
-            <div class="col-md-4"><input type="time" name="availStart" class="form-control form-control-sm azit-input" required></div>
-            <div class="col-md-4"><input type="time" name="availEnd" class="form-control form-control-sm azit-input" required></div>
-            <div class="col-md-1 text-end"><button type="button" class="azit-button azit-button-danger" style="min-height: 34px; padding: 0 12px" onclick="this.closest('.avail-item').remove()">X</button></div>
-        `;
-				container.appendChild(newRow);
+				const row = document.createElement('div');
+				row.className = 'dynamic-row';
+				row.innerHTML = `
+					<div class="dynamic-row-fields">
+						<select name="availDay" class="input">
+							<option value="MON">Monday</option>
+							<option value="TUE">Tuesday</option>
+							<option value="WED">Wednesday</option>
+							<option value="THU">Thursday</option>
+							<option value="FRI">Friday</option>
+							<option value="SAT">Saturday</option>
+							<option value="SUN">Sunday</option>
+						</select>
+						<input type="time" name="availStart" class="input" required />
+						<input type="time" name="availEnd" class="input" required />
+					</div>
+					<button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.dynamic-row').remove()">삭제</button>
+				`;
+				container.appendChild(row);
 			}
 
 			setupProfileImagePreview();

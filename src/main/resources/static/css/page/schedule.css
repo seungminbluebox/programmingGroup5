@@ -488,27 +488,6 @@
 	line-height: 1.35;
 }
 
-.schedule-create-form .input {
-	min-height: 46px;
-	padding: var(--space-2xs) var(--space-xs);
-	border-color: var(--color-border);
-	border-radius: var(--radius-sm);
-	box-shadow: none;
-	color: var(--color-text);
-	font-size: var(--font-size-md\+);
-}
-
-.schedule-create-form .input:focus {
-	border-color: var(--color-primary);
-	border-width: var(--stroke-thin);
-	box-shadow: 0 0 0 3px var(--chip-indigo);
-}
-
-.schedule-create-form .input:disabled {
-	background: var(--color-surface-muted);
-	color: var(--color-text-light);
-	cursor: not-allowed;
-}
 
 .schedule-type-field {
 	border: 0;
