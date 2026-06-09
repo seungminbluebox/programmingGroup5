@@ -82,7 +82,11 @@
 				</ul>
 			</nav>
 			<nav id="sidebar-projects" th:if="${sidebarMemberName != null}">
-				<h2>내 프로젝트</h2>
+				<input id='sidebar-projects-toggle-input' class='toggle-input' type='checkbox' checked />
+				<h2>
+					<span>내 프로젝트</span>
+					<label id='sidebar-projects-toggle-button' for='sidebar-projects-toggle-input' aria-label='내 프로젝트 접기/펼치기'></label>
+				</h2>
 				<ul>
 					<li th:each="project: ${sidebarProjects}">
 						<a
@@ -135,6 +139,12 @@
 										<div class="sidebar-usermenu-label">회원가입</div>
 									</a>
 								</li>
+                                    <li th:if="${sidebarMemberName != null}">
+                                        <a id='sidebar-profile' th:href='@{/profile/me}'>
+                                            <div class='sidebar-usermenu-icon'></div>
+                                            <div class='sidebar-usermenu-label'>프로필 수정</div>
+                                        </a>
+                                    </li>
 								<li th:if="${sidebarMemberName != null}">
 									<form th:action="@{/logout}" method="POST">
 										<button id="sidebar-logout" type="submit">

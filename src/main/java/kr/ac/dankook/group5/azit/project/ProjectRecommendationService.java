@@ -29,6 +29,7 @@ public class ProjectRecommendationService {
         List<String> stackNames = getStackNames(member);
 
         return projects.stream()
+                .filter(project -> member == null || !projectMemberRepository.existsByProjectAndMember(project, member))
                 .map(project -> toRecommendation(project, stackNames, member))
                 .sorted(Comparator.comparingLong(ProjectRecommendation::matchCount).reversed()
                         .thenComparing(recommendation -> recommendation.project().getId()))
@@ -68,16 +69,17 @@ public class ProjectRecommendationService {
         List<String> memberNames = projectMembers.stream()
                 .map(ProjectMember::getMember)
                 .filter(projectMember -> projectMember != null && projectMember.getName() != null)
-                .map(Member::getName)
+                .map(memberItem -> memberItem.getName().trim())
+                .filter(memberName -> !memberName.isEmpty())
                 .toList();
         Member owner = projectMembers.stream()
                 .filter(projectMember -> projectMember.getRole() == ProjectMemberRole.OWNER)
                 .map(ProjectMember::getMember)
-                .filter(projectOwner -> projectOwner != null && projectOwner.getName() != null)
+                .filter(projectOwner -> projectOwner != null)
                 .findFirst()
                 .orElse(null);
         Long ownerId = owner == null ? null : owner.getId();
-        String ownerName = owner == null ? "미정" : owner.getName();
+        String ownerName = resolveOwnerName(owner);
         boolean alreadyMember = member != null && projectMembers.stream()
                 .anyMatch(projectMember -> projectMember.getMember() != null
                         && projectMember.getMember().getId() != null
@@ -97,5 +99,18 @@ public class ProjectRecommendationService {
                 ownerName,
                 alreadyMember,
                 alreadyApplied);
+    }
+
+    private String resolveOwnerName(Member owner) {
+        if (owner == null) {
+            return "미정";
+        }
+        if (owner.getName() != null && !owner.getName().trim().isEmpty()) {
+            return owner.getName().trim();
+        }
+        if (owner.getEmail() != null && !owner.getEmail().trim().isEmpty()) {
+            return owner.getEmail().trim();
+        }
+        return "미정";
     }
 }
