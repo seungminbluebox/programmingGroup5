@@ -103,7 +103,7 @@
 						<a
 							class="sidebar-project"
 							th:href="@{/project/{projectId}(projectId=${project.id})}"
-							th:classappend="${currentPath == #strings.concat('/project/', project.id)} ? 'active'"
+							th:classappend="${currentPath == #strings.concat('/project/', project.id) || #strings.startsWith(currentPath, #strings.concat('/project/', project.id, '/'))} ? 'active'"
 						>
 							<div
 								th:replace="~{fragments/project_icon :: projectIcon(${project.title}, 'sidebar-project-icon')}"
