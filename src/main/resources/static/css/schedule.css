@@ -144,37 +144,7 @@
 }
 
 .schedule-icon {
-	width: 16px;
-	height: 16px;
-	background-color: currentColor;
-}
-
-.schedule-icon-chevron-left {
-	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/chevron-left.svg')
-		no-repeat center / contain;
-	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/chevron-left.svg')
-		no-repeat center / contain;
-}
-
-.schedule-icon-chevron-right {
-	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/chevron-right.svg')
-		no-repeat center / contain;
-	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/chevron-right.svg')
-		no-repeat center / contain;
-}
-
-.schedule-icon-plus {
-	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/plus.svg')
-		no-repeat center / contain;
-	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/plus.svg')
-		no-repeat center / contain;
-}
-
-.schedule-icon-x {
-	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/x.svg')
-		no-repeat center / contain;
-	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/x.svg') no-repeat
-		center / contain;
+	font-size: 16px;
 }
 
 .schedule-scroll {

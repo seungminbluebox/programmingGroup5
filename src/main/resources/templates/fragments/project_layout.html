@@ -38,64 +38,52 @@
 					target="_blank"
 					rel="noopener"
 				>
-					<span class="project-detail-icon-link" aria-hidden="true"></span>
+					<span class="project-detail-icon-link icon icon-external-link" aria-hidden="true"></span>
 					<span th:text="${link.label}">GitHub 저장소</span>
 				</a>
 			</div>
 		</section>
 
-		<nav class="project-detail-tabs" aria-label="프로젝트 상세 메뉴">
+		<nav class="tabs" aria-label="프로젝트 상세 메뉴">
 			<a
-				class="project-detail-tab"
+				class="tab"
 				th:classappend="${activePage == 'overview'} ? ' active'"
 				th:href="@{/project/{projectId}(projectId=${project.id})}"
 			>
-				<span class="project-detail-tab-icon icon-home" aria-hidden="true"></span>
+				<span class="project-tab-icon icon icon-home" aria-hidden="true"></span>
 				개요
 			</a>
 			<a
-				class="project-detail-tab"
+				class="tab"
 				th:classappend="${activePage == 'task'} ? ' active'"
 				th:href="@{/project/{projectId}/task(projectId=${project.id})}"
 			>
-				<span
-					class="project-detail-tab-icon icon-check"
-					aria-hidden="true"
-				></span>
+				<span class="project-tab-icon icon icon-check-square" aria-hidden="true"></span>
 				할 일
 			</a>
 			<a
-				class="project-detail-tab"
+				class="tab"
 				th:classappend="${activePage == 'schedule'} ? ' active'"
 				th:href="@{/project/{projectId}/schedule(projectId=${project.id})}"
 			>
-				<span
-					class="project-detail-tab-icon icon-calendar"
-					aria-hidden="true"
-				></span>
+				<span class="project-tab-icon icon icon-calendar" aria-hidden="true"></span>
 				일정
 			</a>
 			<a
-				class="project-detail-tab"
+				class="tab"
 				th:classappend="${activePage == 'member'} ? ' active'"
 				th:href="@{/project/{projectId}/member(projectId=${project.id})}"
 			>
-				<span
-					class="project-detail-tab-icon icon-users"
-					aria-hidden="true"
-				></span>
+				<span class="project-tab-icon icon icon-users" aria-hidden="true"></span>
 				팀
 			</a>
 			<a
-				class="project-detail-tab"
+				class="tab"
 				th:classappend="${activePage == 'settings'} ? ' active'"
 				th:href="@{/project/{projectId}/settings(projectId=${project.id})}"
 				th:if="${projectOwner}"
 			>
-				<span
-					class="project-detail-tab-icon icon-settings"
-					aria-hidden="true"
-				></span>
+				<span class="project-tab-icon icon icon-settings" aria-hidden="true"></span>
 				설정
 			</a>
 		</nav>

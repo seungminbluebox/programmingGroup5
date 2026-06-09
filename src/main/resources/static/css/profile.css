@@ -1,67 +1,7 @@
 /* ============================================================
    Profile Page — page-specific styles
    Uses common.css design tokens exclusively; no azit.css / bootstrap
-   Icons: lucide-static via CSS mask (no inline SVG)
-   https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/<name>.svg
    ============================================================ */
-
-/* ── Lucide icon base ── */
-.icon {
-	display: inline-block;
-	width: 15px;
-	height: 15px;
-	background-color: currentColor;
-	flex-shrink: 0;
-}
-
-.icon-mail {
-	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/mail.svg')
-		no-repeat center / contain;
-	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/mail.svg')
-		no-repeat center / contain;
-}
-
-.icon-user {
-	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/user.svg')
-		no-repeat center / contain;
-	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/user.svg')
-		no-repeat center / contain;
-}
-
-.icon-pencil {
-	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/pencil.svg')
-		no-repeat center / contain;
-	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/pencil.svg')
-		no-repeat center / contain;
-}
-
-.icon-code-2 {
-	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/code-2.svg')
-		no-repeat center / contain;
-	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/code-2.svg')
-		no-repeat center / contain;
-}
-
-.icon-folder {
-	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/folder.svg')
-		no-repeat center / contain;
-	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/folder.svg')
-		no-repeat center / contain;
-}
-
-.icon-calendar {
-	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/calendar.svg')
-		no-repeat center / contain;
-	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/calendar.svg')
-		no-repeat center / contain;
-}
-
-.icon-square-pen {
-	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/square-pen.svg')
-		no-repeat center / contain;
-	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/square-pen.svg')
-		no-repeat center / contain;
-}
 
 .profile-page {
 	max-width: 1100px;
@@ -231,8 +171,7 @@
 }
 
 .career-icon .icon {
-	width: 20px;
-	height: 20px;
+	font-size: 20px;
 	color: var(--color-primary);
 }
 
