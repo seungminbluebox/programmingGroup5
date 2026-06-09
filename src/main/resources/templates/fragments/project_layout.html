@@ -1,0 +1,132 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:fragment="head">
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title th:text="${project.title} + ' | AZIT'">Project | AZIT</title>
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="stylesheet" href="/css/common.css" />
+		<link rel="stylesheet" href="/css/sidebar.css" />
+		<link rel="stylesheet" href="/css/project.css" />
+	</head>
+
+	<div th:fragment="header(activePage)">
+		<section class="project-detail-hero">
+			<div class="project-detail-identity">
+				<div class="project-detail-icon" aria-hidden="true">
+					<span th:text="${#strings.substring(project.title, 0, 1)}">A</span>
+				</div>
+
+				<div class="project-detail-title-group">
+					<div class="project-detail-title-row">
+						<h1 th:text="${project.title}">프로젝트 이름</h1>
+						<span class="chip chip-green" th:text="${project.status.label}">
+							진행중
+						</span>
+					</div>
+					<p th:text="${project.description}">프로젝트 설명</p>
+					<div class="project-detail-meta"></div>
+				</div>
+			</div>
+
+			<div class="project-detail-hero-actions">
+				<a
+					class="btn btn-outline project-detail-link-button"
+					th:each="link, linkStat : ${project.links}"
+					th:if="${linkStat.index < 2}"
+					th:href="${link.url}"
+					target="_blank"
+					rel="noopener"
+				>
+					<span class="project-detail-icon-link" aria-hidden="true"></span>
+					<span th:text="${link.label}">GitHub 저장소</span>
+				</a>
+			</div>
+		</section>
+
+		<nav class="project-detail-tabs" aria-label="프로젝트 상세 메뉴">
+			<a
+				class="project-detail-tab"
+				th:classappend="${activePage == 'overview'} ? ' active'"
+				th:href="@{/project/{projectId}(projectId=${project.id})}"
+			>
+				<span class="project-detail-tab-icon icon-home" aria-hidden="true"></span>
+				개요
+			</a>
+			<a
+				class="project-detail-tab"
+				th:classappend="${activePage == 'task'} ? ' active'"
+				th:href="@{/project/{projectId}/task(projectId=${project.id})}"
+			>
+				<span
+					class="project-detail-tab-icon icon-check"
+					aria-hidden="true"
+				></span>
+				할 일
+			</a>
+			<a
+				class="project-detail-tab"
+				th:classappend="${activePage == 'schedule'} ? ' active'"
+				th:href="@{/project/{projectId}/schedule(projectId=${project.id})}"
+			>
+				<span
+					class="project-detail-tab-icon icon-calendar"
+					aria-hidden="true"
+				></span>
+				일정
+			</a>
+			<a
+				class="project-detail-tab"
+				th:classappend="${activePage == 'member'} ? ' active'"
+				th:href="@{/project/{projectId}/member(projectId=${project.id})}"
+			>
+				<span
+					class="project-detail-tab-icon icon-users"
+					aria-hidden="true"
+				></span>
+				팀
+			</a>
+			<a
+				class="project-detail-tab"
+				th:classappend="${activePage == 'settings'} ? ' active'"
+				th:href="@{/project/{projectId}/settings(projectId=${project.id})}"
+				th:if="${projectOwner}"
+			>
+				<span
+					class="project-detail-tab-icon icon-settings"
+					aria-hidden="true"
+				></span>
+				설정
+			</a>
+		</nav>
+
+		<div class="project-detail-alerts">
+			<p
+				class="project-detail-alert error"
+				th:if="${errorMessage}"
+				th:text="${errorMessage}"
+			></p>
+			<p
+				class="project-detail-alert success"
+				th:if="${successMessage}"
+				th:text="${successMessage}"
+			></p>
+			<p class="project-detail-alert error" th:if="${projectEditable == false}">
+				완료 또는 중단된 프로젝트는 조회만 가능합니다. 오너가 상태를 진행중으로
+				변경하면 다시 수정할 수 있습니다.
+			</p>
+		</div>
+	</div>
+
+	<script th:fragment="statusScript" th:inline="javascript">
+		const incompleteTaskCount = Number(/*[[${incompleteTaskCount}]]*/ 0);
+
+		function confirmProjectStatusChange() {
+			const select = document.getElementById('projectStatusSelect');
+			if (select && select.value === 'COMPLETED' && incompleteTaskCount > 0) {
+				return confirm('미완료 태스크가 있습니다. 그래도 완료하시겠습니까?');
+			}
+			return true;
+		}
+	</script>
+</html>
