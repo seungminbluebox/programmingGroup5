@@ -17,7 +17,7 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: var(--space-xl);
-	padding: var(--space-2xl) 0 var(--space-sm);
+	padding: var(--space-md) 0 var(--space-sm);
 }
 
 .project-detail-identity {
