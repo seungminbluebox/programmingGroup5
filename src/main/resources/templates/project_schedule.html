@@ -1,0 +1,44 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="~{fragments/project_layout :: head}"></head>
+
+	<body class="has-sidebar">
+		<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+		<main>
+			<div class="project-detail-page">
+				<div th:replace="~{fragments/project_layout :: header('schedule')}"></div>
+				<section class="project-detail-layout">
+					<div class="project-detail-main">
+						<article class="card project-detail-card project-detail-availability-card">
+							<div class="project-detail-card-heading">
+								<div>
+									<h2>만날 수 있는 시간</h2>
+									<p>프로젝트 팀 동기화 시간 보기</p>
+								</div>
+								<span class="project-detail-bolt" aria-hidden="true"></span>
+							</div>
+							<div class="project-detail-rhythm-grid large" aria-hidden="true">
+								<span></span>
+								<span></span>
+								<span></span>
+								<span></span>
+								<span></span>
+								<span></span>
+								<span></span>
+								<span></span>
+								<span></span>
+								<span class="active"></span>
+								<span class="active"></span>
+								<span class="active"></span>
+							</div>
+							<div class="project-detail-rhythm-summary">
+								<span>최적 동기화 시간:</span>
+								<strong>14:30 - 16:00</strong>
+							</div>
+						</article>
+					</div>
+				</section>
+			</div>
+		</main>
+	</body>
+</html>

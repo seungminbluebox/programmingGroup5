@@ -1,0 +1,127 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="~{fragments/project_layout :: head}"></head>
+
+	<body class="has-sidebar">
+		<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+		<main>
+			<div class="project-detail-page">
+				<div th:replace="~{fragments/project_layout :: header('task')}"></div>
+				<section class="project-detail-panel active">
+					<article class="card project-detail-card" id="project-tasks">
+						<div class="project-detail-card-heading">
+							<div>
+								<h2>할 일</h2>
+								<p>태스크를 추가하고 완료 상태를 관리하세요.</p>
+							</div>
+							<span class="project-detail-active-count">
+								<span aria-hidden="true"></span>
+								<span th:text="${incompleteTaskCount} + '개의 활성 작업'">0개의 활성 작업</span>
+							</span>
+						</div>
+
+						<form
+							class="project-detail-task-form"
+							th:if="${projectEditable}"
+							th:action="@{/project/{id}/tasks(id=${project.id})}"
+							method="post"
+						>
+							<input class="input" type="text" name="title" placeholder="태스크 제목" required />
+							<select class="input" name="assigneeId" required>
+								<option value="">담당자 선택</option>
+								<option
+									th:each="projectMember : ${project.members}"
+									th:value="${projectMember.member.id}"
+									th:text="${projectMember.member.name}"
+								>
+									팀원 이름
+								</option>
+							</select>
+							<button type="submit" class="btn btn-primary">태스크 추가</button>
+						</form>
+
+						<div
+							class="project-detail-task-board"
+							th:if="${tasks != null and !tasks.isEmpty()}"
+						>
+							<div class="project-detail-task-lane project-detail-task-lane-progress">
+								<div class="project-detail-lane-title">
+									<strong>진행 중</strong>
+									<span th:text="${incompleteTaskCount}">1</span>
+								</div>
+								<div
+									class="project-detail-task-card"
+									th:each="task : ${tasks}"
+									th:if="${!task.completed}"
+								>
+									<div class="project-detail-task-content">
+										<span class="chip chip-purple">태스크</span>
+										<strong th:text="${task.title}">태스크 제목</strong>
+										<p>
+											담당자:
+											<span th:text="${task.assignee.name}">담당자 이름</span>
+										</p>
+									</div>
+									<form
+										th:if="${projectEditable}"
+										th:action="@{/project/{projectId}/tasks/{taskId}/toggle(projectId=${project.id}, taskId=${task.id})}"
+										method="post"
+										class="project-detail-check-form"
+									>
+										<label class="project-detail-check">
+											<input
+												type="checkbox"
+												th:checked="${task.completed}"
+												onchange="this.form.submit()"
+											/>
+											<span>완료</span>
+										</label>
+									</form>
+								</div>
+							</div>
+
+							<div class="project-detail-task-lane project-detail-task-lane-done">
+								<div class="project-detail-lane-title">
+									<strong>완료</strong>
+									<span th:text="${myCompletedTaskCount}">4</span>
+								</div>
+								<div
+									class="project-detail-task-card completed"
+									th:each="task : ${tasks}"
+									th:if="${task.completed}"
+								>
+									<div class="project-detail-task-content">
+										<span class="chip chip-green">완료됨</span>
+										<strong th:text="${task.title}">완료한 태스크</strong>
+										<p>
+											담당자:
+											<span th:text="${task.assignee.name}">담당자 이름</span>
+										</p>
+									</div>
+									<form
+										th:if="${projectEditable}"
+										th:action="@{/project/{projectId}/tasks/{taskId}/toggle(projectId=${project.id}, taskId=${task.id})}"
+										method="post"
+										class="project-detail-check-form"
+									>
+										<label class="project-detail-check">
+											<input
+												type="checkbox"
+												th:checked="${task.completed}"
+												onchange="this.form.submit()"
+											/>
+											<span>완료</span>
+										</label>
+									</form>
+								</div>
+							</div>
+						</div>
+						<p class="project-detail-empty" th:if="${tasks == null or tasks.isEmpty()}">
+							아직 등록된 태스크가 없습니다.
+						</p>
+					</article>
+				</section>
+			</div>
+		</main>
+	</body>
+</html>

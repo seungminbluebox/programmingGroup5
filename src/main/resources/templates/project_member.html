@@ -1,0 +1,119 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="~{fragments/project_layout :: head}"></head>
+
+	<body class="has-sidebar">
+		<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+		<main>
+			<div class="project-detail-page">
+				<div th:replace="~{fragments/project_layout :: header('member')}"></div>
+				<section class="project-detail-layout">
+					<div class="project-detail-main">
+						<article class="card project-detail-card">
+							<div class="project-detail-card-heading">
+								<h2>팀원</h2>
+								<strong
+									class="project-detail-count"
+									th:text="${project.members != null ? project.members.size() : 0} + '명'"
+									>4명</strong
+								>
+							</div>
+							<div
+								class="project-detail-member-list"
+								th:if="${project.members != null and !project.members.isEmpty()}"
+							>
+								<div
+									class="project-detail-member"
+									th:each="projectMember : ${project.members}"
+								>
+									<div
+										class="project-detail-member-avatar"
+										th:text="${#strings.substring(projectMember.member.name, 0, 1)}"
+									>
+										김
+									</div>
+									<div>
+										<strong th:text="${projectMember.member.name}">팀원 이름</strong>
+										<p th:text="${projectMember.role}">OWNER</p>
+									</div>
+									<span class="project-detail-member-menu" aria-hidden="true"></span>
+								</div>
+							</div>
+							<p
+								class="project-detail-empty"
+								th:if="${project.members == null or project.members.isEmpty()}"
+							>
+								아직 등록된 팀원이 없습니다.
+							</p>
+						</article>
+					</div>
+					<aside class="project-detail-side">
+						<article
+							class="card project-detail-card"
+							th:if="${projectOwner and projectEditable}"
+						>
+							<div class="project-detail-card-heading">
+								<h2>초대 후보</h2>
+							</div>
+							<div
+								class="project-detail-candidate-list"
+								th:if="${inviteCandidates != null and !inviteCandidates.isEmpty()}"
+							>
+								<div
+									class="project-detail-candidate"
+									th:each="member : ${inviteCandidates}"
+								>
+									<div>
+										<strong th:text="${member.name}">사용자 이름</strong>
+										<p th:text="${member.email}">email@example.com</p>
+									</div>
+									<form
+										th:action="@{/project/{projectId}/invitations(projectId=${project.id})}"
+										method="post"
+									>
+										<input type="hidden" name="receiverId" th:value="${member.id}" />
+										<button type="submit" class="btn btn-outline btn-sm">초대</button>
+									</form>
+								</div>
+							</div>
+							<p
+								class="project-detail-empty"
+								th:if="${inviteCandidates == null or inviteCandidates.isEmpty()}"
+							>
+								초대할 수 있는 사용자가 없습니다.
+							</p>
+						</article>
+
+						<article
+							class="card project-detail-card"
+							th:if="${projectOwner and projectEditable}"
+						>
+							<div class="project-detail-card-heading">
+								<h2>이메일로 초대</h2>
+							</div>
+							<form
+								class="project-detail-form"
+								th:action="@{/project/{projectId}/members(projectId=${project.id})}"
+								method="post"
+							>
+								<input
+									type="hidden"
+									th:name="${_csrf.parameterName}"
+									th:value="${_csrf.token}"
+								/>
+								<input
+									class="input"
+									type="email"
+									name="memberEmail"
+									placeholder="초대할 회원 이메일"
+									required
+								/>
+								<button type="submit" class="btn btn-primary">초대 보내기</button>
+							</form>
+						</article>
+					</aside>
+				</section>
+			</div>
+		</main>
+	</body>
+</html>

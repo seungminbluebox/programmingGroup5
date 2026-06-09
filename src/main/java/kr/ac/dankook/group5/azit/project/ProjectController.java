@@ -32,6 +32,30 @@ public class ProjectController {
             Authentication authentication,
             @PathVariable Long projectId,
             Model model) {
+        return detailPage(authentication, projectId, "overview", "project_detail", model);
+    }
+
+    @GetMapping("/project/{projectId}/{page}")
+    public String detailByPage(
+            Authentication authentication,
+            @PathVariable Long projectId,
+            @PathVariable String page,
+            Model model) {
+        return switch (page) {
+            case "task" -> detailPage(authentication, projectId, page, "project_task", model);
+            case "schedule" -> detailPage(authentication, projectId, page, "project_schedule", model);
+            case "member" -> detailPage(authentication, projectId, page, "project_member", model);
+            case "settings" -> detailPage(authentication, projectId, page, "project_settings", model);
+            default -> "redirect:/project/" + projectId;
+        };
+    }
+
+    private String detailPage(
+            Authentication authentication,
+            Long projectId,
+            String activeProjectPage,
+            String templateName,
+            Model model) {
         String email = authentication.getName();
 
         Project project = projectService.getProjectForMember(email, projectId);
@@ -47,8 +71,9 @@ public class ProjectController {
         model.addAttribute("projectStatuses", ProjectStatus.values());
         model.addAttribute("projectEditable", project.getStatus() == ProjectStatus.IN_PROGRESS);
         model.addAttribute("incompleteTaskCount", tasks.stream().filter(task -> !task.isCompleted()).count());
+        model.addAttribute("activeProjectPage", activeProjectPage);
 
-        return "project_detail";
+        return templateName;
     }
 
     @PostMapping("/project/{projectId}/links")
@@ -64,7 +89,7 @@ public class ProjectController {
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
-        return "redirect:/project/" + projectId;
+        return "redirect:/project/" + projectId + "/settings";
     }
 
     @PostMapping("/project/{projectId}/status")
@@ -79,7 +104,7 @@ public class ProjectController {
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
-        return "redirect:/project/" + projectId;
+        return "redirect:/project/" + projectId + "/settings";
     }
 
     @PostMapping("/project/{projectId}/members")
@@ -94,7 +119,7 @@ public class ProjectController {
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
-        return "redirect:/project/" + projectId;
+        return "redirect:/project/" + projectId + "/member";
     }
 
     @PostMapping("/project/{projectId}/tasks")
@@ -110,7 +135,7 @@ public class ProjectController {
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
-        return "redirect:/project/" + projectId;
+        return "redirect:/project/" + projectId + "/task";
     }
 
     @PostMapping("/project/{projectId}/tasks/{taskId}/toggle")
@@ -124,7 +149,7 @@ public class ProjectController {
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
-        return "redirect:/project/" + projectId;
+        return "redirect:/project/" + projectId + "/task";
     }
 
     @PostMapping("/project/{projectId}/invitations")
@@ -139,7 +164,7 @@ public class ProjectController {
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
-        return "redirect:/project/" + projectId;
+        return "redirect:/project/" + projectId + "/member";
     }
 
     @GetMapping("/invitations")
