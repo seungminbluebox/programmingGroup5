@@ -443,4 +443,41 @@ public class ProjectService {
             }
         }
     }
+
+    public int getDeadlineRemainingRate(String email, Long projectId) {
+        Member member = getMemberByEmail(email);
+        Project project = getProjectById(projectId);
+        assertProjectMember(project, member);
+
+        if (project.getDeadline() == null || project.getCreatedAt() == null) {
+            return 0;
+        }
+
+        LocalDate startDate = project.getCreatedAt().toLocalDate();
+        LocalDate today = LocalDate.now();
+        LocalDate deadline = project.getDeadline();
+
+        long totalDays = ChronoUnit.DAYS.between(startDate, deadline);
+        long remainingDays = ChronoUnit.DAYS.between(today, deadline);
+
+        if (totalDays <= 0) {
+            return today.isAfter(deadline) ? 0 : 100;
+        }
+
+        int rate = (int) Math.round((remainingDays * 100.0) / totalDays);
+
+        return Math.min(100, Math.max(0, rate));
+    }
+
+    public long getDeadlineRemainingDays(String email, Long projectId) {
+        Member member = getMemberByEmail(email);
+        Project project = getProjectById(projectId);
+        assertProjectMember(project, member);
+
+        if (project.getDeadline() == null) {
+            return 0;
+        }
+
+        return Math.max(0, ChronoUnit.DAYS.between(LocalDate.now(), project.getDeadline()));
+    }
 }

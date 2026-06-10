@@ -1,5 +1,6 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -9,75 +10,337 @@
     <link rel="stylesheet" href="/css/sidebar.css" />
     <link rel="stylesheet" href="/css/azit.css" />
     <style>
-        .new-project-page { padding: 40px 48px; }
-        .new-project-back { display: flex; align-items: center; gap: 6px; color: #6b7280; font-size: 0.9rem; text-decoration: none; margin-bottom: 24px; }
-        .new-project-back:hover { color: #6366f1; }
-        .new-project-title { font-size: 1.75rem; font-weight: 800; color: #1a1a2e; margin-bottom: 6px; }
-        .new-project-subtitle { color: #6b7280; font-size: 0.95rem; margin-bottom: 36px; }
+        .new-project-page {
+            padding: 40px 48px;
+        }
 
-        .new-project-layout { display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; }
+        .new-project-back {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #6b7280;
+            font-size: 0.9rem;
+            text-decoration: none;
+            margin-bottom: 24px;
+        }
 
-        .new-project-form { background: #fff; border-radius: 18px; padding: 36px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); }
+        .new-project-back:hover {
+            color: #6366f1;
+        }
 
-        .form-group { margin-bottom: 24px; }
-        .form-label { display: flex; align-items: center; gap: 6px; font-size: 0.92rem; font-weight: 600; color: #374151; margin-bottom: 8px; }
-        .form-label .required { color: #ef4444; }
-        .form-input { width: 100%; padding: 12px 14px; border: 1.5px solid #e5e7eb; border-radius: 10px; font-size: 0.95rem; outline: none; box-sizing: border-box; font-family: inherit; transition: border-color 0.15s; }
-        .form-input:focus { border-color: #6366f1; }
-        .form-textarea { resize: vertical; min-height: 120px; }
-        .form-char-count { text-align: right; font-size: 0.78rem; color: #9ca3af; margin-top: 4px; }
+        .new-project-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+        }
+
+        .new-project-subtitle {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin-bottom: 36px;
+        }
+
+        .new-project-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .new-project-form {
+            background: #fff;
+            border-radius: 18px;
+            padding: 36px;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: #ef4444;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            outline: none;
+            box-sizing: border-box;
+            font-family: inherit;
+            transition: border-color 0.15s;
+        }
+
+        .form-input:focus {
+            border-color: #6366f1;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-char-count {
+            text-align: right;
+            font-size: 0.78rem;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
 
         /* 기술 스택 */
-        .stack-search-wrap { position: relative; }
-        .stack-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; }
-        .stack-search { padding-left: 36px !important; }
-        .stack-section { margin-bottom: 12px; }
-        .stack-section-label { font-size: 0.78rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-        .stack-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-        .stack-chip { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border: 1.5px solid #e5e7eb; border-radius: 99px; font-size: 0.82rem; cursor: pointer; background: #fff; color: #374151; transition: all 0.15s; user-select: none; }
-        .stack-chip:hover { border-color: #6366f1; color: #6366f1; }
-        .stack-chip.selected { background: #6366f1; color: #fff; border-color: #6366f1; }
-        .stack-chip img { width: 16px; height: 16px; }
+        .stack-search-wrap {
+            position: relative;
+        }
+
+        .stack-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .stack-search {
+            padding-left: 36px !important;
+        }
+
+        .stack-section {
+            margin-bottom: 12px;
+        }
+
+        .stack-section-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .stack-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .stack-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 99px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            background: #fff;
+            color: #374151;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .stack-chip:hover {
+            border-color: #6366f1;
+            color: #6366f1;
+        }
+
+        .stack-chip.selected {
+            background: #6366f1;
+            color: #fff;
+            border-color: #6366f1;
+        }
+
+        .stack-chip img {
+            width: 16px;
+            height: 16px;
+        }
 
         /* 기간/팀 규모 */
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
 
         /* 공개 범위 */
-        .visibility-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .visibility-option { border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 16px; cursor: pointer; transition: all 0.15s; }
-        .visibility-option.selected { border-color: #6366f1; background: #f0f0ff; }
-        .visibility-option input { display: none; }
-        .visibility-option-title { font-size: 0.92rem; font-weight: 600; color: #1a1a2e; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
-        .visibility-option-desc { font-size: 0.8rem; color: #6b7280; line-height: 1.5; }
-        .visibility-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #e5e7eb; flex-shrink: 0; transition: all 0.15s; }
-        .visibility-option.selected .visibility-dot { border-color: #6366f1; background: #6366f1; }
+        .visibility-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .visibility-option {
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .visibility-option.selected {
+            border-color: #6366f1;
+            background: #f0f0ff;
+        }
+
+        .visibility-option input {
+            display: none;
+        }
+
+        .visibility-option-title {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .visibility-option-desc {
+            font-size: 0.8rem;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .visibility-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid #e5e7eb;
+            flex-shrink: 0;
+            transition: all 0.15s;
+        }
+
+        .visibility-option.selected .visibility-dot {
+            border-color: #6366f1;
+            background: #6366f1;
+        }
 
         /* 제출 버튼 */
-        .submit-btn { width: 100%; padding: 16px; background: #6366f1; color: #fff; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 8px; transition: background 0.15s; }
-        .submit-btn:hover { background: #4f46e5; }
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: #6366f1;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.15s;
+        }
+
+        .submit-btn:hover {
+            background: #4f46e5;
+        }
 
         /* 사이드 패널 */
-        .new-project-side { display: flex; flex-direction: column; gap: 16px; }
-        .side-card { background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); }
-        .side-card-title { font-size: 0.95rem; font-weight: 700; color: #1a1a2e; margin-bottom: 16px; }
-        .guide-steps { display: flex; flex-direction: column; gap: 14px; }
-        .guide-step { display: flex; gap: 12px; align-items: flex-start; }
-        .guide-step-num { width: 24px; height: 24px; border-radius: 50%; background: #6366f1; color: #fff; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-        .guide-step-content { }
-        .guide-step-title { font-size: 0.88rem; font-weight: 600; color: #1a1a2e; margin-bottom: 2px; }
-        .guide-step-desc { font-size: 0.8rem; color: #6b7280; line-height: 1.5; }
+        .new-project-side {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
 
-        .stack-free-card { text-align: center; padding: 28px 20px; }
-        .stack-free-icon { font-size: 2.5rem; margin-bottom: 12px; }
-        .stack-free-title { font-size: 0.95rem; font-weight: 700; color: #1a1a2e; margin-bottom: 8px; }
-        .stack-free-desc { font-size: 0.8rem; color: #6b7280; line-height: 1.6; }
+        .side-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
+        }
+
+        .side-card-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+        }
+
+        .guide-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .guide-step {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .guide-step-num {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #6366f1;
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .guide-step-content {}
+
+        .guide-step-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 2px;
+        }
+
+        .guide-step-desc {
+            font-size: 0.8rem;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .stack-free-card {
+            text-align: center;
+            padding: 28px 20px;
+        }
+
+        .stack-free-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .stack-free-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+
+        .stack-free-desc {
+            font-size: 0.8rem;
+            color: #6b7280;
+            line-height: 1.6;
+        }
     </style>
 </head>
+
 <body class="azit-app has-sidebar">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
     <main class="new-project-page">
-        <a href="/projects/new" class="new-project-back">&#8592; 돌아가기</a>
+        <a href="/discover" class="new-project-back">&#8592; 돌아가기</a>
         <h1 class="new-project-title">프로젝트를 만들어볼까요? </h1>
         <p class="new-project-subtitle">비슷한 프로젝트를 확인하고, 바로 시작할 수 있어요.</p>
 
@@ -88,16 +351,16 @@
                 <!-- 프로젝트 제목 -->
                 <div class="form-group">
                     <label class="form-label">프로젝트 제목 <span class="required">*</span></label>
-                    <input type="text" name="title" class="form-input" placeholder="생성할 프로젝트의 제목을 입력해주세요" maxlength="80" required
-                           oninput="updateCount(this, 'title-count')" />
+                    <input type="text" name="title" class="form-input" placeholder="생성할 프로젝트의 제목을 입력해주세요" maxlength="80"
+                        required oninput="updateCount(this, 'title-count')" />
                     <div class="form-char-count"><span id="title-count">0</span>/80</div>
                 </div>
 
                 <!-- 한 줄 소개 -->
                 <div class="form-group">
                     <label class="form-label">한 줄 소개 <span class="required">*</span></label>
-                    <input type="text" name="description" class="form-input" placeholder="프로젝트를 한 줄로 소개해주세요." maxlength="80" required
-                           oninput="updateCount(this, 'desc-count')" />
+                    <input type="text" name="description" class="form-input" placeholder="프로젝트를 한 줄로 소개해주세요."
+                        maxlength="80" required oninput="updateCount(this, 'desc-count')" />
                     <div class="form-char-count"><span id="desc-count">0</span>/80</div>
                 </div>
 
@@ -105,11 +368,13 @@
                 <div class="form-group">
                     <label class="form-label">
                         상세 설명
-                        <span style="background:#f3f4f6;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:0.7rem;color:#6b7280;cursor:help;" title="프로젝트의 목표, 주요 기능 등을 자세히 설명해주세요.">?</span>
+                        <span
+                            style="background:#f3f4f6;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:0.7rem;color:#6b7280;cursor:help;"
+                            title="프로젝트의 목표, 주요 기능 등을 자세히 설명해주세요.">?</span>
                     </label>
                     <textarea class="form-input form-textarea" name="detailDescription" maxlength="1000"
-                              placeholder="프로젝트의 목표, 주요 기능, 기대 효과 등을 자세히 설명해주세요."
-                              oninput="updateCount(this, 'detail-count')"></textarea>
+                        placeholder="프로젝트의 목표, 주요 기능, 기대 효과 등을 자세히 설명해주세요."
+                        oninput="updateCount(this, 'detail-count')"></textarea>
                     <div class="form-char-count"><span id="detail-count">0</span>/1000</div>
                 </div>
 
@@ -120,21 +385,20 @@
                     <div class="stack-search-wrap" style="margin-bottom:16px;">
                         <span class="stack-search-icon">🔍</span>
                         <input type="text" class="form-input stack-search" id="stackSearchInput"
-                               placeholder="기술 스택을 검색하세요. (예: React, Node.js, Python...)"
-                               oninput="filterStacks(this.value)" />
+                            placeholder="기술 스택을 검색하세요. (예: React, Node.js, Python...)"
+                            oninput="filterStacks(this.value)" />
                     </div>
                     <div id="stack-list">
                         <div th:each="category : ${ {'Frontend', 'Backend', 'Database', 'DevOps', 'Language'} }">
                             <div class="stack-section">
                                 <div class="stack-section-label" th:text="${category}"></div>
                                 <div class="stack-chips">
-                                    <label th:each="stack : ${allStacks}"
-                                           th:if="${stack.category == category}"
-                                           class="stack-chip"
-                                           th:data-name="${stack.stackName}">
-                                        <input type="checkbox" name="requiredStackIds" th:value="${stack.id}" style="display:none;"
-                                               onchange="toggleChip(this)" />
-                                        <img th:src="${stack.iconUrl}" th:alt="${stack.stackName}" onerror="this.style.display='none'" />
+                                    <label th:each="stack : ${allStacks}" th:if="${stack.category == category}"
+                                        class="stack-chip" th:data-name="${stack.stackName}">
+                                        <input type="checkbox" name="requiredStackIds" th:value="${stack.id}"
+                                            style="display:none;" onchange="toggleChip(this)" />
+                                        <img th:src="${stack.iconUrl}" th:alt="${stack.stackName}"
+                                            onerror="this.style.display='none'" />
                                         <span th:text="${stack.stackName}"></span>
                                     </label>
                                 </div>
@@ -143,23 +407,15 @@
                     </div>
                 </div>
 
-                <!-- 프로젝트 기간 / 모집 마감일 -->
+                <!-- 프로젝트 마감일 -->
                 <div class="form-group">
-                    <div class="form-row">
-                        <div>
-                            <label class="form-label">프로젝트 기간 <span style="color:#9ca3af;font-weight:400;">(선택)</span></label>
-                            <select class="form-input">
-                                <option value="">예상 기간을 선택해주세요.</option>
-                                <option>1개월 이하</option>
-                                <option>1~3개월</option>
-                                <option>3~6개월</option>
-                                <option>6개월 이상</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="form-label">모집 마감일 <span style="color:#9ca3af;font-weight:400;">(선택)</span></label>
-                            <input type="date" name="deadline" class="form-input" />
-                        </div>
+                    <label class="form-label">
+                        프로젝트 마감일
+                        <span style="color:#9ca3af;font-weight:400;">(선택)</span>
+                    </label>
+                    <input type="date" name="deadline" class="form-input" />
+                    <div style="font-size:0.75rem;color:#9ca3af;margin-top:4px;">
+                        프로젝트를 언제까지 진행할지 마감일을 선택해주세요.
                     </div>
                 </div>
 
@@ -167,7 +423,8 @@
                 <div class="form-group">
                     <div class="form-row">
                         <div>
-                            <label class="form-label">팀 규모 <span style="color:#9ca3af;font-weight:400;">(선택)</span></label>
+                            <label class="form-label">팀 규모 <span
+                                    style="color:#9ca3af;font-weight:400;">(선택)</span></label>
                             <select class="form-input">
                                 <option value="">예상 팀 규모를 선택해주세요.</option>
                                 <option>2~3명</option>
@@ -177,12 +434,17 @@
                             </select>
                         </div>
                         <div>
-                            <label class="form-label">주간 최소 참여 시간 <span style="color:#9ca3af;font-weight:400;">(선택)</span></label>
+                            <label class="form-label">주간 최소 참여 시간 <span
+                                    style="color:#9ca3af;font-weight:400;">(선택)</span></label>
                             <div style="position:relative;">
-                                <input type="number" class="form-input" placeholder="예: 5" min="1" max="80" style="padding-right:60px;" />
-                                <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.85rem;">시간 이상</span>
+                                <input type="number" class="form-input" placeholder="예: 5" min="1" max="80"
+                                    style="padding-right:60px;" />
+                                <span
+                                    style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.85rem;">시간
+                                    이상</span>
                             </div>
-                            <div style="font-size:0.75rem;color:#9ca3af;margin-top:4px;">일주일에 최소로 참여해야 할 시간을 입력해주세요.</div>
+                            <div style="font-size:0.75rem;color:#9ca3af;margin-top:4px;">일주일에 최소로 참여해야 할 시간을 입력해주세요.
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -395,4 +657,5 @@
         }
     </script>
 </body>
+
 </html>

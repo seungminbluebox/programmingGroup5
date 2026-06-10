@@ -565,8 +565,8 @@ a.project-detail-member:hover {
 	color: var(--color-text-muted);
 }
 
-.project-detail-member > div:nth-child(2),
-.project-detail-candidate > div:first-child {
+.project-detail-member>div:nth-child(2),
+.project-detail-candidate>div:first-child {
 	min-width: 0;
 	flex: 1;
 }
@@ -667,7 +667,7 @@ a.project-detail-member:hover {
 	color: var(--color-primary);
 }
 
-.project-detail-link-row > span:nth-child(2) {
+.project-detail-link-row>span:nth-child(2) {
 	min-width: 0;
 	flex: 1;
 }
@@ -733,7 +733,7 @@ a.project-detail-member:hover {
 		order: -1;
 	}
 
-	#project-tab-schedule .project-detail-side > article:first-child {
+	#project-tab-schedule .project-detail-side>article:first-child {
 		order: 1;
 	}
 
@@ -867,9 +867,17 @@ a.project-detail-member:hover {
 	font-size: var(--font-size-sm\+);
 }
 
-.project-schedule-filter-item:nth-child(2n) .project-detail-member-avatar { background: var(--color-accent-orange); }
-.project-schedule-filter-item:nth-child(3n) .project-detail-member-avatar { background: var(--color-text-muted); }
-.project-schedule-filter-item:nth-child(4n) .project-detail-member-avatar { background: var(--color-accent-blue); }
+.project-schedule-filter-item:nth-child(2n) .project-detail-member-avatar {
+	background: var(--color-accent-orange);
+}
+
+.project-schedule-filter-item:nth-child(3n) .project-detail-member-avatar {
+	background: var(--color-text-muted);
+}
+
+.project-schedule-filter-item:nth-child(4n) .project-detail-member-avatar {
+	background: var(--color-accent-blue);
+}
 
 /* 가능 시간대 목록 */
 .project-schedule-slot-list {
@@ -941,3 +949,109 @@ a.project-detail-member:hover {
 	flex: 0 0 auto;
 }
 
+.project-detail-deadline-chip {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	min-width: 116px;
+	padding: var(--space-2xs) var(--space-xs);
+	border-radius: var(--radius-md);
+	background: var(--chip-violet);
+	color: var(--color-primary);
+}
+
+.project-detail-deadline-chip .icon {
+	font-size: 18px;
+}
+
+.project-detail-deadline-chip strong {
+	display: block;
+	font-size: var(--font-size-md);
+	font-weight: var(--font-weight-extrabold);
+	line-height: 1.2;
+}
+
+.project-detail-deadline-chip span {
+	display: block;
+	font-size: var(--font-size-xs);
+	color: var(--color-text-muted);
+}
+
+.project-detail-progress-label small {
+	margin-left: 4px;
+	color: var(--color-text-muted);
+	font-size: var(--font-size-sm);
+	font-weight: var(--font-weight-medium);
+}
+
+.progress-fill.deadline {
+	background: linear-gradient(90deg, #7c3aed, #f59e0b);
+}
+
+.project-detail-progress-list .progress {
+	height: 10px;
+}
+
+.project-detail-progress-list .progress-fill,
+.project-detail-progress-list .progress-fill.deadline {
+	background: #2563eb;
+}
+
+.project-detail-deadline-chip {
+	width: fit-content;
+	min-width: 116px;
+	align-self: flex-end;
+	flex-shrink: 0;
+}
+
+@media (max-width: 960px) {
+	.project-detail-deadline-chip {
+		align-self: flex-start;
+	}
+}
+
+.project-detail-main>.project-detail-card:first-child {
+	position: relative;
+}
+
+.project-detail-main>.project-detail-card:first-child .project-detail-card-heading {
+	padding-right: 140px;
+}
+
+.project-detail-deadline-chip {
+	position: absolute;
+	top: 24px;
+	right: 24px;
+	width: 104px;
+	min-width: 104px;
+	height: 50px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 8px 10px;
+	border-radius: 12px;
+	background: var(--chip-violet);
+	color: var(--color-primary);
+	flex-shrink: 0;
+}
+
+.project-detail-deadline-chip .icon {
+	font-size: 18px;
+	flex-shrink: 0;
+}
+
+.project-detail-deadline-chip strong {
+	display: block;
+	font-size: var(--font-size-md);
+	font-weight: var(--font-weight-extrabold);
+	line-height: 1.1;
+	white-space: nowrap;
+}
+
+.project-detail-deadline-chip span {
+	display: block;
+	font-size: var(--font-size-xs);
+	color: var(--color-text-muted);
+	white-space: nowrap;
+}

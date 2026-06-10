@@ -5,7 +5,6 @@ import kr.ac.dankook.group5.azit.schedule.dto.TimeRange;
 import kr.ac.dankook.group5.azit.schedule.entity.DayOfWeek;
 import kr.ac.dankook.group5.azit.schedule.service.ScheduleService;
 import kr.ac.dankook.group5.azit.user.Member;
-import kr.ac.dankook.group5.azit.project.MatchingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
@@ -16,9 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -198,9 +194,9 @@ public class ProjectController {
         model.addAttribute("projectEditable", project.getStatus() == ProjectStatus.IN_PROGRESS);
         model.addAttribute("incompleteTaskCount", tasks.stream().filter(task -> !task.isCompleted()).count());
         model.addAttribute("activeProjectPage", activeProjectPage);
-        model.addAttribute("deadlineProgressRate", projectService.getDeadlineProgressRate(email, projectId));
         model.addAttribute("teamTaskCompletionRate", projectService.getTeamTaskCompletionRate(email, projectId));
-        model.addAttribute("deadlineDday", projectService.getDeadlineDday(email, projectId));
+        model.addAttribute("deadlineRemainingRate", projectService.getDeadlineRemainingRate(email, projectId));
+        model.addAttribute("deadlineRemainingDays", projectService.getDeadlineRemainingDays(email, projectId));
 
         return templateName;
     }

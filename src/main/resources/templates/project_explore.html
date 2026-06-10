@@ -1,5 +1,6 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -9,82 +10,371 @@
     <link rel="stylesheet" href="/css/sidebar.css" />
     <link rel="stylesheet" href="/css/azit.css" />
     <style>
-        .explore-page { padding: 40px 48px; max-width: 900px; }
-        .explore-title { font-size: 1.75rem; font-weight: 800; color: #1a1a2e; margin-bottom: 6px; }
-        .explore-subtitle { color: #6b7280; font-size: 0.95rem; margin-bottom: 32px; }
+        .explore-page {
+            padding: 40px 48px;
+            max-width: 900px;
+        }
 
-        .explore-cta { margin-bottom: 36px; }
-        .explore-cta-label { font-size: 1.05rem; font-weight: 700; color: #6366f1; margin-bottom: 4px; }
-        .explore-cta-desc { font-size: 0.88rem; color: #6b7280; margin-bottom: 14px; }
+        .explore-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+        }
 
-        .explore-search { position: relative; margin-bottom: 36px; }
+        .explore-subtitle {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin-bottom: 32px;
+        }
+
+        .explore-cta {
+            margin-bottom: 36px;
+        }
+
+        .explore-cta-label {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #6366f1;
+            margin-bottom: 4px;
+        }
+
+        .explore-cta-desc {
+            font-size: 0.88rem;
+            color: #6b7280;
+            margin-bottom: 14px;
+        }
+
+        .explore-search {
+            position: relative;
+            margin-bottom: 36px;
+        }
+
         .explore-search input {
-            width: 100%; padding: 14px 18px 14px 44px;
-            border: 1.5px solid #e5e7eb; border-radius: 12px;
-            font-size: 0.95rem; outline: none; background: #fff;
-            box-sizing: border-box; font-family: inherit;
+            width: 100%;
+            padding: 14px 18px 14px 44px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            outline: none;
+            background: #fff;
+            box-sizing: border-box;
+            font-family: inherit;
         }
-        .explore-search input:focus { border-color: #6366f1; }
-        .explore-search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; }
 
-        .explore-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .explore-section-title { font-size: 1rem; font-weight: 700; color: #1a1a2e; }
+        .explore-search input:focus {
+            border-color: #6366f1;
+        }
 
-        .explore-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .explore-search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .explore-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .explore-section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        .explore-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
         .explore-tab {
-            padding: 6px 16px; border-radius: 99px; font-size: 0.85rem; font-weight: 500;
-            border: 1.5px solid #e5e7eb; background: #fff; cursor: pointer;
-            color: #374151; transition: all 0.15s; text-decoration: none;
+            padding: 6px 16px;
+            border-radius: 99px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1.5px solid #e5e7eb;
+            background: #fff;
+            cursor: pointer;
+            color: #374151;
+            transition: all 0.15s;
+            text-decoration: none;
         }
-        .explore-tab.active, .explore-tab:hover { background: #6366f1; color: #fff; border-color: #6366f1; }
 
-        .project-list { display: flex; flex-direction: column; border-radius: 14px; overflow: hidden; border: 1.5px solid #e5e7eb; background: #fff; }
-        .project-list-item {
-            display: flex; align-items: center; gap: 16px;
-            padding: 20px 24px; border-bottom: 1px solid #f3f4f6;
-            text-decoration: none; transition: background 0.1s; color: inherit;
+        .explore-tab.active,
+        .explore-tab:hover {
+            background: #6366f1;
+            color: #fff;
+            border-color: #6366f1;
         }
-        .project-list-item:last-child { border-bottom: none; }
-        .project-list-item:hover { background: #f8f9ff; }
+
+        .project-list {
+            display: flex;
+            flex-direction: column;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1.5px solid #e5e7eb;
+            background: #fff;
+        }
+
+        .project-list-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 24px;
+            border-bottom: 1px solid #f3f4f6;
+            text-decoration: none;
+            transition: background 0.1s;
+            color: inherit;
+        }
+
+        .project-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .project-list-item:hover {
+            background: #f8f9ff;
+        }
 
         .project-list-icon {
-            width: 52px; height: 52px; border-radius: 14px;
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
             background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; font-weight: 800; color: #6366f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #6366f1;
             flex-shrink: 0;
         }
-        .project-list-content { flex: 1; min-width: 0; }
-        .project-list-name { font-size: 0.95rem; font-weight: 700; color: #1a1a2e; margin-bottom: 3px; }
-        .project-list-desc { font-size: 0.82rem; color: #6b7280; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .project-list-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
-        .project-list-tag { padding: 2px 8px; border-radius: 6px; background: #f3f4f6; font-size: 0.75rem; color: #374151; display: flex; align-items: center; gap: 4px; }
-        .project-list-tag img { width: 12px; height: 12px; }
-        .project-list-meta { font-size: 0.78rem; color: #9ca3af; }
-        .project-list-meta .deadline { font-weight: 600; color: #ef4444; margin-left: 8px; }
 
-        .project-list-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-        .member-avatars { display: flex; }
-        .member-avatar {
-            width: 28px; height: 28px; border-radius: 50%;
-            background: #6366f1; color: #fff; font-size: 0.72rem; font-weight: 700;
-            display: flex; align-items: center; justify-content: center;
-            border: 2px solid #fff; margin-left: -6px;
+        .project-list-content {
+            flex: 1;
+            min-width: 0;
         }
-        .member-avatar:first-child { margin-left: 0; }
 
-        .project-empty { text-align: center; padding: 60px 24px; color: #9ca3af; }
-        .project-empty-title { font-size: 1rem; font-weight: 600; color: #374151; margin-bottom: 8px; }
+        .project-list-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 3px;
+        }
+
+        .project-list-desc {
+            font-size: 0.82rem;
+            color: #6b7280;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .project-list-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 4px;
+        }
+
+        .project-list-tag {
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: #f3f4f6;
+            font-size: 0.75rem;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .project-list-tag img {
+            width: 12px;
+            height: 12px;
+        }
+
+        .project-list-meta {
+            font-size: 0.78rem;
+            color: #9ca3af;
+        }
+
+        .project-list-meta .deadline {
+            font-weight: 600;
+            color: #ef4444;
+            margin-left: 8px;
+        }
+
+        .project-list-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .member-avatars {
+            display: flex;
+        }
+
+        .member-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #6366f1;
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #fff;
+            margin-left: -6px;
+        }
+
+        .member-avatar:first-child {
+            margin-left: 0;
+        }
+
+        .project-empty {
+            text-align: center;
+            padding: 60px 24px;
+            color: #9ca3af;
+        }
+
+        .project-empty-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
 
         .new-project-btn {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: #6366f1; color: #fff; padding: 11px 22px;
-            border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #6366f1;
+            color: #fff;
+            padding: 11px 22px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
             transition: background 0.15s;
         }
-        .new-project-btn:hover { background: #4f46e5; }
+
+        .new-project-btn:hover {
+            background: #4f46e5;
+        }
+
+        .explore-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 90;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(15, 23, 42, 0.42);
+        }
+
+        .explore-modal-backdrop.open {
+            display: flex;
+        }
+
+        .explore-modal {
+            width: min(560px, 100%);
+            overflow: hidden;
+            border-radius: 16px;
+            background: #fff;
+            box-shadow: 0 24px 70px rgba(15, 23, 42, 0.24);
+        }
+
+        .explore-modal-header,
+        .explore-modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 18px 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .explore-modal-footer {
+            justify-content: flex-end;
+            border-top: 1px solid #e5e7eb;
+            border-bottom: 0;
+        }
+
+        .explore-modal-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #1a1a2e;
+        }
+
+        .explore-modal-close {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fff;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .explore-modal-body {
+            display: grid;
+            gap: 16px;
+            padding: 20px;
+        }
+
+        .explore-modal-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .explore-modal-meta a,
+        .explore-modal-meta span {
+            display: inline-flex;
+            align-items: center;
+            min-height: 28px;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: #f3f4f6;
+            color: #374151;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        #exploreModalDescription {
+            margin: 0;
+            color: #6b7280;
+            line-height: 1.7;
+        }
+
+        .explore-modal-members {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        #exploreJoinButton:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+        }
     </style>
 </head>
+
 <body class="azit-app has-sidebar">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
@@ -100,12 +390,12 @@
         <div class="explore-search">
             <span class="explore-search-icon">🔍</span>
             <input type="text" id="searchInput" placeholder="예) AI 여행 플래너, 반려동물 케어 앱, 공부 관리 서비스"
-                   oninput="filterProjects(this.value)" />
+                oninput="filterProjects(this.value)" />
         </div>
 
         <div class="explore-section-header">
             <div class="explore-section-title">참여 가능한 프로젝트</div>
-            <a href="/projects/create" class="new-project-btn">
+            <a href="/projects/new" class="new-project-btn">
                 ✨ 새 프로젝트 만들기
             </a>
         </div>
@@ -121,52 +411,60 @@
         </div>
 
         <div class="project-list" id="projectList">
-            <th:block th:if="${publicProjects != null and !#lists.isEmpty(publicProjects)}">
-                <a class="project-list-item"
-                   th:each="project : ${publicProjects}"
-                   th:href="@{/project/{id}(id=${project.id})}"
-                   th:data-title="${project.title}"
-                   th:data-desc="${project.description}"
-                   th:data-stacks="${#strings.listJoin(project.stacks.![techStack.stackName], ',')}">
+            <th:block th:if="${mainProjects != null and !mainProjects.isEmpty()}">
+                <a class="project-list-item" href="#" th:each="projectItem : ${mainProjects}"
+                    th:data-title="${projectItem.project().title}" th:data-desc="${projectItem.project().description}"
+                    th:data-owner="${projectItem.ownerName()}"
+                    th:data-owner-url="@{/profile/{ownerId}(ownerId=${projectItem.ownerId()})}"
+                    th:data-member-names="${#strings.listJoin(projectItem.memberNames(), '|')}"
+                    th:data-members="${projectItem.memberCount()}" th:data-match-count="${projectItem.matchCount()}"
+                    th:data-already-member="${projectItem.alreadyMember()}"
+                    th:data-already-applied="${projectItem.alreadyApplied()}"
+                    th:data-action="@{/discover/projects/{projectId}/join-requests(projectId=${projectItem.project().id})}">
+                    <div class="project-list-icon" th:text="${#strings.substring(projectItem.project().title, 0, 1)}">
+                        A
+                    </div>
 
-                    <!-- 아이콘 (제목 첫 글자) -->
-                    <div class="project-list-icon"
-                         th:text="${#strings.substring(project.title, 0, 1)}">A</div>
-
-                    <!-- 내용 -->
                     <div class="project-list-content">
-                        <div class="project-list-name" th:text="${project.title}"></div>
-                        <div class="project-list-desc" th:text="${project.description}"></div>
-                        <div class="project-list-tags">
-                            <span class="project-list-tag"
-                                  th:each="stack, stat : ${project.stacks}"
-                                  th:if="${stat.index < 3}">
-                                <img th:src="${stack.techStack.iconUrl}"
-                                     th:alt="${stack.techStack.stackName}"
-                                     onerror="this.style.display='none'" />
-                                <span th:text="${stack.techStack.stackName}"></span>
-                            </span>
-                            <span class="project-list-tag"
-                                  th:if="${#lists.size(project.stacks) > 3}"
-                                  th:text="'+' + (${#lists.size(project.stacks)} - 3)"
-                                  style="background:#e0e7ff;color:#6366f1;"></span>
+                        <div class="project-list-name" th:text="${projectItem.project().title}">
+                            프로젝트 이름
                         </div>
+
+                        <div class="project-list-desc" th:text="${projectItem.project().description}">
+                            프로젝트 설명
+                        </div>
+
+                        <div class="project-list-tags">
+                            <span class="project-list-tag" th:if="${loggedIn and projectItem.matchCount() > 0}"
+                                th:text="${projectItem.matchCount()} + '개 일치'">
+                                1개 일치
+                            </span>
+
+                            <span class="project-list-tag" th:if="${projectItem.alreadyMember()}"
+                                style="background:#dcfce7;color:#16a34a;">
+                                참여중
+                            </span>
+
+                            <span class="project-list-tag" th:if="${projectItem.alreadyApplied()}"
+                                style="background:#e5e7eb;color:#6b7280;">
+                                신청완료
+                            </span>
+                        </div>
+
                         <div class="project-list-meta">
-                            <span th:text="${#lists.size(project.members)} + '명 참여 중'"></span>
-                            <span class="deadline"
-                                  th:if="${project.deadline != null}"
-                                  th:text="'D-' + ${#temporals.daysBetween(#temporals.createToday(), project.deadline)}"></span>
+                            <span th:text="${projectItem.memberCount()} + '명 참여 중'">
+                                0명 참여 중
+                            </span>
                         </div>
                     </div>
 
-                    <!-- 오른쪽: 멤버 아바타 -->
                     <div class="project-list-right">
-                        <div class="member-avatars">
-                            <div class="member-avatar"
-                                 th:each="pm, stat : ${project.members}"
-                                 th:if="${stat.index < 3}"
-                                 th:text="${#strings.substring(pm.member.name, 0, 1)}"
-                                 th:style="'background:' + (${stat.index} == 0 ? '#6366f1' : (${stat.index} == 1 ? '#8b5cf6' : '#06b6d4')) + ';'">
+                        <div class="member-avatars" th:if="${!projectItem.memberNames().isEmpty()}">
+                            <div class="member-avatar" th:each="memberName, stat : ${projectItem.memberNames()}"
+                                th:if="${stat.index < 3}" th:title="${memberName}"
+                                th:text="${#strings.substring(memberName, 0, 1)}"
+                                th:style="'background:' + (${stat.index} == 0 ? '#6366f1' : (${stat.index} == 1 ? '#8b5cf6' : '#06b6d4')) + ';'">
+                                U
                             </div>
                         </div>
                     </div>
@@ -174,13 +472,49 @@
             </th:block>
 
             <!-- 프로젝트 없을 때 -->
-            <div class="project-empty" th:if="${publicProjects == null or #lists.isEmpty(publicProjects)}">
+            <div class="project-empty" th:if="${mainProjects == null or mainProjects.isEmpty()}">
                 <div class="project-empty-title">아직 참여 가능한 프로젝트가 없어요</div>
                 <p style="font-size:0.85rem;margin-bottom:20px;">첫 번째 프로젝트를 만들어보세요!</p>
-                <a href="/projects/create" class="new-project-btn">✨ 새 프로젝트 만들기</a>
+                <a href="/projects/new" class="new-project-btn">✨ 새 프로젝트 만들기</a>
             </div>
         </div>
     </main>
+
+    <div id="projectExploreModal" class="explore-modal-backdrop" aria-hidden="true">
+        <section class="explore-modal" role="dialog" aria-modal="true" aria-labelledby="exploreModalTitle">
+            <header class="explore-modal-header">
+                <h2 id="exploreModalTitle">프로젝트 이름</h2>
+                <button type="button" class="explore-modal-close" data-explore-modal-close aria-label="닫기">
+                    X
+                </button>
+            </header>
+
+            <div class="explore-modal-body">
+                <div class="explore-modal-meta">
+                    <a id="exploreModalOwner" href="#">Owner: 미정</a>
+                    <span id="exploreModalMatches"></span>
+                </div>
+
+                <p id="exploreModalDescription">프로젝트 설명</p>
+
+                <div id="exploreModalMembers" class="explore-modal-members"></div>
+            </div>
+
+            <footer class="explore-modal-footer">
+                <a th:if="${!loggedIn}" href="/login" class="new-project-btn">
+                    로그인 후 가입신청
+                </a>
+
+                <form th:if="${loggedIn}" id="exploreJoinForm" method="post">
+                    <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}"
+                        th:value="${_csrf.token}" />
+                    <button id="exploreJoinButton" type="submit" class="new-project-btn">
+                        가입신청하기
+                    </button>
+                </form>
+            </footer>
+        </section>
+    </div>
 
     <script>
         function filterProjects(query) {
@@ -188,8 +522,10 @@
             document.querySelectorAll('.project-list-item').forEach(item => {
                 const title = (item.dataset.title || '').toLowerCase();
                 const desc = (item.dataset.desc || '').toLowerCase();
-                const stacks = (item.dataset.stacks || '').toLowerCase();
-                item.style.display = (title.includes(q) || desc.includes(q) || stacks.includes(q)) ? '' : 'none';
+                const owner = (item.dataset.owner || '').toLowerCase();
+
+                item.style.display =
+                    (title.includes(q) || desc.includes(q) || owner.includes(q)) ? '' : 'none';
             });
         }
 
@@ -205,6 +541,93 @@
                 }
             });
         }
+
+        const exploreModal = document.getElementById('projectExploreModal');
+        const exploreModalTitle = document.getElementById('exploreModalTitle');
+        const exploreModalDescription = document.getElementById('exploreModalDescription');
+        const exploreModalOwner = document.getElementById('exploreModalOwner');
+        const exploreModalMatches = document.getElementById('exploreModalMatches');
+        const exploreModalMembers = document.getElementById('exploreModalMembers');
+        const exploreJoinForm = document.getElementById('exploreJoinForm');
+        const exploreJoinButton = document.getElementById('exploreJoinButton');
+
+        function openExploreModal(card) {
+            if (!exploreModal) return;
+
+            const matchCount = Number(card.dataset.matchCount || 0);
+            const alreadyMember = card.dataset.alreadyMember === 'true';
+            const alreadyApplied = card.dataset.alreadyApplied === 'true';
+
+            exploreModalTitle.textContent = card.dataset.title || '프로젝트 이름';
+            exploreModalDescription.textContent = card.dataset.desc || '프로젝트 설명이 없습니다.';
+
+            exploreModalOwner.textContent = 'Owner: ' + (card.dataset.owner || '미정');
+            exploreModalOwner.href = card.dataset.ownerUrl || '#';
+
+            exploreModalMatches.textContent = matchCount > 0 ? matchCount + '개 일치' : '';
+            exploreModalMatches.style.display = matchCount > 0 ? 'inline-flex' : 'none';
+
+            exploreModalMembers.innerHTML = '';
+            (card.dataset.memberNames || '')
+                .split('|')
+                .filter((name) => name.trim().length > 0)
+                .forEach((name) => {
+                    const avatar = document.createElement('div');
+                    avatar.className = 'member-avatar';
+                    avatar.title = name;
+                    avatar.textContent = name.trim().charAt(0);
+                    exploreModalMembers.appendChild(avatar);
+                });
+
+            if (exploreJoinForm) {
+                exploreJoinForm.action = card.dataset.action || '';
+            }
+
+            if (exploreJoinButton) {
+                exploreJoinButton.disabled = alreadyMember || alreadyApplied;
+                exploreJoinButton.textContent = alreadyMember
+                    ? '이미 참여중'
+                    : alreadyApplied
+                        ? '신청완료'
+                        : '가입신청하기';
+            }
+
+            exploreModal.classList.add('open');
+            exploreModal.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeExploreModal() {
+            if (!exploreModal) return;
+            exploreModal.classList.remove('open');
+            exploreModal.setAttribute('aria-hidden', 'true');
+        }
+
+        document.querySelectorAll('.project-list-item').forEach((item) => {
+            item.addEventListener('click', (event) => {
+                event.preventDefault();
+                openExploreModal(item);
+            });
+        });
+
+        document.querySelectorAll('[data-explore-modal-close]').forEach((button) => {
+            button.addEventListener('click', closeExploreModal);
+        });
+
+        if (exploreModal) {
+            exploreModal.addEventListener('click', (event) => {
+                if (event.target === exploreModal) {
+                    closeExploreModal();
+                }
+            });
+        }
+
+        if (exploreJoinForm && exploreJoinButton) {
+            exploreJoinForm.addEventListener('submit', () => {
+                exploreJoinButton.disabled = true;
+                exploreJoinButton.textContent = '신청 중';
+            });
+        }
     </script>
 </body>
+
 </html>

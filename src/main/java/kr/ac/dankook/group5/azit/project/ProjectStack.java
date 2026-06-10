@@ -1,6 +1,5 @@
 package kr.ac.dankook.group5.azit.project;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
