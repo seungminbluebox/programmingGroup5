@@ -193,7 +193,9 @@
 									aria-hidden="true"
 								></span>
 							</div>
-							<th:block th:replace="~{project_schedule :: topSlots(${topAvailableSlots}, 3)}"></th:block>
+							<th:block
+								th:replace="~{project_schedule :: topSlots(${topAvailableSlots}, 3)}"
+							></th:block>
 							<a
 								class="btn btn-outline project-detail-wide-button"
 								th:href="@{/project/{projectId}/schedule(projectId=${project.id})}"
@@ -422,7 +424,9 @@
 									th:href="@{/profile/{id}(id=${projectMember.member.id})}"
 									th:each="projectMember : ${project.members}"
 								>
-									<th:block th:replace="~{fragments/avatar :: avatar(${projectMember.member.profileUrl}, ${projectMember.member.name}, 'project-detail-member-avatar')}"></th:block>
+									<th:block
+										th:replace="~{fragments/avatar :: avatar(${projectMember.member.profileUrl}, ${projectMember.member.name}, 'project-detail-member-avatar')}"
+									></th:block>
 									<div>
 										<strong th:text="${projectMember.member.name}"
 											>팀원 이름</strong
