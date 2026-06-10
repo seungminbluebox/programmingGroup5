@@ -11,7 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import kr.ac.dankook.group5.azit.user.Availability;
+import kr.ac.dankook.group5.azit.schedule.entity.DayOfWeek;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,12 +35,12 @@ public class ProjectAvailability {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
-    private Availability.DayOfWeek dayOfWeek;
+    private DayOfWeek dayOfWeek;
 
     private LocalTime startTime;
     private LocalTime endTime;
 
-    public ProjectAvailability(Project project, Availability.DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
+    public ProjectAvailability(Project project, DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
         this.project = project;
         this.dayOfWeek = dayOfWeek;
         this.startTime = startTime;

@@ -1,6 +1,6 @@
 package kr.ac.dankook.group5.azit.project;
 
-import kr.ac.dankook.group5.azit.user.Availability;
+import kr.ac.dankook.group5.azit.schedule.entity.Routine;
 import kr.ac.dankook.group5.azit.user.Member;
 import kr.ac.dankook.group5.azit.user.MemberStack;
 import kr.ac.dankook.group5.azit.user.MemberStackRepository;
@@ -110,7 +110,7 @@ public class MatchingService {
 
     private int calculateAvailabilityMatchCount(
             List<ProjectAvailability> projectAvailabilities,
-            List<Availability> memberAvailabilities) {
+            List<Routine> memberAvailabilities) {
         if (projectAvailabilities.isEmpty() || memberAvailabilities.isEmpty()) {
             return 0;
         }
@@ -121,7 +121,7 @@ public class MatchingService {
                 .count();
     }
 
-    private boolean isOverlap(ProjectAvailability projectAvailability, Availability memberAvailability) {
+    private boolean isOverlap(ProjectAvailability projectAvailability, Routine memberAvailability) {
         if (projectAvailability.getDayOfWeek() != memberAvailability.getDayOfWeek()) {
             return false;
         }

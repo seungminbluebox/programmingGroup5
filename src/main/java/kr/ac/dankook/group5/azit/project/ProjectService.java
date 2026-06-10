@@ -1,6 +1,6 @@
 package kr.ac.dankook.group5.azit.project;
 
-import kr.ac.dankook.group5.azit.user.Availability;
+import kr.ac.dankook.group5.azit.schedule.entity.DayOfWeek;
 import kr.ac.dankook.group5.azit.user.Member;
 import kr.ac.dankook.group5.azit.user.MemberRepository;
 import kr.ac.dankook.group5.azit.user.TechStack;
@@ -431,7 +431,7 @@ public class ProjectService {
         if (days != null && !days.isEmpty()) {
             for (int i = 0; i < days.size(); i++) {
                 try {
-                    Availability.DayOfWeek dayOfWeek = Availability.DayOfWeek.valueOf(days.get(i));
+                    DayOfWeek dayOfWeek = DayOfWeek.valueOf(days.get(i));
                     LocalTime startTime = LocalTime.parse(starts.get(i));
                     LocalTime endTime = LocalTime.parse(ends.get(i));
 
