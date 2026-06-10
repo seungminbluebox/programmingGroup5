@@ -15,12 +15,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -167,6 +171,7 @@ public class ProjectController {
         List<ProjectTask> tasks = projectService.getTasks(email, projectId);
 
         model.addAttribute("project", project);
+        model.addAttribute("projectMembers", projectService.getProjectMembers(email, projectId));
         model.addAttribute("tasks", tasks);
         model.addAttribute("myTaskCompletionRate", projectService.getMyTaskCompletionRate(email, projectId));
         model.addAttribute("myCompletedTaskCount", projectService.getMyCompletedTaskCount(email, projectId));
@@ -177,6 +182,9 @@ public class ProjectController {
         model.addAttribute("projectEditable", project.getStatus() == ProjectStatus.IN_PROGRESS);
         model.addAttribute("incompleteTaskCount", tasks.stream().filter(task -> !task.isCompleted()).count());
         model.addAttribute("activeProjectPage", activeProjectPage);
+        model.addAttribute("deadlineProgressRate", projectService.getDeadlineProgressRate(email, projectId));
+        model.addAttribute("teamTaskCompletionRate", projectService.getTeamTaskCompletionRate(email, projectId));
+        model.addAttribute("deadlineDday", projectService.getDeadlineDday(email, projectId));
 
         return templateName;
     }
@@ -323,6 +331,20 @@ public class ProjectController {
             @PathVariable Long projectId) {
         projectService.deleteProject(authentication.getName(), projectId);
         return "redirect:/";
+    }
+
+    @PostMapping("/project/{id}/deadline")
+    public String updateDeadline(
+            Authentication authentication,
+            @PathVariable Long id,
+            @RequestParam("deadline") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate deadline) {
+
+        System.out.println("deadline update called: " + id + ", " + deadline);
+
+        String email = authentication.getName();
+        projectService.updateDeadline(email, id, deadline);
+
+        return "redirect:/project/" + id;
     }
 
 }

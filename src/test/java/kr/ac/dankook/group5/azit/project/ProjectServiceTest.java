@@ -39,6 +39,9 @@ class ProjectServiceTest {
     @Mock
     private ProjectInvitationRepository projectInvitationRepository;
 
+    @Mock
+    private ProjectJoinRequestRepository projectJoinRequestRepository;
+
     @InjectMocks
     private ProjectService projectService;
 

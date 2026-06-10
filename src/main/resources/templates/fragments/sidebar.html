@@ -40,12 +40,18 @@
 					<a id="sidebar-home" class="logo" th:href="@{/}">AZIT</a>
 				</div>
 				<div>
-					<a
+					<button
 						id="sidebar-notification"
 						class="icon icon-bell"
 						th:href="@{/invitations}"
 						aria-label="초대 목록"
 					></a>
+						type="button"
+						aria-label="알림 목록"
+						data-notification-open
+					>
+						<span class="notification-badge" th:if="${sidebarNotificationCount > 0}" th:text="${sidebarNotificationCount}">1</span>
+					</button>
 				</div>
 			</div>
 			<nav id="sidebar-menu">
@@ -65,8 +71,8 @@
 						<a
 							id="sidebar-start"
 							class="sidebar-page"
-							th:href="@{/}"
-							th:classappend="${currentPath == '/'} ? 'active'"
+							th:href="@{/main}"
+							th:classappend="${currentPath == '/main'} ? 'active'"
 						>
 							<div class="sidebar-page-icon icon icon-circle-plus"></div>
 							<div class="sidebar-page-name">시작하기</div>
@@ -98,6 +104,11 @@
 			</nav>
 			<nav id="sidebar-projects" th:if="${sidebarMemberName != null}">
 				<h2>내 프로젝트 <span class="icon icon-plus" aria-hidden="true"></span></h2>
+				<input id='sidebar-projects-toggle-input' class='toggle-input' type='checkbox' checked />
+				<h2>
+					<span>내 프로젝트</span>
+					<label id='sidebar-projects-toggle-button' for='sidebar-projects-toggle-input' aria-label='내 프로젝트 접기/펼치기'></label>
+				</h2>
 				<ul>
 					<li th:each="project: ${sidebarProjects}">
 						<a
@@ -165,6 +176,12 @@
 										<div class="sidebar-usermenu-label">회원가입</div>
 									</a>
 								</li>
+                                    <li th:if="${sidebarMemberName != null}">
+                                        <a id='sidebar-profile' th:href='@{/profile/me}'>
+                                            <div class='sidebar-usermenu-icon'></div>
+                                            <div class='sidebar-usermenu-label'>프로필 수정</div>
+                                        </a>
+                                    </li>
 								<li th:if="${sidebarMemberName != null}">
 									<form th:action="@{/logout}" method="POST">
 										<button id="sidebar-logout" type="submit">
@@ -181,6 +198,92 @@
 				</ul>
 			</nav>
 			<dialog th:if="${sidebarMemberName != null}" th:replace="~{auth :: modal}"></dialog>
+			<div id="notification-modal" class="notification-modal-backdrop" aria-hidden="true">
+				<section class="notification-modal" role="dialog" aria-modal="true" aria-labelledby="notification-modal-title">
+					<header class="notification-modal-header">
+						<h2 id="notification-modal-title">알림</h2>
+						<button type="button" class="notification-modal-close" data-notification-close aria-label="닫기">X</button>
+					</header>
+					<div class="notification-modal-body">
+						<section>
+							<h3>받은 초대</h3>
+							<div class="notification-list" th:if="${sidebarPendingInvitations != null and !sidebarPendingInvitations.isEmpty()}">
+								<article class="notification-item" th:each="invitation : ${sidebarPendingInvitations}">
+									<strong th:text="${invitation.project.title}">프로젝트 이름</strong>
+									<p th:text="${invitation.sender.name + '님이 초대했습니다.'}">초대한 사람</p>
+									<div class="notification-actions">
+										<form th:action="@{/invitations/{id}/accept(id=${invitation.id})}" method="post">
+											<button type="submit" class="azit-button">수락</button>
+										</form>
+										<form th:action="@{/invitations/{id}/reject(id=${invitation.id})}" method="post">
+											<button type="submit" class="azit-button azit-button-danger">거절</button>
+										</form>
+									</div>
+								</article>
+							</div>
+							<p class="notification-empty" th:if="${sidebarPendingInvitations == null or sidebarPendingInvitations.isEmpty()}">받은 초대가 없습니다.</p>
+						</section>
+
+						<section>
+							<h3>가입신청</h3>
+							<div class="notification-list" th:if="${sidebarPendingJoinRequests != null and !sidebarPendingJoinRequests.isEmpty()}">
+								<article class="notification-item" th:each="joinRequest : ${sidebarPendingJoinRequests}">
+									<strong th:text="${joinRequest.project.title}">프로젝트 이름</strong>
+									<p>
+										<a th:href="@{/profile/{id}(id=${joinRequest.applicant.id})}" th:text="${joinRequest.applicant.name}">신청자</a>
+										<span>님이 가입신청했습니다.</span>
+									</p>
+									<div class="notification-actions">
+										<form th:action="@{/join-requests/{id}/accept(id=${joinRequest.id})}" method="post">
+											<button type="submit" class="azit-button">수락</button>
+										</form>
+										<form th:action="@{/join-requests/{id}/reject(id=${joinRequest.id})}" method="post">
+											<button type="submit" class="azit-button azit-button-danger">거절</button>
+										</form>
+									</div>
+								</article>
+							</div>
+							<p class="notification-empty" th:if="${sidebarPendingJoinRequests == null or sidebarPendingJoinRequests.isEmpty()}">가입신청이 없습니다.</p>
+						</section>
+					</div>
+				</section>
+			</div>
+			<script>
+				(() => {
+					const modal = document.getElementById("notification-modal");
+					const openButton = document.querySelector("[data-notification-open]");
+					const closeButtons = document.querySelectorAll("[data-notification-close]");
+
+					if (!modal || !openButton) {
+						return;
+					}
+
+					function closeModal() {
+						modal.classList.remove("open");
+						modal.setAttribute("aria-hidden", "true");
+					}
+
+					openButton.addEventListener("click", () => {
+						modal.classList.add("open");
+						modal.setAttribute("aria-hidden", "false");
+					});
+
+					document.querySelectorAll(".notification-actions form").forEach((notificationForm) => {
+						notificationForm.addEventListener("submit", () => {
+							notificationForm.querySelectorAll("button").forEach((button) => {
+								button.disabled = true;
+							});
+						});
+					});
+
+					closeButtons.forEach((button) => button.addEventListener("click", closeModal));
+					modal.addEventListener("click", (event) => {
+						if (event.target === modal) {
+							closeModal();
+						}
+					});
+				})();
+			</script>
 		</header>
 		<main>
 			<h1>본문</h1>

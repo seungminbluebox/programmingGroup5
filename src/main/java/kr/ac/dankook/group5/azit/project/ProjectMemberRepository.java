@@ -9,9 +9,13 @@ import java.util.Optional;
 public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Long> {
     List<ProjectMember> findAllByMember(Member member);
 
+    List<ProjectMember> findAllByProject(Project project);
+
     boolean existsByProjectAndMember(Project project, Member member);
 
     Optional<ProjectMember> findByProjectAndMember(Project project, Member member);
+
+    long countByProject(Project project);
 
     void deleteAllByProject(Project project);
 }

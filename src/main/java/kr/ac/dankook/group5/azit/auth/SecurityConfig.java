@@ -21,7 +21,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/home", "/login", "/register", "/css/**", "/js/**", "/images/**",
+                        .requestMatchers("/", "/home", "/main", "/login", "/register", "/css/**", "/js/**", "/images/**",
                                 "/uploads/**", "/h2-console/**")
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN") // 관리자 전용 경로 추가
@@ -31,7 +31,7 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/", true)
                         .permitAll())
                 .logout((logout) -> logout.permitAll())
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**", "/projects"))
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
         return http.build();
