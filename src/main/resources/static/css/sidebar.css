@@ -300,11 +300,6 @@
 	display: block;
 }
 
-#sidebar-user:has(#sidebar-login):hover #sidebar-usermenu,
-#sidebar-user:has(#sidebar-login):focus-within #sidebar-usermenu {
-	display: block;
-}
-
 #sidebar-usermenu ul {
 	margin: 0;
 	padding: 0;
