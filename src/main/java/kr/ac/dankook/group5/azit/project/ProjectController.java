@@ -5,6 +5,7 @@ import kr.ac.dankook.group5.azit.schedule.dto.TimeRange;
 import kr.ac.dankook.group5.azit.schedule.entity.DayOfWeek;
 import kr.ac.dankook.group5.azit.schedule.service.ScheduleService;
 import kr.ac.dankook.group5.azit.user.Member;
+import kr.ac.dankook.group5.azit.project.MatchingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
@@ -35,13 +36,27 @@ public class ProjectController {
 
     private final ProjectService projectService;
     private final ScheduleService scheduleService;
+    private final MatchingService matchingService;
 
     @PostMapping("/projects")
     public String createProject(
             Authentication authentication,
             @RequestParam String title,
-            @RequestParam String description) {
+            @RequestParam String description,
+            @RequestParam(required = false) List<Long> requiredStackIds,
+            @RequestParam(value = "availDay", required = false) List<String> availDays,
+            @RequestParam(value = "availStart", required = false) List<String> availStarts,
+            @RequestParam(value = "availEnd", required = false) List<String> availEnds) {
         Project project = projectService.createProject(authentication.getName(), title, description);
+
+        if (requiredStackIds != null && !requiredStackIds.isEmpty()) {
+            projectService.addProjectRequiredStacks(project.getId(), requiredStackIds);
+        }
+
+        if (availDays != null && !availDays.isEmpty()) {
+            projectService.addProjectAvailabilities(project.getId(), availDays, availStarts, availEnds);
+        }
+
         return "redirect:/project/" + project.getId();
     }
 
@@ -58,10 +73,10 @@ public class ProjectController {
         List<Member> allMembers = project.getMembers().stream()
                 .map(ProjectMember::getMember).toList();
 
-        Map<DayOfWeek, List<TimeRange>> availableMap =
-                scheduleService.getGroupAvailableTimeOnDate(allMembers, weekStart, weekStart.plusDays(6));
-        DayOfWeek[] dayOrder = {DayOfWeek.SUN, DayOfWeek.MON, DayOfWeek.TUE,
-                DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT};
+        Map<DayOfWeek, List<TimeRange>> availableMap = scheduleService.getGroupAvailableTimeOnDate(allMembers,
+                weekStart, weekStart.plusDays(6));
+        DayOfWeek[] dayOrder = { DayOfWeek.SUN, DayOfWeek.MON, DayOfWeek.TUE,
+                DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT };
         List<List<TimeRange>> available = new ArrayList<>();
         for (DayOfWeek day : dayOrder) {
             available.add(availableMap.containsKey(day)
@@ -107,11 +122,11 @@ public class ProjectController {
                 ? new HashSet<>(memberIds)
                 : allMembers.stream().map(Member::getId).collect(java.util.stream.Collectors.toSet());
         model.addAttribute("selectedMemberIds", selectedMemberIds);
-        Map<DayOfWeek, List<TimeRange>> availableMap =
-                scheduleService.getGroupAvailableTimeOnDate(members, weekStart, weekStart.plusDays(6));
+        Map<DayOfWeek, List<TimeRange>> availableMap = scheduleService.getGroupAvailableTimeOnDate(members, weekStart,
+                weekStart.plusDays(6));
 
-        DayOfWeek[] dayOrder = {DayOfWeek.SUN, DayOfWeek.MON, DayOfWeek.TUE,
-                DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT};
+        DayOfWeek[] dayOrder = { DayOfWeek.SUN, DayOfWeek.MON, DayOfWeek.TUE,
+                DayOfWeek.WED, DayOfWeek.THU, DayOfWeek.FRI, DayOfWeek.SAT };
         List<List<TimeRange>> available = new ArrayList<>();
         for (DayOfWeek day : dayOrder) {
             available.add(availableMap.containsKey(day)
@@ -172,6 +187,7 @@ public class ProjectController {
 
         model.addAttribute("project", project);
         model.addAttribute("projectMembers", projectService.getProjectMembers(email, projectId));
+        model.addAttribute("recommendedMembers", matchingService.recommendMembers(projectId));
         model.addAttribute("tasks", tasks);
         model.addAttribute("myTaskCompletionRate", projectService.getMyTaskCompletionRate(email, projectId));
         model.addAttribute("myCompletedTaskCount", projectService.getMyCompletedTaskCount(email, projectId));

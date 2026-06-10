@@ -1,12 +1,16 @@
 package kr.ac.dankook.group5.azit.project;
 
+import kr.ac.dankook.group5.azit.user.Availability;
 import kr.ac.dankook.group5.azit.user.Member;
 import kr.ac.dankook.group5.azit.user.MemberRepository;
+import kr.ac.dankook.group5.azit.user.TechStack;
+import kr.ac.dankook.group5.azit.user.TechStackRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
@@ -23,6 +27,9 @@ public class ProjectService {
     private final ProjectTaskRepository projectTaskRepository;
     private final ProjectInvitationRepository projectInvitationRepository;
     private final ProjectJoinRequestRepository projectJoinRequestRepository;
+    private final ProjectStackRepository projectStackRepository;
+    private final ProjectAvailabilityRepository projectAvailabilityRepository;
+    private final TechStackRepository techStackRepository;
 
     @Transactional
     public Project createProject(String ownerEmail, String title, String description) {
@@ -53,8 +60,10 @@ public class ProjectService {
         assertProjectMember(project, member);
 
         return projectMemberRepository.findAllByProject(project).stream()
-                .sorted(Comparator.comparing((ProjectMember projectMember) -> projectMember.getRole() != ProjectMemberRole.OWNER)
-                        .thenComparing(projectMember -> projectMember.getJoinedAt(), Comparator.nullsLast(Comparator.naturalOrder())))
+                .sorted(Comparator
+                        .comparing((ProjectMember projectMember) -> projectMember.getRole() != ProjectMemberRole.OWNER)
+                        .thenComparing(projectMember -> projectMember.getJoinedAt(),
+                                Comparator.nullsLast(Comparator.naturalOrder())))
                 .toList();
     }
 
@@ -398,5 +407,40 @@ public class ProjectService {
         }
 
         return "D+" + Math.abs(days);
+    }
+
+    @Transactional
+    public void addProjectRequiredStacks(Long projectId, List<Long> stackIds) {
+        Project project = getProjectById(projectId);
+        projectStackRepository.deleteAllByProject(project);
+
+        if (stackIds != null && !stackIds.isEmpty()) {
+            for (Long stackId : stackIds) {
+                TechStack techStack = techStackRepository.findById(stackId)
+                        .orElseThrow(() -> new IllegalArgumentException("기술 스택을 찾을 수 없습니다."));
+                projectStackRepository.save(new ProjectStack(project, techStack, true));
+            }
+        }
+    }
+
+    @Transactional
+    public void addProjectAvailabilities(Long projectId, List<String> days, List<String> starts, List<String> ends) {
+        Project project = getProjectById(projectId);
+        projectAvailabilityRepository.deleteAllByProject(project);
+
+        if (days != null && !days.isEmpty()) {
+            for (int i = 0; i < days.size(); i++) {
+                try {
+                    Availability.DayOfWeek dayOfWeek = Availability.DayOfWeek.valueOf(days.get(i));
+                    LocalTime startTime = LocalTime.parse(starts.get(i));
+                    LocalTime endTime = LocalTime.parse(ends.get(i));
+
+                    projectAvailabilityRepository.save(
+                            new ProjectAvailability(project, dayOfWeek, startTime, endTime));
+                } catch (Exception e) {
+                    System.out.println("Failed to parse project availability: " + e.getMessage());
+                }
+            }
+        }
     }
 }

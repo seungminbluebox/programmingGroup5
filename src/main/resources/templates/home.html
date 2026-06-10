@@ -1,185 +1,248 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Azit</title>
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="stylesheet" href="/css/common.css" />
+		<link rel="stylesheet" href="/css/sidebar.css" />
+		<link rel="stylesheet" href="/css/dashboard.css" />
+	</head>
 
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>Azit</title>
-	<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-	<link rel="stylesheet" href="/css/common.css" />
-	<link rel="stylesheet" href="/css/sidebar.css" />
-	<link rel="stylesheet" href="/css/dashboard.css" />
-</head>
-
-<body class="azit-app" th:classappend="${nickname != null} ? ' has-sidebar' : ''">
-	<div th:if="${nickname != null}">
-		<div th:replace="~{fragments/sidebar :: sidebar}"></div>
-	</div>
-
-	<header class="azit-nav" th:if="${nickname == null}">
-		<div class="azit-shell azit-nav-inner">
-			<a class="azit-brand" href="/">
-				<span class="azit-brand-mark">AZ</span>
-				<span>Azit</span>
-			</a>
-			<div class="azit-nav-actions">
-				<a href="/login" class="azit-button azit-button-secondary">로그인</a>
-				<a href="/register" class="azit-button">회원가입</a>
-			</div>
+	<body class="azit-app" th:classappend="${nickname != null} ? ' has-sidebar' : ''">
+		<div th:if="${nickname != null}">
+			<div th:replace="~{fragments/sidebar :: sidebar}"></div>
 		</div>
-	</header>
 
-	<main class="azit-shell dashboard-page" th:if="${nickname != null}">
-		<section class="dashboard-hero">
-			<h1>
-				안녕하세요,
-				<span th:text="${nickname}">사용자</span>님!
-			</h1>
-			<p>소속된 프로젝트와 오늘 확인할 작업을 한눈에 볼 수 있습니다.</p>
-		</section>
-
-		<section class="dashboard-section">
-			<div class="dashboard-section-header">
-				<h2>참여 중인 프로젝트</h2>
-				<button type="button" class="dashboard-text-button"
-					onclick="window.dispatchEvent(new CustomEvent('open-project-create-modal'))">
-					추가하기
-				</button>
-			</div>
-
-			<div class="dashboard-project-grid" th:if="${projects != null and !projects.isEmpty()}">
-				<a class="dashboard-project-card" th:each="project : ${projects}"
-					th:href="@{/project/{id}(id=${project.id})}">
-					<div
-						th:replace="~{fragments/project_icon :: projectIcon(${project.title}, 'dashboard-project-icon')}">
-					</div>
-
-					<div>
-						<strong th:text="${project.title}">프로젝트 이름</strong>
-						<p th:text="${project.description}">프로젝트 설명</p>
-					</div>
-
-					<div class="dashboard-card-meta">
-						<span class="azit-status-badge" th:classappend="${project.status.cssClass}"
-							th:text="${project.status.label}">
-							진행중
-						</span>
-						<span th:if="${project.deadline != null}" th:text="${project.deadline}">
-							2026-06-10
-						</span>
-					</div>
+		<header class="azit-nav" th:if="${nickname == null}">
+			<div class="azit-shell azit-nav-inner">
+				<a class="azit-brand" href="/">
+					<span class="azit-brand-mark">AZ</span>
+					<span>Azit</span>
 				</a>
+				<div class="azit-nav-actions">
+					<a href="/login" class="azit-button azit-button-secondary">로그인</a>
+					<a href="/register" class="azit-button">회원가입</a>
+				</div>
 			</div>
+		</header>
 
-			<p class="azit-empty" th:if="${projects == null or projects.isEmpty()}">
-				아직 참여 중인 프로젝트가 없습니다.
-			</p>
-		</section>
+		<main class="azit-shell dashboard-page" th:if="${nickname != null}">
+			<section class="dashboard-hero">
+				<h1>
+					안녕하세요,
+					<span th:text="${nickname}">사용자</span>님!
+				</h1>
+				<p>소속된 프로젝트와 오늘 확인할 작업을 한눈에 볼 수 있습니다.</p>
+			</section>
 
-		<section class="dashboard-section" th:if="${todayTasks != null and !todayTasks.isEmpty()}">
-			<div class="dashboard-section-header">
-				<h2>
-					내 할 일
-					<span class="dashboard-count" th:text="${todayTasks.size()}">0</span>
-				</h2>
-			</div>
-
-			<div class="dashboard-task-list">
-				<a class="dashboard-task-item" th:each="task : ${todayTasks}"
-					th:href="@{/project/{id}/task(id=${task.project.id})}">
-					<span class="dashboard-task-check"></span>
-
-					<div>
-						<strong th:text="${task.title}">태스크 제목</strong>
-						<p th:text="${task.project.title}">프로젝트 이름</p>
-					</div>
-
-					<span class="dashboard-user-badge">
-						<span th:text="${#strings.substring(task.assignee.name, 0, 1)}">U</span>
-					</span>
-				</a>
-			</div>
-		</section>
-
-		<section class="dashboard-section" th:if="${upcomingSchedules != null and !upcomingSchedules.isEmpty()}">
-			<div class="dashboard-section-header">
-				<h2>다가오는 일정</h2>
-				<a class="dashboard-text-button" href="/schedule">전체 일정 보기</a>
-			</div>
-
-			<div class="dashboard-schedule-grid">
-				<article class="dashboard-schedule-card" th:each="schedule : ${upcomingSchedules}">
-					<strong th:text="${schedule.name}">일정 이름</strong>
-					<p th:text="${schedule.date}">2026-06-10</p>
-					<span th:text="${schedule.startTime} + ' - ' + ${schedule.endTime}">
-						10:00 - 11:00
-					</span>
-				</article>
-			</div>
-		</section>
-	</main>
-	<div id="createProjectModal" class="dashboard-modal-backdrop" aria-hidden="true">
-		<section class="dashboard-modal" role="dialog" aria-modal="true" aria-labelledby="createProjectTitle">
-			<header class="dashboard-modal-header">
-				<h2 id="createProjectTitle">프로젝트 생성</h2>
-				<button type="button" class="dashboard-modal-close" data-create-modal-close aria-label="닫기">
-					X
-				</button>
-			</header>
-
-			<form th:action="@{/projects}" method="post" class="dashboard-create-form">
-				<div class="dashboard-modal-body">
-					<label>
-						프로젝트 이름
-						<input class="azit-input" type="text" name="title" placeholder="예: 포트폴리오 매칭 서비스" required />
-					</label>
-
-					<label>
-						프로젝트 설명
-						<textarea class="azit-input" name="description" rows="5"
-							placeholder="프로젝트 목표, 만들 기능, 필요한 협업 방식을 적어주세요." required></textarea>
-					</label>
+			<section class="dashboard-section">
+				<div class="dashboard-section-header">
+					<h2>참여 중인 프로젝트</h2>
+					<button
+						type="button"
+						class="dashboard-text-button"
+						onclick="
+							window.dispatchEvent(
+								new CustomEvent('open-project-create-modal'),
+							)
+						"
+					>
+						추가하기
+					</button>
 				</div>
 
-				<footer class="dashboard-modal-footer">
-					<button type="submit" class="azit-button">프로젝트 생성</button>
-				</footer>
-			</form>
-		</section>
-	</div>
+				<div
+					class="dashboard-project-grid"
+					th:if="${projects != null and !projects.isEmpty()}"
+				>
+					<a
+						class="dashboard-project-card"
+						th:each="project : ${projects}"
+						th:href="@{/project/{id}(id=${project.id})}"
+					>
+						<div
+							th:replace="~{fragments/project_icon :: projectIcon(${project.title}, 'dashboard-project-icon')}"
+						></div>
 
-	<script>
-		(() => {
-			const modal = document.getElementById('createProjectModal');
-			const closeButtons = document.querySelectorAll('[data-create-modal-close]');
+						<div>
+							<strong th:text="${project.title}">프로젝트 이름</strong>
+							<p th:text="${project.description}">프로젝트 설명</p>
+						</div>
 
-			function openModal() {
-				if (!modal) return;
-				modal.classList.add('open');
-				modal.setAttribute('aria-hidden', 'false');
-			}
+						<div class="dashboard-card-meta">
+							<span
+								class="azit-status-badge"
+								th:classappend="${project.status.cssClass}"
+								th:text="${project.status.label}"
+							>
+								진행중
+							</span>
+							<span
+								th:if="${project.deadline != null}"
+								th:text="${project.deadline}"
+							>
+								2026-06-10
+							</span>
+						</div>
+					</a>
+				</div>
 
-			function closeModal() {
-				if (!modal) return;
-				modal.classList.remove('open');
-				modal.setAttribute('aria-hidden', 'true');
-			}
+				<p class="azit-empty" th:if="${projects == null or projects.isEmpty()}">
+					아직 참여 중인 프로젝트가 없습니다.
+				</p>
+			</section>
 
-			window.addEventListener('open-project-create-modal', openModal);
+			<section
+				class="dashboard-section"
+				th:if="${todayTasks != null and !todayTasks.isEmpty()}"
+			>
+				<div class="dashboard-section-header">
+					<h2>
+						내 할 일
+						<span class="dashboard-count" th:text="${todayTasks.size()}"
+							>0</span
+						>
+					</h2>
+				</div>
 
-			closeButtons.forEach((button) => {
-				button.addEventListener('click', closeModal);
-			});
+				<div class="dashboard-task-list">
+					<a
+						class="dashboard-task-item"
+						th:each="task : ${todayTasks}"
+						th:href="@{/project/{id}/task(id=${task.project.id})}"
+					>
+						<span class="dashboard-task-check"></span>
 
-			if (modal) {
-				modal.addEventListener('click', (event) => {
-					if (event.target === modal) {
-						closeModal();
-					}
+						<div>
+							<strong th:text="${task.title}">태스크 제목</strong>
+							<p th:text="${task.project.title}">프로젝트 이름</p>
+						</div>
+
+						<span class="dashboard-user-badge">
+							<span
+								th:text="${#strings.substring(task.assignee.name, 0, 1)}"
+								>U</span
+							>
+						</span>
+					</a>
+				</div>
+			</section>
+
+			<section
+				class="dashboard-section"
+				th:if="${upcomingSchedules != null and !upcomingSchedules.isEmpty()}"
+			>
+				<div class="dashboard-section-header">
+					<h2>다가오는 일정</h2>
+					<a class="dashboard-text-button" href="/schedule">전체 일정 보기</a>
+				</div>
+
+				<div class="dashboard-schedule-grid">
+					<article
+						class="dashboard-schedule-card"
+						th:each="schedule : ${upcomingSchedules}"
+					>
+						<strong th:text="${schedule.name}">일정 이름</strong>
+						<p th:text="${schedule.date}">2026-06-10</p>
+						<span
+							th:text="${schedule.startTime} + ' - ' + ${schedule.endTime}"
+						>
+							10:00 - 11:00
+						</span>
+					</article>
+				</div>
+			</section>
+		</main>
+		<div id="createProjectModal" class="dashboard-modal-backdrop" aria-hidden="true">
+			<section
+				class="dashboard-modal"
+				role="dialog"
+				aria-modal="true"
+				aria-labelledby="createProjectTitle"
+			>
+				<header class="dashboard-modal-header">
+					<h2 id="createProjectTitle">프로젝트 생성</h2>
+					<button
+						type="button"
+						class="dashboard-modal-close"
+						data-create-modal-close
+						aria-label="닫기"
+					>
+						X
+					</button>
+				</header>
+
+				<form
+					th:action="@{/projects}"
+					method="post"
+					class="dashboard-create-form"
+				>
+					<div class="dashboard-modal-body">
+						<label>
+							프로젝트 이름
+							<input
+								class="azit-input"
+								type="text"
+								name="title"
+								placeholder="예: 포트폴리오 매칭 서비스"
+								required
+							/>
+						</label>
+
+						<label>
+							프로젝트 설명
+							<textarea
+								class="azit-input"
+								name="description"
+								rows="5"
+								placeholder="프로젝트 목표, 만들 기능, 필요한 협업 방식을 적어주세요."
+								required
+							></textarea>
+						</label>
+					</div>
+
+					<footer class="dashboard-modal-footer">
+						<button type="submit" class="azit-button">프로젝트 생성</button>
+					</footer>
+				</form>
+			</section>
+		</div>
+
+		<script>
+			(() => {
+				const modal = document.getElementById('createProjectModal');
+				const closeButtons = document.querySelectorAll(
+					'[data-create-modal-close]',
+				);
+
+				function openModal() {
+					if (!modal) return;
+					modal.classList.add('open');
+					modal.setAttribute('aria-hidden', 'false');
+				}
+
+				function closeModal() {
+					if (!modal) return;
+					modal.classList.remove('open');
+					modal.setAttribute('aria-hidden', 'true');
+				}
+
+				window.addEventListener('open-project-create-modal', openModal);
+
+				closeButtons.forEach((button) => {
+					button.addEventListener('click', closeModal);
 				});
-			}
-		})();
-	</script>
-</body>
 
+				if (modal) {
+					modal.addEventListener('click', (event) => {
+						if (event.target === modal) {
+							closeModal();
+						}
+					});
+				}
+			})();
+		</script>
+	</body>
 </html>
