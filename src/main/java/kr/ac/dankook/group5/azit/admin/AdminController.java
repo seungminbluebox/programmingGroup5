@@ -3,9 +3,12 @@ package kr.ac.dankook.group5.azit.admin;
 import kr.ac.dankook.group5.azit.user.TechStack;
 import kr.ac.dankook.group5.azit.user.TechStackRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -35,5 +38,11 @@ public class AdminController {
     public String deleteStack(@PathVariable Long id) {
         techStackRepository.deleteById(id);
         return "redirect:/admin/stacks";
+    }
+
+    @GetMapping("/api/stacks")
+    @ResponseBody
+    public ResponseEntity<List<TechStack>> getTechStacks() {
+        return ResponseEntity.ok(techStackRepository.findAll());
     }
 }

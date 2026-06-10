@@ -1,185 +1,638 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Azit - 대시보드</title>
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="stylesheet" href="/css/common.css" />
+		<link rel="stylesheet" href="/css/sidebar.css" />
+		<link rel="stylesheet" href="/css/azit.css" />
+		<style>
+			/* 대시보드 스타일 */
+			.dashboard-page {
+				padding: 40px 48px;
+				max-width: 1100px;
+			}
+			.dashboard-greeting {
+				margin-bottom: 36px;
+			}
+			.dashboard-greeting h1 {
+				font-size: 1.75rem;
+				font-weight: 800;
+				color: #1a1a2e;
+				margin: 0 0 6px;
+			}
+			.dashboard-greeting p {
+				color: #6b7280;
+				font-size: 0.95rem;
+				margin: 0;
+			}
 
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>Azit</title>
-	<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-	<link rel="stylesheet" href="/css/common.css" />
-	<link rel="stylesheet" href="/css/sidebar.css" />
-	<link rel="stylesheet" href="/css/dashboard.css" />
-</head>
+			/* 섹션 공통 */
+			.dashboard-section {
+				margin-bottom: 40px;
+			}
+			.dashboard-section-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 18px;
+			}
+			.dashboard-section-title {
+				font-size: 1.1rem;
+				font-weight: 700;
+				color: #1a1a2e;
+			}
+			.dashboard-section-link {
+				font-size: 0.85rem;
+				color: #6366f1;
+				text-decoration: none;
+			}
+			.dashboard-section-link:hover {
+				text-decoration: underline;
+			}
 
-<body class="azit-app" th:classappend="${nickname != null} ? ' has-sidebar' : ''">
-	<div th:if="${nickname != null}">
+			/* 참여 중인 프로젝트 카드 */
+			.project-cards {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 16px;
+			}
+			.project-card {
+				background: #fff;
+				border-radius: 16px;
+				padding: 24px;
+				box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+				cursor: pointer;
+				transition: box-shadow 0.2s;
+				text-decoration: none;
+				display: block;
+			}
+			.project-card:hover {
+				box-shadow: 0 4px 16px rgba(99, 102, 241, 0.12);
+			}
+			.project-card-icon {
+				width: 48px;
+				height: 48px;
+				border-radius: 12px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 1.5rem;
+				margin-bottom: 14px;
+				background: #f3f4f6;
+			}
+			.project-card-name {
+				font-size: 1rem;
+				font-weight: 700;
+				color: #1a1a2e;
+				margin-bottom: 4px;
+			}
+			.project-card-role {
+				font-size: 0.82rem;
+				color: #6b7280;
+				margin-bottom: 14px;
+			}
+			.project-card-progress-bar {
+				height: 6px;
+				background: #e5e7eb;
+				border-radius: 99px;
+				margin-bottom: 8px;
+				overflow: hidden;
+			}
+			.project-card-progress-fill {
+				height: 100%;
+				border-radius: 99px;
+				background: linear-gradient(90deg, #6366f1, #818cf8);
+			}
+			.project-card-progress-label {
+				font-size: 0.78rem;
+				color: #6b7280;
+				text-align: right;
+				margin-bottom: 12px;
+			}
+			.project-card-members {
+				display: flex;
+				align-items: center;
+				gap: 4px;
+			}
+			.project-card-avatar {
+				width: 26px;
+				height: 26px;
+				border-radius: 50%;
+				background: #6366f1;
+				color: #fff;
+				font-size: 0.7rem;
+				font-weight: 700;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				border: 2px solid #fff;
+				margin-left: -6px;
+			}
+			.project-card-avatar:first-child {
+				margin-left: 0;
+			}
+			.project-card-member-count {
+				font-size: 0.82rem;
+				color: #6b7280;
+				margin-left: 6px;
+			}
+
+			/* 빈 프로젝트 */
+			.project-empty {
+				background: #f8f9ff;
+				border-radius: 16px;
+				padding: 40px;
+				text-align: center;
+				color: #6b7280;
+			}
+			.project-empty-title {
+				font-size: 1rem;
+				font-weight: 600;
+				margin-bottom: 8px;
+				color: #1a1a2e;
+			}
+			.project-empty-desc {
+				font-size: 0.88rem;
+				margin-bottom: 20px;
+			}
+			.project-empty-btn {
+				display: inline-block;
+				background: #6366f1;
+				color: #fff;
+				padding: 10px 24px;
+				border-radius: 10px;
+				text-decoration: none;
+				font-weight: 600;
+				font-size: 0.9rem;
+			}
+
+			/* 할 일 */
+			.task-list {
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+			}
+			.task-item {
+				background: #fff;
+				border-radius: 12px;
+				padding: 16px 20px;
+				display: flex;
+				align-items: center;
+				gap: 16px;
+				box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+			}
+			.task-priority {
+				padding: 3px 10px;
+				border-radius: 99px;
+				font-size: 0.75rem;
+				font-weight: 600;
+				white-space: nowrap;
+			}
+			.task-priority.urgent {
+				background: #fef2f2;
+				color: #ef4444;
+			}
+			.task-priority.important {
+				background: #fff7ed;
+				color: #f97316;
+			}
+			.task-priority.normal {
+				background: #f0fdf4;
+				color: #22c55e;
+			}
+			.task-content {
+				flex: 1;
+			}
+			.task-title {
+				font-size: 0.95rem;
+				font-weight: 600;
+				color: #1a1a2e;
+				margin-bottom: 2px;
+			}
+			.task-project {
+				font-size: 0.8rem;
+				color: #6b7280;
+			}
+			.task-due {
+				font-size: 0.82rem;
+				font-weight: 600;
+				white-space: nowrap;
+			}
+			.task-due.today {
+				color: #ef4444;
+			}
+			.task-due.soon {
+				color: #f97316;
+			}
+			.task-due.normal {
+				color: #6b7280;
+			}
+			.task-assignee {
+				width: 30px;
+				height: 30px;
+				border-radius: 50%;
+				background: #6366f1;
+				color: #fff;
+				font-size: 0.8rem;
+				font-weight: 700;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			/* 일정 */
+			.schedule-cards {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 16px;
+			}
+			.schedule-card {
+				background: #fff;
+				border-radius: 14px;
+				padding: 20px;
+				box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+			}
+			.schedule-card-title {
+				font-size: 0.95rem;
+				font-weight: 700;
+				color: #1a1a2e;
+				margin-bottom: 4px;
+			}
+			.schedule-card-project {
+				font-size: 0.8rem;
+				color: #6b7280;
+				margin-bottom: 10px;
+			}
+			.schedule-card-time {
+				font-size: 0.85rem;
+				font-weight: 600;
+				color: #6366f1;
+				margin-bottom: 10px;
+			}
+			.schedule-card-members {
+				display: flex;
+				align-items: center;
+				gap: 4px;
+			}
+
+			/* 시작하기 페이지 (프로젝트 없을 때) */
+			.start-page {
+				padding: 40px 48px;
+				max-width: 900px;
+			}
+			.start-page-title {
+				font-size: 1.75rem;
+				font-weight: 800;
+				color: #1a1a2e;
+				margin-bottom: 6px;
+			}
+			.start-page-desc {
+				color: #6b7280;
+				margin-bottom: 32px;
+			}
+			.start-search {
+				position: relative;
+				margin-bottom: 36px;
+			}
+			.start-search input {
+				width: 100%;
+				padding: 14px 18px 14px 44px;
+				border: 1.5px solid #e5e7eb;
+				border-radius: 12px;
+				font-size: 0.95rem;
+				outline: none;
+				background: #fff;
+				box-sizing: border-box;
+			}
+			.start-search input:focus {
+				border-color: #6366f1;
+			}
+			.start-search-icon {
+				position: absolute;
+				left: 14px;
+				top: 50%;
+				transform: translateY(-50%);
+				color: #9ca3af;
+				font-size: 1.1rem;
+			}
+			.start-section-title {
+				font-size: 1rem;
+				font-weight: 700;
+				color: #1a1a2e;
+				margin-bottom: 16px;
+			}
+			.start-tabs {
+				display: flex;
+				gap: 8px;
+				margin-bottom: 20px;
+				flex-wrap: wrap;
+			}
+			.start-tab {
+				padding: 6px 16px;
+				border-radius: 99px;
+				font-size: 0.85rem;
+				font-weight: 500;
+				border: 1.5px solid #e5e7eb;
+				background: #fff;
+				cursor: pointer;
+				color: #374151;
+				transition: all 0.15s;
+				text-decoration: none;
+			}
+			.start-tab.active,
+			.start-tab:hover {
+				background: #6366f1;
+				color: #fff;
+				border-color: #6366f1;
+			}
+			.project-list {
+				display: flex;
+				flex-direction: column;
+				gap: 0;
+				border-radius: 14px;
+				overflow: hidden;
+				border: 1.5px solid #e5e7eb;
+				background: #fff;
+			}
+			.project-list-item {
+				display: flex;
+				align-items: center;
+				gap: 16px;
+				padding: 20px 24px;
+				border-bottom: 1px solid #f3f4f6;
+				text-decoration: none;
+				transition: background 0.1s;
+			}
+			.project-list-item:last-child {
+				border-bottom: none;
+			}
+			.project-list-item:hover {
+				background: #f8f9ff;
+			}
+			.project-list-icon {
+				width: 48px;
+				height: 48px;
+				border-radius: 12px;
+				background: #f3f4f6;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 1.4rem;
+				flex-shrink: 0;
+			}
+			.project-list-content {
+				flex: 1;
+			}
+			.project-list-name {
+				font-size: 0.95rem;
+				font-weight: 700;
+				color: #1a1a2e;
+				margin-bottom: 3px;
+			}
+			.project-list-desc {
+				font-size: 0.82rem;
+				color: #6b7280;
+				margin-bottom: 6px;
+			}
+			.project-list-tags {
+				display: flex;
+				gap: 6px;
+				flex-wrap: wrap;
+			}
+			.project-list-tag {
+				padding: 2px 8px;
+				border-radius: 6px;
+				background: #f3f4f6;
+				font-size: 0.75rem;
+				color: #374151;
+			}
+			.project-list-meta {
+				font-size: 0.8rem;
+				color: #6b7280;
+				margin-top: 4px;
+			}
+			.project-list-deadline {
+				font-size: 0.78rem;
+				font-weight: 600;
+				color: #ef4444;
+			}
+			.project-list-right {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+			}
+
+			/* 랜딩 페이지 */
+			.landing-hero {
+				padding: 80px 48px;
+				max-width: 900px;
+			}
+			.landing-hero h1 {
+				font-size: 2.5rem;
+				font-weight: 900;
+				color: #1a1a2e;
+				margin-bottom: 16px;
+			}
+			.landing-hero p {
+				color: #6b7280;
+				font-size: 1.05rem;
+				margin-bottom: 32px;
+				line-height: 1.7;
+			}
+			.landing-hero-actions {
+				display: flex;
+				gap: 12px;
+			}
+			.btn-primary {
+				display: inline-block;
+				background: #6366f1;
+				color: #fff;
+				padding: 12px 28px;
+				border-radius: 10px;
+				text-decoration: none;
+				font-weight: 700;
+				font-size: 0.95rem;
+			}
+			.btn-secondary {
+				display: inline-block;
+				background: #fff;
+				color: #6366f1;
+				padding: 12px 28px;
+				border-radius: 10px;
+				text-decoration: none;
+				font-weight: 700;
+				font-size: 0.95rem;
+				border: 1.5px solid #6366f1;
+			}
+		</style>
+	</head>
+	<body class="azit-app has-sidebar">
 		<div th:replace="~{fragments/sidebar :: sidebar}"></div>
-	</div>
 
-	<header class="azit-nav" th:if="${nickname == null}">
-		<div class="azit-shell azit-nav-inner">
-			<a class="azit-brand" href="/">
-				<span class="azit-brand-mark">AZ</span>
-				<span>Azit</span>
-			</a>
-			<div class="azit-nav-actions">
-				<a href="/login" class="azit-button azit-button-secondary">로그인</a>
-				<a href="/register" class="azit-button">회원가입</a>
-			</div>
-		</div>
-	</header>
-
-	<main class="azit-shell dashboard-page" th:if="${nickname != null}">
-		<section class="dashboard-hero">
-			<h1>
-				안녕하세요,
-				<span th:text="${nickname}">사용자</span>님!
-			</h1>
-			<p>소속된 프로젝트와 오늘 확인할 작업을 한눈에 볼 수 있습니다.</p>
-		</section>
-
-		<section class="dashboard-section">
-			<div class="dashboard-section-header">
-				<h2>참여 중인 프로젝트</h2>
-				<button type="button" class="dashboard-text-button"
-					onclick="window.dispatchEvent(new CustomEvent('open-project-create-modal'))">
-					추가하기
-				</button>
+		<!-- 로그인된 사용자: 참여 프로젝트 있을 때 대시보드 -->
+		<main
+			class="dashboard-page"
+			th:if="${nickname != null and projects != null and !#lists.isEmpty(projects)}"
+		>
+			<div class="dashboard-greeting">
+				<h1>안녕하세요, <span th:text="${nickname}"></span>님! 👋</h1>
+				<p>오늘도 조금씩, 함께 성장해요.</p>
 			</div>
 
-			<div class="dashboard-project-grid" th:if="${projects != null and !projects.isEmpty()}">
-				<a class="dashboard-project-card" th:each="project : ${projects}"
-					th:href="@{/project/{id}(id=${project.id})}">
-					<div
-						th:replace="~{fragments/project_icon :: projectIcon(${project.title}, 'dashboard-project-icon')}">
-					</div>
-
-					<div>
-						<strong th:text="${project.title}">프로젝트 이름</strong>
-						<p th:text="${project.description}">프로젝트 설명</p>
-					</div>
-
-					<div class="dashboard-card-meta">
-						<span class="azit-status-badge" th:classappend="${project.status.cssClass}"
-							th:text="${project.status.label}">
-							진행중
-						</span>
-						<span th:if="${project.deadline != null}" th:text="${project.deadline}">
-							2026-06-10
-						</span>
-					</div>
-				</a>
-			</div>
-
-			<p class="azit-empty" th:if="${projects == null or projects.isEmpty()}">
-				아직 참여 중인 프로젝트가 없습니다.
-			</p>
-		</section>
-
-		<section class="dashboard-section" th:if="${todayTasks != null and !todayTasks.isEmpty()}">
-			<div class="dashboard-section-header">
-				<h2>
-					내 할 일
-					<span class="dashboard-count" th:text="${todayTasks.size()}">0</span>
-				</h2>
-			</div>
-
-			<div class="dashboard-task-list">
-				<a class="dashboard-task-item" th:each="task : ${todayTasks}"
-					th:href="@{/project/{id}/task(id=${task.project.id})}">
-					<span class="dashboard-task-check"></span>
-
-					<div>
-						<strong th:text="${task.title}">태스크 제목</strong>
-						<p th:text="${task.project.title}">프로젝트 이름</p>
-					</div>
-
-					<span class="dashboard-user-badge">
-						<span th:text="${#strings.substring(task.assignee.name, 0, 1)}">U</span>
-					</span>
-				</a>
-			</div>
-		</section>
-
-		<section class="dashboard-section" th:if="${upcomingSchedules != null and !upcomingSchedules.isEmpty()}">
-			<div class="dashboard-section-header">
-				<h2>다가오는 일정</h2>
-				<a class="dashboard-text-button" href="/schedule">전체 일정 보기</a>
-			</div>
-
-			<div class="dashboard-schedule-grid">
-				<article class="dashboard-schedule-card" th:each="schedule : ${upcomingSchedules}">
-					<strong th:text="${schedule.name}">일정 이름</strong>
-					<p th:text="${schedule.date}">2026-06-10</p>
-					<span th:text="${schedule.startTime} + ' - ' + ${schedule.endTime}">
-						10:00 - 11:00
-					</span>
-				</article>
-			</div>
-		</section>
-	</main>
-	<div id="createProjectModal" class="dashboard-modal-backdrop" aria-hidden="true">
-		<section class="dashboard-modal" role="dialog" aria-modal="true" aria-labelledby="createProjectTitle">
-			<header class="dashboard-modal-header">
-				<h2 id="createProjectTitle">프로젝트 생성</h2>
-				<button type="button" class="dashboard-modal-close" data-create-modal-close aria-label="닫기">
-					X
-				</button>
-			</header>
-
-			<form th:action="@{/projects}" method="post" class="dashboard-create-form">
-				<div class="dashboard-modal-body">
-					<label>
-						프로젝트 이름
-						<input class="azit-input" type="text" name="title" placeholder="예: 포트폴리오 매칭 서비스" required />
-					</label>
-
-					<label>
-						프로젝트 설명
-						<textarea class="azit-input" name="description" rows="5"
-							placeholder="프로젝트 목표, 만들 기능, 필요한 협업 방식을 적어주세요." required></textarea>
-					</label>
+			<!-- 참여 중인 프로젝트 -->
+			<div class="dashboard-section">
+				<div class="dashboard-section-header">
+					<div class="dashboard-section-title">참여 중인 프로젝트</div>
+					<a href="/projects/new" class="dashboard-section-link"
+						>추가하기 &rsaquo;</a
+					>
 				</div>
+				<div class="project-cards">
+					<a
+						th:each="project : ${projects}"
+						th:href="@{/project/{id}(id=${project.id})}"
+						class="project-card"
+					>
+						<div
+							class="project-card-icon"
+							th:replace="~{fragments/project_icon :: projectIcon(${project.title}, 'project-card-icon')}"
+						></div>
+						<div class="project-card-name" th:text="${project.title}"></div>
+						<div
+							class="project-card-role"
+							th:text="${project.description}"
+						></div>
+						<div class="project-card-progress-bar">
+							<div
+								class="project-card-progress-fill"
+								style="width: 50%"
+							></div>
+						</div>
+						<div class="project-card-progress-label">50%</div>
+						<div class="project-card-members">
+							<span
+								class="project-card-avatar"
+								th:each="member, stat : ${project.members}"
+								th:if="${stat.index < 3}"
+								th:text="${#strings.substring(member.member.name, 0, 1)}"
+							>
+							</span>
+							<span
+								class="project-card-member-count"
+								th:text="${#lists.size(project.members)} + '명'"
+							></span>
+						</div>
+					</a>
+				</div>
+			</div>
+		</main>
 
-				<footer class="dashboard-modal-footer">
-					<button type="submit" class="azit-button">프로젝트 생성</button>
-				</footer>
-			</form>
-		</section>
-	</div>
+		<!-- 로그인된 사용자: 참여 프로젝트 없을 때 시작하기 -->
+		<main
+			class="start-page"
+			th:if="${nickname != null and (projects == null or #lists.isEmpty(projects))}"
+		>
+			<h1 class="start-page-title">함께 만들 팀을 찾아보세요 🚀</h1>
+			<p class="start-page-desc">
+				아이디어를 실현할 팀원을 찾고, 함께 멋진 프로젝트를 만들어보세요.
+			</p>
 
-	<script>
-		(() => {
-			const modal = document.getElementById('createProjectModal');
-			const closeButtons = document.querySelectorAll('[data-create-modal-close]');
+			<div style="margin-bottom: 28px">
+				<div
+					style="
+						font-size: 1.05rem;
+						font-weight: 700;
+						color: #6366f1;
+						margin-bottom: 6px;
+					"
+				>
+					무엇을 만들고 싶나요?
+				</div>
+				<div style="font-size: 0.9rem; color: #6b7280; margin-bottom: 16px">
+					먼저 비슷한 프로젝트를 찾아보세요. 없으면 새로 만들 수 있어요. 🌱
+				</div>
+			</div>
 
-			function openModal() {
-				if (!modal) return;
-				modal.classList.add('open');
-				modal.setAttribute('aria-hidden', 'false');
-			}
+			<div class="start-search">
+				<span class="start-search-icon">🔍</span>
+				<input
+					type="text"
+					placeholder="예) AI 여행 플래너, 반려동물 케어 앱, 공부 관리 서비스"
+				/>
+			</div>
 
-			function closeModal() {
-				if (!modal) return;
-				modal.classList.remove('open');
-				modal.setAttribute('aria-hidden', 'true');
-			}
+			<div class="start-section-title">참여 가능한 프로젝트</div>
+			<div class="start-tabs">
+				<a href="#" class="start-tab active">전체</a>
+				<a href="#" class="start-tab">React</a>
+				<a href="#" class="start-tab">Node.js</a>
+				<a href="#" class="start-tab">TypeScript</a>
+				<a href="#" class="start-tab">Python</a>
+				<a href="#" class="start-tab">UI/UX</a>
+				<a href="#" class="start-tab">디자인</a>
+				<a href="#" class="start-tab">+</a>
+			</div>
 
-			window.addEventListener('open-project-create-modal', openModal);
+			<div class="project-list">
+				<!-- 초대 받은 프로젝트가 있으면 표시 -->
+				<div
+					th:if="${pendingInvitations != null and !#lists.isEmpty(pendingInvitations)}"
+				>
+					<div
+						style="
+							padding: 16px 24px;
+							background: #f0f0ff;
+							font-size: 0.9rem;
+							font-weight: 600;
+							color: #6366f1;
+						"
+					>
+						📬 <span th:text="${#lists.size(pendingInvitations)}"></span>개의
+						초대가 있습니다
+						<a
+							href="/invitations"
+							style="
+								margin-left: 8px;
+								color: #6366f1;
+								text-decoration: underline;
+							"
+							>확인하기</a
+						>
+					</div>
+				</div>
+				<div
+					class="project-list-item"
+					style="justify-content: center; color: #9ca3af; padding: 40px"
+				>
+					아직 참여 가능한 프로젝트 목록이 없습니다.
+					<a
+						href="/projects/new"
+						style="
+							margin-left: 12px;
+							color: #6366f1;
+							font-weight: 600;
+							text-decoration: none;
+						"
+						>새 프로젝트 만들기 →</a
+					>
+				</div>
+			</div>
+		</main>
 
-			closeButtons.forEach((button) => {
-				button.addEventListener('click', closeModal);
-			});
-
-			if (modal) {
-				modal.addEventListener('click', (event) => {
-					if (event.target === modal) {
-						closeModal();
-					}
-				});
-			}
-		})();
-	</script>
-</body>
-
+		<!-- 비로그인 랜딩 -->
+		<main class="landing-hero" th:if="${nickname == null}">
+			<h1>함께 만드는 프로젝트,<br />Azit에서 시작하세요</h1>
+			<p>
+				기술 스택, 가용 시간, 관심사를 기반으로 팀을 찾고<br />프로젝트를 함께
+				만들어보세요.
+			</p>
+			<div class="landing-hero-actions">
+				<a href="/register" class="btn-primary">프로젝트 시작하기</a>
+				<a href="/login" class="btn-secondary">로그인</a>
+			</div>
+		</main>
+	</body>
 </html>
