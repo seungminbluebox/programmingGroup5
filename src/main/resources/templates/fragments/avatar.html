@@ -13,7 +13,7 @@
 				th:class="${className + ' profile-avatar-initials'}"
 				aria-hidden="true"
 			>
-				<span th:text="${#strings.substring(name, 0, 1)}">U</span>
+				<span th:text="${(name != null and !#strings.isEmpty(name)) ? #strings.substring(name, 0, 1) : ''}">U</span>
 			</div>
 		</th:block>
 	</body>
