@@ -6,8 +6,7 @@
     <title>Azit Main</title>
     <link rel="stylesheet" href="/css/common.css" />
     <link rel="stylesheet" href="/css/fragments/sidebar.css" />
-    <link rel="stylesheet" href="/css/azit.css" />
-    <link rel=stylesheet href=/css/main.css />
+    <link rel="stylesheet" href="/css/main.css" />
   </head>
   <body class="azit-app" th:classappend="${loggedIn} ? ' has-sidebar' : ''">
     <div th:if="${loggedIn}">
@@ -97,7 +96,7 @@
       </section>
     </main>
 
-    <button type=button class=main-create-button data-create-open aria-label=create-project>+</button>
+    <button type="button" class="main-create-button" data-create-open aria-label="create-project">+</button>
 
     <div id="projectModal" class="main-modal-backdrop" aria-hidden="true">
       <section class="main-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -131,7 +130,7 @@
           <h2 id="createProjectTitle" class="main-modal-title">프로젝트 생성</h2>
           <button type="button" class="main-modal-close" data-modal-close aria-label="닫기">X</button>
         </header>
-        <form class=main-create-form action=/projects method=post>
+        <form class="main-create-form" action="/projects" method="post">
           <div class="main-modal-body">
             <label>
               프로젝트 이름
