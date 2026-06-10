@@ -984,17 +984,8 @@ a.project-detail-member:hover {
 	font-weight: var(--font-weight-medium);
 }
 
-.progress-fill.deadline {
-	background: linear-gradient(90deg, #7c3aed, #f59e0b);
-}
-
 .project-detail-progress-list .progress {
 	height: 10px;
-}
-
-.project-detail-progress-list .progress-fill,
-.project-detail-progress-list .progress-fill.deadline {
-	background: #2563eb;
 }
 
 .project-detail-deadline-chip {
