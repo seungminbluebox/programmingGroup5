@@ -11,5 +11,7 @@ public interface ProjectTaskRepository extends JpaRepository<ProjectTask, Long> 
 
     List<ProjectTask> findAllByProjectAndAssignee(Project project, Member assignee);
 
+    List<ProjectTask> findTop5ByAssigneeAndCompletedFalseOrderByIdDesc(Member assignee);
+
     void deleteAllByProject(Project project);
 }

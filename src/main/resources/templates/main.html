@@ -5,26 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Azit Main</title>
     <link rel="stylesheet" href="/css/common.css" />
-    <link rel="stylesheet" href="/css/fragments/sidebar.css" />
+    <link rel="stylesheet" href="/css/sidebar.css" />
     <link rel="stylesheet" href="/css/main.css" />
   </head>
-  <body class="azit-app" th:classappend="${loggedIn} ? ' has-sidebar' : ''">
-    <div th:if="${loggedIn}">
-      <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    </div>
-
-    <header class="azit-nav" th:if="${!loggedIn}">
-      <div class="azit-shell azit-nav-inner">
-        <a class="azit-brand" href="/">
-          <span class="azit-brand-mark">AZ</span>
-          <span>Azit</span>
-        </a>
-        <div class="azit-nav-actions">
-          <a href="/login" class="azit-button azit-button-secondary">로그인</a>
-          <a href="/register" class="azit-button">회원가입</a>
-        </div>
-      </div>
-    </header>
+  <body class="azit-app has-sidebar">
+  <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
     <main class="azit-shell azit-page main-board">
       <section class="main-board-head">

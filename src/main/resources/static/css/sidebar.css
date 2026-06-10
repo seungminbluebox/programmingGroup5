@@ -67,7 +67,6 @@
 		no-repeat center / contain;
 	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/bell.svg')
 		no-repeat center / contain;
->>>>>>> mainpage:src/main/resources/static/css/fragments/sidebar.css
 }
 
 #sidebar-notification:hover {
@@ -469,30 +468,6 @@
 	flex-wrap: wrap;
 }
 
-#sidebar-projects-toggle-input:not(:checked) ~ ul {
-	display: none;
-}
-
-#sidebar-projects-toggle-button {
-	display: grid;
-	width: 22px;
-	height: 22px;
-	place-items: center;
-	border-radius: var(--radius-sm);
-	cursor: pointer;
-	color: var(--color-text-muted);
-	font-size: 18px;
-	font-weight: var(--font-weight-bold);
-}
-
-#sidebar-projects-toggle-button::before {
-	content: '+';
-}
-
-#sidebar-projects-toggle-input:not(:checked) ~ h2 #sidebar-projects-toggle-button::before {
-	content: '-';
-}
-
 #sidebar-profile {
 	color: var(--color-primary);
 }
@@ -500,12 +475,6 @@
 #sidebar-profile .sidebar-usermenu-icon {
 	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/user-cog.svg') no-repeat center / contain;
 	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/user-cog.svg') no-repeat center / contain;
-}
-
-
-#sidebar-projects-toggle-button:hover {
-	background: var(--color-bg);
-	color: var(--color-text);
 }
 
 #sidebar ul {
@@ -521,4 +490,64 @@
 
 #sidebar a {
 	text-decoration: none;
+}
+
+#sidebar-login {
+	display: flex;
+	align-items: center;
+	gap: var(--space-10);
+	color: var(--color-text);
+}
+
+.sidebar-login-avatar {
+	display: grid;
+	place-items: center;
+	background: var(--chip-indigo);
+	color: var(--color-primary);
+	font-weight: var(--font-weight-bold);
+}
+
+.sidebar-projects-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 var(--space-xs) var(--space-10);
+}
+
+.sidebar-projects-header h2 {
+	margin: 0;
+	font-size: var(--font-size-sm\+);
+	font-weight: var(--font-weight-medium);
+	color: var(--color-text-muted);
+}
+
+#sidebar-project-create {
+	display: grid;
+	width: 22px;
+	height: 22px;
+	place-items: center;
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: transparent;
+	color: var(--color-text-muted);
+	font-size: 18px;
+	font-weight: var(--font-weight-bold);
+	cursor: pointer;
+}
+
+#sidebar-project-create:hover {
+	background: var(--color-bg);
+	color: var(--color-primary);
+}
+
+#sidebar-login {
+	display: flex;
+	align-items: center;
+	gap: var(--space-10);
+	color: var(--color-text);
+	text-decoration: none;
+}
+
+#sidebar-login .sidebar-user-name {
+	padding-left: var(--space-2xs);
 }
