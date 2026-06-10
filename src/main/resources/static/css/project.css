@@ -1014,10 +1014,6 @@ a.project-detail-member:hover {
 	position: relative;
 }
 
-.project-detail-main>.project-detail-card:first-child .project-detail-card-heading {
-	padding-right: 140px;
-}
-
 .project-detail-deadline-chip {
 	position: absolute;
 	top: 24px;
