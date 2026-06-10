@@ -191,10 +191,6 @@
 									<a
 										id="sidebar-register"
 										th:href="@{/register}"
-										onclick="
-											authSwitch('register');
-											event.preventDefault();
-										"
 									>
 										<div
 											class="sidebar-usermenu-icon icon icon-user-plus"
@@ -231,10 +227,10 @@
 					</li>
 				</ul>
 			</nav>
-			<dialog
+			<!-- <dialog
 				th:if="${sidebarMemberName != null}"
 				th:replace="~{auth :: modal}"
-			></dialog>
+			></dialog> -->
 			<dialog
 				id="notification-modal"
 				class="modal notification-modal"
@@ -354,50 +350,7 @@
 					</section>
 				</div>
 			</dialog>
-			<script>
-				(() => {
-					const modal = document.getElementById('notification-modal');
-					const openButton = document.querySelector('#sidebar-notification');
-					const closeButtons = document.querySelectorAll(
-						'#notification-modal .modal-close',
-					);
-
-					if (!modal || !openButton) {
-						return;
-					}
-
-					function closeModal() {
-						modal.close();
-						modal.setAttribute('aria-hidden', 'true');
-					}
-
-					openButton.addEventListener('click', () => {
-						modal.showModal('open');
-						modal.setAttribute('aria-hidden', 'false');
-					});
-
-					document
-						.querySelectorAll('.notification-actions form')
-						.forEach((notificationForm) => {
-							notificationForm.addEventListener('submit', () => {
-								notificationForm
-									.querySelectorAll('button')
-									.forEach((button) => {
-										button.disabled = true;
-									});
-							});
-						});
-
-					closeButtons.forEach((button) =>
-						button.addEventListener('click', closeModal),
-					);
-					modal.addEventListener('click', (event) => {
-						if (event.target === modal) {
-							closeModal();
-						}
-					});
-				})();
-			</script>
+			<!-- <script th:replace="~{auth :: script}"></script> -->
 		</header>
 		<main>
 			<h1>본문</h1>
