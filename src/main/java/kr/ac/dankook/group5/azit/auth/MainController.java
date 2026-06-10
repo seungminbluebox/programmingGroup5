@@ -6,6 +6,7 @@ import kr.ac.dankook.group5.azit.project.ProjectService;
 import kr.ac.dankook.group5.azit.project.ProjectTaskRepository;
 import kr.ac.dankook.group5.azit.schedule.repository.ScheduleRepository;
 import kr.ac.dankook.group5.azit.user.MemberRepository;
+import kr.ac.dankook.group5.azit.user.MemberStack;
 import kr.ac.dankook.group5.azit.user.TechStackRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -15,10 +16,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import kr.ac.dankook.group5.azit.user.Member;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -82,11 +84,19 @@ public class MainController {
     @GetMapping("/discover")
     public String discover(Authentication authentication, Model model) {
         boolean loggedIn = isLoggedIn(authentication);
-        String email = loggedIn ? authentication.getName() : null;
+		String email = loggedIn ? authentication.getName() : null;
 
         model.addAttribute("loggedIn", loggedIn);
         model.addAttribute("mainProjects", projectRecommendationService.findMainProjects(email));
-        model.addAttribute("pendingInvitations", loggedIn ? projectService.getPendingInvitations(email) : List.of());
+		model.addAttribute("pendingInvitations", loggedIn ? projectService.getPendingInvitations(email) : List.of());
+
+		memberRepository.findByEmail(email)
+				.ifPresent(member -> {
+					model.addAttribute("memberStacks",
+							member.getMemberStacks().stream()
+									.map(MemberStack::getTechStack)
+									.toList());
+				});
 
         return "project_explore";
     }

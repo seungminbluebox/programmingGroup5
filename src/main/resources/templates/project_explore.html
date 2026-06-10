@@ -8,11 +8,11 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/css/common.css" />
     <link rel="stylesheet" href="/css/sidebar.css" />
-    <link rel="stylesheet" href="/css/azit.css" />
     <style>
         .explore-page {
             padding: 40px 48px;
-            max-width: 900px;
+            max-width: 1100px;
+            margin: 0 auto;
         }
 
         .explore-title {
@@ -23,9 +23,9 @@
         }
 
         .explore-subtitle {
-            color: #6b7280;
-            font-size: 0.95rem;
-            margin-bottom: 32px;
+            color: var(--font-text-subtle);
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--space-2xl);
         }
 
         .explore-cta {
@@ -33,16 +33,16 @@
         }
 
         .explore-cta-label {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: #6366f1;
+            font-size: var(--font-size-4xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-primary);
             margin-bottom: 4px;
         }
 
         .explore-cta-desc {
-            font-size: 0.88rem;
-            color: #6b7280;
-            margin-bottom: 14px;
+            font-size: var(--font-size-lg);
+            color: var(--font-size-subtle);
+            margin-bottom: var(--space-xs);
         }
 
         .explore-search {
@@ -52,7 +52,7 @@
 
         .explore-search input {
             width: 100%;
-            padding: 14px 18px 14px 44px;
+            padding: var(--space-sm) var(--space-md) var(--space-sm) calc(var(--space-md) * 2 + 16px);
             border: 1.5px solid #e5e7eb;
             border-radius: 12px;
             font-size: 0.95rem;
@@ -68,10 +68,10 @@
 
         .explore-search-icon {
             position: absolute;
-            left: 14px;
+            left: var(--space-md);
             top: 50%;
             transform: translateY(-50%);
-            color: #9ca3af;
+            color: var(--color-text-subtle);
         }
 
         .explore-section-header {
@@ -82,36 +82,13 @@
         }
 
         .explore-section-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #1a1a2e;
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text);
         }
 
         .explore-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .explore-tab {
-            padding: 6px 16px;
-            border-radius: 99px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            border: 1.5px solid #e5e7eb;
-            background: #fff;
-            cursor: pointer;
-            color: #374151;
-            transition: all 0.15s;
-            text-decoration: none;
-        }
-
-        .explore-tab.active,
-        .explore-tab:hover {
-            background: #6366f1;
-            color: #fff;
-            border-color: #6366f1;
+            margin-bottom: var(--space-sm);
         }
 
         .project-list {
@@ -254,24 +231,6 @@
             margin-bottom: 8px;
         }
 
-        .new-project-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #6366f1;
-            color: #fff;
-            padding: 11px 22px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: background 0.15s;
-        }
-
-        .new-project-btn:hover {
-            background: #4f46e5;
-        }
-
         .explore-modal-backdrop {
             position: fixed;
             inset: 0;
@@ -383,31 +342,26 @@
         <p class="explore-subtitle">아이디어를 실현할 팀원을 찾고, 함께 멋진 프로젝트를 만들어보세요.</p>
 
         <div class="explore-cta">
-            <div class="explore-cta-label">무엇을 만들고 싶나요?</div>
+            <h2 class="explore-cta-label">무엇을 만들고 싶나요?</h2>
             <div class="explore-cta-desc">먼저 비슷한 프로젝트를 찾아보세요. 없으면 새로 만들 수 있어요. 🌱</div>
         </div>
 
         <div class="explore-search">
-            <span class="explore-search-icon">🔍</span>
+            <span class="explore-search-icon icon icon-search"></span>
             <input type="text" id="searchInput" placeholder="예) AI 여행 플래너, 반려동물 케어 앱, 공부 관리 서비스"
                 oninput="filterProjects(this.value)" />
         </div>
 
         <div class="explore-section-header">
-            <div class="explore-section-title">참여 가능한 프로젝트</div>
-            <a href="/projects/new" class="new-project-btn">
-                ✨ 새 프로젝트 만들기
+            <h2 class="explore-section-title">참여 가능한 프로젝트</h2>
+            <a href="/projects/new" class="btn btn-primary">
+                <span class="icon icon-plus"></span> 새 프로젝트 만들기
             </a>
         </div>
 
-        <div class="explore-tabs">
-            <a href="#" class="explore-tab active" onclick="filterByStack('', this); return false;">전체</a>
-            <a href="#" class="explore-tab" onclick="filterByStack('React', this); return false;">React</a>
-            <a href="#" class="explore-tab" onclick="filterByStack('Node.js', this); return false;">Node.js</a>
-            <a href="#" class="explore-tab" onclick="filterByStack('TypeScript', this); return false;">TypeScript</a>
-            <a href="#" class="explore-tab" onclick="filterByStack('Python', this); return false;">Python</a>
-            <a href="#" class="explore-tab" onclick="filterByStack('Spring Boot', this); return false;">Spring Boot</a>
-            <a href="#" class="explore-tab" onclick="filterByStack('Vue.js', this); return false;">Vue.js</a>
+        <div class="tabs explore-tabs" th:if="${memberStacks != null}">
+            <a href="#" class="tab active explore-tab" data-stack="">전체</a>
+            <a th:each="stack : ${memberStacks}" href="#" class="tab explore-tab" th:data-stack="${stack.stackName}" th:text="${stack.stackName}"></a>
         </div>
 
         <div class="project-list" id="projectList">
@@ -601,6 +555,13 @@
             exploreModal.classList.remove('open');
             exploreModal.setAttribute('aria-hidden', 'true');
         }
+
+        document.querySelectorAll('.explore-tab').forEach((tab) => {
+            tab.addEventListener('click', (event) => {
+                event.preventDefault();
+                filterByStack(event.currentTarget.dataset.stack, event.currentTarget);
+            })
+        });
 
         document.querySelectorAll('.project-list-item').forEach((item) => {
             item.addEventListener('click', (event) => {

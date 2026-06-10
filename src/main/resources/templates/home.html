@@ -7,7 +7,6 @@
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 		<link rel="stylesheet" href="/css/common.css" />
 		<link rel="stylesheet" href="/css/sidebar.css" />
-		<link rel="stylesheet" href="/css/azit.css" />
 		<style>
 			/* 대시보드 스타일 */
 			.dashboard-page {
@@ -17,15 +16,10 @@
 			.dashboard-greeting {
 				margin-bottom: 36px;
 			}
-			.dashboard-greeting h1 {
-				font-size: 1.75rem;
-				font-weight: 800;
-				color: #1a1a2e;
-				margin: 0 0 6px;
-			}
+
 			.dashboard-greeting p {
-				color: #6b7280;
-				font-size: 0.95rem;
+				color: var(--color-text-muted);
+				font-size: var(--font-size-lg);
 				margin: 0;
 			}
 
@@ -37,16 +31,17 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				margin-bottom: 18px;
+				margin-bottom: var(--space-md);
 			}
 			.dashboard-section-title {
-				font-size: 1.1rem;
-				font-weight: 700;
-				color: #1a1a2e;
+				font-size: var(--font-size-3xl);
+				font-weight: var(--font-weight-bold);
+				color: var(--color-text);
 			}
 			.dashboard-section-link {
-				font-size: 0.85rem;
-				color: #6366f1;
+				font-size: var(--font-size-md);
+				color: var(--color-primary);
+				font-weight: var(--font-weight-semibold);
 				text-decoration: none;
 			}
 			.dashboard-section-link:hover {
@@ -57,20 +52,20 @@
 			.project-cards {
 				display: grid;
 				grid-template-columns: repeat(3, 1fr);
-				gap: 16px;
+				gap: var(--space-md);
 			}
 			.project-card {
 				background: #fff;
-				border-radius: 16px;
-				padding: 24px;
-				box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+				border-radius: var(--radius-md);
+				padding: var(--space-sm);
+				box-shadow: var(--shadow-md);
 				cursor: pointer;
 				transition: box-shadow 0.2s;
 				text-decoration: none;
 				display: block;
 			}
 			.project-card:hover {
-				box-shadow: 0 4px 16px rgba(99, 102, 241, 0.12);
+				box-shadow: var(--shadow-lg);
 			}
 			.project-card-icon {
 				width: 48px;
@@ -79,36 +74,36 @@
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				font-size: 1.5rem;
-				margin-bottom: 14px;
+				font-size: var(--font-size-5xl);
+				margin-bottom: var(--space-sm);
 				background: #f3f4f6;
 			}
 			.project-card-name {
-				font-size: 1rem;
-				font-weight: 700;
-				color: #1a1a2e;
+				font-size: var(--font-size-xl);
+				font-weight: var(--font-weight-bold);
+				color: var(--color-text);
 				margin-bottom: 4px;
 			}
 			.project-card-role {
-				font-size: 0.82rem;
-				color: #6b7280;
-				margin-bottom: 14px;
+				font-size: var(--font-size-md);
+				color: var(--color-text-muted);
+				margin-bottom: var(--space-md);
 			}
 			.project-card-progress-bar {
 				height: 6px;
 				background: #e5e7eb;
-				border-radius: 99px;
+				border-radius: var(--radius-full);
 				margin-bottom: 8px;
 				overflow: hidden;
 			}
 			.project-card-progress-fill {
 				height: 100%;
-				border-radius: 99px;
-				background: linear-gradient(90deg, #6366f1, #818cf8);
+				border-radius: var(--radius-full);
+				background: var(--color-primary);
 			}
 			.project-card-progress-label {
-				font-size: 0.78rem;
-				color: #6b7280;
+				font-size: var(--font-size-md);
+				color: var(--color-text-muted);
 				text-align: right;
 				margin-bottom: 12px;
 			}
