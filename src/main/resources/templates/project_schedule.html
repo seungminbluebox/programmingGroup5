@@ -1,0 +1,207 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<th:block th:replace="~{fragments/project_layout :: head}"></th:block>
+		<link th:replace="~{fragments/timetable :: stylesheet}" />
+		<script
+		src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js"
+		integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V"
+		crossorigin="anonymous"
+	></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/htmx-ext-route-layout@0.1.4/dist/index.min.js"
+		integrity="sha256-X7Tg/54td+irTN7upx+rWIRXE/pBynhrmfsJn7Da/Eo="
+		crossorigin="anonymous"
+	></script>
+
+	</head>
+
+	<body hx-ext="route-layout">
+		<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+		<main>
+			<div class="project-detail-page">
+				<div th:replace="~{fragments/project_layout :: header('schedule')}"></div>
+				<section id="project-tab-schedule" class="project-detail-layout" hx-outlet="/project/:id/schedule">
+					<div class="project-detail-main">
+						<article class="card project-detail-card">
+							<div class="project-detail-card-heading">
+								<div>
+									<h2>만날 수 있는 시간</h2>
+									<p>일정이 없는 시간대를 확인하세요.</p>
+								</div>
+								<th:block th:replace="~{fragments/timetable :: weekNav(
+									@{/project/{id}/schedule(id=${project.id},date=${weekStart.minusWeeks(1)})},
+									@{/project/{id}/schedule(id=${project.id},date=${weekStart.plusWeeks(1)})},
+									@{/project/{id}/schedule(id=${project.id})},
+									${weekStart},
+									'M월 d일'
+								)}"></th:block>
+							</div>
+
+							<div class="project-schedule-legend" aria-label="범례">
+								<div class="project-schedule-legend-item">
+									<span class="project-schedule-legend-swatch" style="background: rgb(134,239,172);"></span>
+									<span>가능한 시간</span>
+								</div>
+								<div class="project-schedule-legend-item">
+									<span class="project-schedule-legend-swatch" style="background: rgb(238,239,243); border: 1px solid #d1d5db;"></span>
+									<span>일정 있는 시간</span>
+								</div>
+							</div>
+
+							<div class="timetable-scroll">
+								<div
+									class="timetable-grid"
+									style="--timetable-min-width: 720px; --timetable-label-col: 56px; --timetable-col-width: minmax(88px, 1fr); --timetable-header-height: 52px; --timetable-slot-count: 144; --timetable-row-end: 146;"
+								>
+									<th:block th:replace="~{fragments/timetable :: gridSkeleton(
+										${weekStart},
+										${today},
+										${#numbers.sequence(0, 23)},
+										0,
+										'timetable-col-shade--busy'
+									)}"></th:block>
+
+									<!-- 가용 슬롯 (10분 그리드 스냅: 1분이라도 걸치면 회색) -->
+									<th:block th:each="daySlots, dayStat : ${available}">
+										<th:block
+											th:each="slot : ${daySlots}"
+											th:with="startMin=${slot.startTime.hour * 60 + slot.startTime.minute},
+											         endMin=${slot.endTime.hour == 23 and slot.endTime.minute == 59 ? 1440 : slot.endTime.hour * 60 + slot.endTime.minute},
+											         rowStart=${2 + (startMin + 9) / 10},
+											         rowEnd=${2 + endMin / 10}"
+										>
+											<div
+												class="project-schedule-free-slot"
+												th:if="${rowStart < rowEnd}"
+												th:style="|grid-column: ${dayStat.index + 2}; grid-row: ${rowStart} / ${rowEnd}|"
+												aria-hidden="true"
+											></div>
+										</th:block>
+									</th:block>
+
+								</div>
+							</div>
+
+						</article>
+					</div>
+					<aside class="project-detail-side">
+						<article class="card project-detail-card" hx-replace-url="true" hx-push-url="false">
+							<div class="project-detail-card-heading">
+								<h2>멤버 필터</h2>
+								<button
+									type="button"
+									id="ps-filter-all"
+									class="btn btn-outline project-schedule-filter-all-btn"
+								>모두 선택</button>
+							</div>
+							<form
+								class="project-schedule-filter-form"
+								method="get"
+								th:action="@{/project/{id}/schedule(id=${project.id})}"
+							>
+								<input
+									type="hidden"
+									name="date"
+									th:value="${#temporals.format(weekStart, 'yyyy-MM-dd')}"
+								/>
+								<div class="project-schedule-filter-list">
+									<label
+										class="project-schedule-filter-item"
+										th:each="pm, pmStat : ${project.members}"
+									>
+										<th:block th:replace="~{fragments/avatar :: avatar(${pm.member.profileUrl}, ${pm.member.name}, 'project-detail-member-avatar')}"></th:block>
+										<span th:text="${pm.member.name}">멤버 이름</span>
+										<input
+											type="checkbox"
+											name="memberIds"
+											th:value="${pm.member.id}"
+											th:checked="${selectedMemberIds.contains(pm.member.id)}"
+										/>
+									</label>
+								</div>
+							</form>
+						</article>
+
+						<article class="card project-detail-card">
+							<div class="project-detail-card-heading">
+								<h2>가능한 시간대</h2>
+							</div>
+
+							<th:block th:fragment="topSlots(slots, limit)"
+								th:with="slots=${slots ?: topAvailableSlots}">
+								<div
+									class="project-schedule-slot-list"
+									th:if="${!slots.isEmpty()}"
+								>
+									<div
+										class="project-schedule-slot-item"
+										th:each="slot, iStat : ${slots}"
+										th:if="${limit == null or iStat.index < limit}"
+										th:with="startMin=${slot.startTime.hour * 60 + slot.startTime.minute},
+										         endMin=${slot.endTime.hour == 23 and slot.endTime.minute == 59 ? 1440 : slot.endTime.hour * 60 + slot.endTime.minute},
+										         mins=${endMin - startMin},
+										         allDay=${mins >= 1380}"
+									>
+										<span
+											class="project-schedule-slot-day"
+											th:text="|${#temporals.format(slot.date, 'E', #locale)} ${#temporals.format(slot.date, 'M/d')}|"
+										>월 6/9</span>
+										<div class="project-schedule-slot-info">
+											<strong
+												th:text="${allDay ? '하루 종일' : #temporals.format(slot.startTime, 'HH:mm') + ' – ' + #temporals.format(slot.endTime, 'HH:mm')}"
+											>10:00 – 14:00</strong>
+											<span
+												th:if="${!allDay}"
+												th:text="${(mins / 60 > 0 ? mins / 60 + '시간' : '') + (mins % 60 > 0 ? (mins / 60 > 0 ? ' ' : '') + mins % 60 + '분' : '')}"
+											>4시간</span>
+										</div>
+									</div>
+								</div>
+								<p
+									class="project-detail-empty"
+									th:if="${slots.isEmpty()}"
+								>이번 주 공통 가능 시간이 없습니다.</p>
+							</th:block>
+
+						</article>
+					</aside>
+
+				<script>
+					(function () {
+						const btn = document.getElementById('ps-filter-all');
+						const boxes = () => [...document.querySelectorAll('input[name="memberIds"]')];
+						if (!btn) return;
+						let bulk = false;
+
+						function isUnfiltered() {
+							const n = boxes().filter(b => b.checked).length;
+							return n === 0 || n === boxes().length;
+						}
+
+						function syncBtn() {
+							btn.textContent = boxes().every(b => b.checked) ? '모두 해제' : '모두 선택';
+						}
+
+						btn.addEventListener('click', () => {
+							const before = isUnfiltered();
+							bulk = true;
+							const allChecked = boxes().every(b => b.checked);
+							boxes().forEach(b => b.checked = !allChecked);
+							bulk = false;
+							syncBtn();
+							if (!(before && isUnfiltered())) boxes()[0].form.requestSubmit();
+						});
+
+						boxes().forEach(b => b.addEventListener('change', () => {
+							if (bulk) return;
+							b.form.requestSubmit();
+						}));
+						syncBtn();
+					})();
+				</script>
+			</section>
+		</div>
+	</main>
+	</body>
+</html>

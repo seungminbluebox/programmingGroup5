@@ -1,0 +1,108 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="~{fragments/project_layout :: head}"></head>
+
+	<body>
+		<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+		<main>
+			<div class="project-detail-page">
+				<div th:replace="~{fragments/project_layout :: header('settings')}"></div>
+
+				<section class="project-detail-settings-grid">
+					<article class="card project-detail-card">
+						<div class="project-detail-card-heading">
+							<div>
+								<h2>작업 링크</h2>
+								<p>프로젝트 작업을 진행하는 외부 링크 바로가기를
+									만듭니다.</p>
+							</div>
+							<strong
+								class="project-detail-count"
+								th:text="${project.links != null ? project.links.size() : 0} + '개'"
+								>0개</strong
+							>
+						</div>
+						<div
+							class="project-detail-link-list"
+							th:if="${project.links != null and !project.links.isEmpty()}"
+						>
+							<a
+								class="project-detail-link-row"
+								th:each="link, linkStat : ${project.links}"
+								th:href="${link.url}"
+								target="_blank"
+								rel="noopener"
+							>
+								<span class="project-detail-icon-link icon icon-external-link" aria-hidden="true"></span>
+								<span>
+									<strong th:text="${link.label}">GitHub 저장소</strong>
+									<small th:text="${link.url}">https://github.com</small>
+								</span>
+							</a>
+						</div>
+						<p
+							class="project-detail-empty"
+							th:if="${project.links == null or project.links.isEmpty()}"
+						>
+							작업 링크가 없습니다.
+						</p>
+						<form
+							class="project-detail-form"
+							th:if="${projectEditable}"
+							th:action="@{/project/{id}/links(id=${project.id})}"
+							method="post"
+						>
+							<input class="input" type="text" name="label" placeholder="링크 이름: GitHub" required />
+							<input
+								class="input"
+								type="url"
+								name="url"
+								placeholder="https://github.com/team/repo"
+								required
+							/>
+							<button type="submit" class="btn btn-primary">링크 추가</button>
+						</form>
+					</article>
+
+					<article class="card project-detail-card" th:if="${projectOwner}">
+						<div class="project-detail-card-heading">
+							<div>
+								<h2>상태 관리</h2>
+								<p>프로젝트 상태와 위험 작업을 관리합니다.</p>
+							</div>
+						</div>
+						<form
+							class="project-detail-form"
+							th:action="@{/project/{projectId}/status(projectId=${project.id})}"
+							method="post"
+							onsubmit="return confirmProjectStatusChange();"
+						>
+							<select id="projectStatusSelect" class="input" name="status" required>
+								<option
+									th:each="status : ${projectStatuses}"
+									th:value="${status}"
+									th:text="${status.label}"
+									th:selected="${status == project.status}"
+								>
+									진행중
+								</option>
+							</select>
+							<button type="submit" class="btn btn-primary">상태 변경</button>
+						</form>
+						<form
+							class="project-detail-form compact"
+							th:action="@{/project/{projectId}/delete(projectId=${project.id})}"
+							method="post"
+							onsubmit="return confirm('프로젝트를 삭제하시겠습니까?');"
+						>
+							<button type="submit" class="btn btn-danger project-detail-wide-button">
+								프로젝트 삭제
+							</button>
+						</form>
+					</article>
+				</section>
+			</div>
+		</main>
+		<script th:replace="~{fragments/project_layout :: statusScript}"></script>
+	</body>
+</html>

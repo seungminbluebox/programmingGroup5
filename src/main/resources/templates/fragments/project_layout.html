@@ -3,7 +3,7 @@
 	<head th:fragment="head">
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title th:text="${project.title} + ' | AZIT'">Project | AZIT</title>
+		<title th:text="${project.title} + ' - AZIT'">Project | AZIT</title>
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 		<link rel="stylesheet" href="/css/common.css" />
 		<link rel="stylesheet" href="/css/sidebar.css" />
@@ -13,16 +13,16 @@
 	<div th:fragment="header(activePage)">
 		<section class="project-detail-hero">
 			<div class="project-detail-identity">
-				<div class="project-detail-icon" aria-hidden="true">
-					<span th:text="${#strings.substring(project.title, 0, 1)}">A</span>
-				</div>
+				<div
+					th:replace="~{fragments/project_icon :: projectIcon(${project.title}, 'project-detail-icon')}"
+				></div>
 
 				<div class="project-detail-title-group">
 					<div class="project-detail-title-row">
 						<h1 th:text="${project.title}">프로젝트 이름</h1>
-						<span class="chip chip-green" th:text="${project.status.label}">
-							진행중
-						</span>
+						<span class="chip chip-green" th:if="${project.status.name() == 'IN_PROGRESS'}" th:text="${project.status.label}">진행중</span>
+						<span class="chip chip-orange" th:if="${project.status.name() == 'COMPLETED'}" th:text="${project.status.label}">완료</span>
+						<span class="chip chip-red" th:if="${project.status.name() == 'PAUSED'}" th:text="${project.status.label}">중단</span>
 					</div>
 					<p th:text="${project.description}">프로젝트 설명</p>
 					<div class="project-detail-meta"></div>
@@ -38,64 +38,52 @@
 					target="_blank"
 					rel="noopener"
 				>
-					<span class="project-detail-icon-link" aria-hidden="true"></span>
+					<span class="project-detail-icon-link icon icon-external-link" aria-hidden="true"></span>
 					<span th:text="${link.label}">GitHub 저장소</span>
 				</a>
 			</div>
 		</section>
 
-		<nav class="project-detail-tabs" aria-label="프로젝트 상세 메뉴">
+		<nav class="tabs" aria-label="프로젝트 상세 메뉴">
 			<a
-				class="project-detail-tab"
+				class="tab"
 				th:classappend="${activePage == 'overview'} ? ' active'"
 				th:href="@{/project/{projectId}(projectId=${project.id})}"
 			>
-				<span class="project-detail-tab-icon icon-home" aria-hidden="true"></span>
+				<span class="project-tab-icon icon icon-home" aria-hidden="true"></span>
 				개요
 			</a>
 			<a
-				class="project-detail-tab"
+				class="tab"
 				th:classappend="${activePage == 'task'} ? ' active'"
 				th:href="@{/project/{projectId}/task(projectId=${project.id})}"
 			>
-				<span
-					class="project-detail-tab-icon icon-check"
-					aria-hidden="true"
-				></span>
+				<span class="project-tab-icon icon icon-check-square" aria-hidden="true"></span>
 				할 일
 			</a>
 			<a
-				class="project-detail-tab"
+				class="tab"
 				th:classappend="${activePage == 'schedule'} ? ' active'"
 				th:href="@{/project/{projectId}/schedule(projectId=${project.id})}"
 			>
-				<span
-					class="project-detail-tab-icon icon-calendar"
-					aria-hidden="true"
-				></span>
+				<span class="project-tab-icon icon icon-calendar" aria-hidden="true"></span>
 				일정
 			</a>
 			<a
-				class="project-detail-tab"
+				class="tab"
 				th:classappend="${activePage == 'member'} ? ' active'"
 				th:href="@{/project/{projectId}/member(projectId=${project.id})}"
 			>
-				<span
-					class="project-detail-tab-icon icon-users"
-					aria-hidden="true"
-				></span>
+				<span class="project-tab-icon icon icon-users" aria-hidden="true"></span>
 				팀
 			</a>
 			<a
-				class="project-detail-tab"
+				class="tab"
 				th:classappend="${activePage == 'settings'} ? ' active'"
 				th:href="@{/project/{projectId}/settings(projectId=${project.id})}"
 				th:if="${projectOwner}"
 			>
-				<span
-					class="project-detail-tab-icon icon-settings"
-					aria-hidden="true"
-				></span>
+				<span class="project-tab-icon icon icon-settings" aria-hidden="true"></span>
 				설정
 			</a>
 		</nav>

@@ -6,6 +6,7 @@
 		<title>일정 - AZIT</title>
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 		<link rel="stylesheet" th:href="@{/css/common.css}" />
+		<link th:replace="~{fragments/timetable :: stylesheet}" />
 		<link rel="stylesheet" th:href="@{/css/schedule.css}" />
 		<link th:replace="~{fragments/sidebar :: stylesheet}" />
 		<script
@@ -43,38 +44,14 @@
 					<div>
 						<h1 id="schedule-title">일정</h1>
 					</div>
-					<div class="schedule-header-controls" hx-replace-url="true" hx-push-url="false">
-						<div class="schedule-navigation" aria-label="주간 일정 이동">
-							<a
-								class="schedule-icon-button"
-								aria-label="이전 주"
-								th:href="@{/schedule(date=${weekStart.minusWeeks(1)})}"
-							>
-								<span
-									class="schedule-icon schedule-icon-chevron-left"
-									aria-hidden="true"
-								></span>
-							</a>
-							<strong
-								class="schedule-range"
-								th:text="|${#temporals.format(weekStart, 'yyyy년 M월 d일')} - ${#temporals.format(weekStart.plusDays(6), 'yyyy년 M월 d일')}|"
-							>
-								2026년 5월 17일 - 23일
-							</strong>
-							<a
-								class="schedule-icon-button"
-								aria-label="다음 주"
-								th:href="@{/schedule(date=${weekStart.plusWeeks(1)})}"
-							>
-								<span
-									class="schedule-icon schedule-icon-chevron-right"
-									aria-hidden="true"
-								></span>
-							</a>
-							<a class="schedule-today-button" th:href="@{/schedule}"
-								>오늘</a
-							>
-						</div>
+					<div class="schedule-header-controls">
+						<th:block th:replace="~{fragments/timetable :: weekNav(
+							@{/schedule(date=${weekStart.minusWeeks(1)})},
+							@{/schedule(date=${weekStart.plusWeeks(1)})},
+							@{/schedule},
+							${weekStart},
+							'yyyy년 M월 d일'
+						)}"></th:block>
 						<button
 							class="schedule-add-button"
 							onclick="
@@ -84,7 +61,7 @@
 							"
 						>
 							<span
-								class="schedule-icon schedule-icon-plus"
+								class="icon icon-plus"
 								aria-hidden="true"
 							></span>
 							일정 추가
@@ -92,129 +69,18 @@
 					</div>
 				</div>
 
-				<div class="schedule-scroll" aria-label="주간 시간표">
+				<div class="timetable-scroll" aria-label="주간 시간표">
 					<div
-						class="schedule-grid"
-						th:style="|--schedule-slot-count: ${timetableSlotCount}; --schedule-row-end: ${timetableRowEnd};|"
+						class="timetable-grid"
+						th:style="|--timetable-slot-count: ${timetableSlotCount}; --timetable-row-end: ${timetableRowEnd};|"
 					>
-						<div class="schedule-corner" aria-hidden="true"></div>
-
-						<div
-							class="schedule-day schedule-col-sun"
-							th:classappend="${today.equals(weekStart)} ? ' schedule-day-today'"
-						>
-							<span>일</span>
-							<strong th:text="${#temporals.format(weekStart, 'M/d')}"
-								>5/17</strong
-							>
-						</div>
-						<div
-							class="schedule-day schedule-col-mon"
-							th:classappend="${today.equals(weekStart.plusDays(1))} ? ' schedule-day-today'"
-						>
-							<span>월</span>
-							<strong
-								th:text="${#temporals.format(weekStart.plusDays(1), 'M/d')}"
-								>5/18</strong
-							>
-						</div>
-						<div
-							class="schedule-day schedule-col-tue"
-							th:classappend="${today.equals(weekStart.plusDays(2))} ? ' schedule-day-today'"
-						>
-							<span>화</span>
-							<strong
-								th:text="${#temporals.format(weekStart.plusDays(2), 'M/d')}"
-								>5/19</strong
-							>
-						</div>
-						<div
-							class="schedule-day schedule-col-wed"
-							th:classappend="${today.equals(weekStart.plusDays(3))} ? ' schedule-day-today'"
-						>
-							<span>수</span>
-							<strong
-								th:text="${#temporals.format(weekStart.plusDays(3), 'M/d')}"
-								>5/20</strong
-							>
-						</div>
-						<div
-							class="schedule-day schedule-col-thu"
-							th:classappend="${today.equals(weekStart.plusDays(4))} ? ' schedule-day-today'"
-						>
-							<span>목</span>
-							<strong
-								th:text="${#temporals.format(weekStart.plusDays(4), 'M/d')}"
-								>5/21</strong
-							>
-						</div>
-						<div
-							class="schedule-day schedule-col-fri"
-							th:classappend="${today.equals(weekStart.plusDays(5))} ? ' schedule-day-today'"
-						>
-							<span>금</span>
-							<strong
-								th:text="${#temporals.format(weekStart.plusDays(5), 'M/d')}"
-								>5/22</strong
-							>
-						</div>
-						<div
-							class="schedule-day schedule-col-sat"
-							th:classappend="${today.equals(weekStart.plusDays(6))} ? ' schedule-day-today'"
-						>
-							<span>토</span>
-							<strong
-								th:text="${#temporals.format(weekStart.plusDays(6), 'M/d')}"
-								>5/23</strong
-							>
-						</div>
-
-						<div
-							class="schedule-day-shade schedule-col-sun"
-							th:classappend="${today.equals(weekStart)} ? ' today'"
-						></div>
-						<div
-							class="schedule-day-shade schedule-col-mon"
-							th:classappend="${today.equals(weekStart.plusDays(1))} ? ' today'"
-						></div>
-						<div
-							class="schedule-day-shade schedule-col-tue"
-							th:classappend="${today.equals(weekStart.plusDays(2))} ? ' today'"
-						></div>
-						<div
-							class="schedule-day-shade schedule-col-wed"
-							th:classappend="${today.equals(weekStart.plusDays(3))} ? ' today'"
-						></div>
-						<div
-							class="schedule-day-shade schedule-col-thu"
-							th:classappend="${today.equals(weekStart.plusDays(4))} ? ' today'"
-						></div>
-						<div
-							class="schedule-day-shade schedule-col-fri"
-							th:classappend="${today.equals(weekStart.plusDays(5))} ? ' today'"
-						></div>
-						<div
-							class="schedule-day-shade schedule-col-sat"
-							th:classappend="${today.equals(weekStart.plusDays(6))} ? ' today'"
-						></div>
-
-						<div
-							class="schedule-time"
-							th:each="hour : ${timeLabels}"
-							th:classappend="${hour == timetableStartHour} ? ' schedule-time-start'"
-							th:style="|--time-row: ${2 + ((hour - timetableStartHour) * 6)}|"
-							th:text="|${hour < 10 ? '0' : ''}${hour}:00|"
-						>
-							06:00
-						</div>
-
-						<div
-							class="schedule-hour-line"
-							th:each="hour : ${timeLabels}"
-							th:if="${hour != timetableStartHour}"
-							th:style="|--time-row: ${2 + ((hour - timetableStartHour) * 6)}|"
-							aria-hidden="true"
-						></div>
+						<th:block th:replace="~{fragments/timetable :: gridSkeleton(
+							${weekStart},
+							${today},
+							${timeLabels},
+							${timetableStartHour},
+							null
+						)}"></th:block>
 
 						<th:block th:each="daySchedule, dayStat : ${schedule}">
 							<a
@@ -255,7 +121,7 @@
 							"
 						>
 							<span
-								class="schedule-icon schedule-icon-x"
+								class="icon icon-x"
 								aria-hidden="true"
 							></span>
 						</button>
@@ -472,7 +338,7 @@
 							"
 						>
 							<span
-								class="schedule-icon schedule-icon-x"
+								class="icon icon-x"
 								aria-hidden="true"
 							></span>
 						</button>

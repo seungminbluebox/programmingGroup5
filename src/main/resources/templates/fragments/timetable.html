@@ -1,0 +1,167 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" th:href="@{/css/common.css}" />
+		<link th:fragment="stylesheet" rel="stylesheet" th:href="@{/css/timetable.css}" />
+	</head>
+	<body>
+		<!--
+	Fragment: weekNav(prevUrl, nextUrl, todayUrl, weekStart, dateFormat)
+
+	Parameters:
+	  prevUrl     - 이전 주 URL (예: @{/schedule(date=${...})})
+	  nextUrl     - 다음 주 URL
+	  todayUrl    - 오늘 URL
+	  weekStart   - 주 시작 날짜 (LocalDate)
+	  dateFormat  - 날짜 표시 형식 (예: 'M월 d일', 'yyyy년 M월 d일')
+-->
+		<nav
+			th:fragment="weekNav(prevUrl, nextUrl, todayUrl, weekStart, dateFormat)"
+			class="timetable-nav"
+			aria-label="주간 이동"
+			hx-replace-url="true"
+			hx-push-url="false"
+		>
+			<a class="timetable-nav-btn" aria-label="이전 주" th:href="${prevUrl}">
+				<span class="icon icon-chevron-left" aria-hidden="true"></span>
+			</a>
+			<strong
+				class="timetable-range"
+				th:text="|${#temporals.format(weekStart, dateFormat)} – ${#temporals.format(weekStart.plusDays(6), dateFormat)}|"
+				>날짜 범위</strong
+			>
+			<a class="timetable-nav-btn" aria-label="다음 주" th:href="${nextUrl}">
+				<span class="icon icon-chevron-right" aria-hidden="true"></span>
+			</a>
+			<a class="timetable-today-btn" th:href="${todayUrl}">오늘</a>
+		</nav>
+
+		<!--
+	Fragment: gridSkeleton(weekStart, today, timeLabels, startHour)
+
+	그리드의 공통 뼈대를 렌더링합니다 (코너 + 요일 헤더 + 시간 레이블 + 시간선).
+	열 음영(col-shade)과 내용(이벤트/슬롯)은 각 페이지에서 직접 추가합니다.
+
+	Parameters:
+	  weekStart  - 주 시작 날짜 (LocalDate)
+	  today      - 오늘 날짜 (LocalDate)
+	  timeLabels - 표시할 시간 목록 (예: ${timeLabels}, ${#numbers.sequence(0,23)})
+	  startHour  - 첫 번째 시간 (그리드 행 오프셋 계산 기준, 예: 0 또는 timetableStartHour)
+-->
+		<th:block th:fragment="gridSkeleton(weekStart, today, timeLabels, startHour, shadeExtraClass)">
+			<div class="timetable-corner" aria-hidden="true"></div>
+
+			<div
+				class="timetable-day"
+				style="grid-column: 2"
+				th:classappend="${today.equals(weekStart)} ? ' timetable-day-today'"
+			>
+				<span>일</span>
+				<strong th:text="${#temporals.format(weekStart, 'M/d')}">날짜</strong>
+			</div>
+			<div
+				class="timetable-day"
+				style="grid-column: 3"
+				th:classappend="${today.equals(weekStart.plusDays(1))} ? ' timetable-day-today'"
+			>
+				<span>월</span>
+				<strong th:text="${#temporals.format(weekStart.plusDays(1), 'M/d')}"
+					>날짜</strong
+				>
+			</div>
+			<div
+				class="timetable-day"
+				style="grid-column: 4"
+				th:classappend="${today.equals(weekStart.plusDays(2))} ? ' timetable-day-today'"
+			>
+				<span>화</span>
+				<strong th:text="${#temporals.format(weekStart.plusDays(2), 'M/d')}"
+					>날짜</strong
+				>
+			</div>
+			<div
+				class="timetable-day"
+				style="grid-column: 5"
+				th:classappend="${today.equals(weekStart.plusDays(3))} ? ' timetable-day-today'"
+			>
+				<span>수</span>
+				<strong th:text="${#temporals.format(weekStart.plusDays(3), 'M/d')}"
+					>날짜</strong
+				>
+			</div>
+			<div
+				class="timetable-day"
+				style="grid-column: 6"
+				th:classappend="${today.equals(weekStart.plusDays(4))} ? ' timetable-day-today'"
+			>
+				<span>목</span>
+				<strong th:text="${#temporals.format(weekStart.plusDays(4), 'M/d')}"
+					>날짜</strong
+				>
+			</div>
+			<div
+				class="timetable-day"
+				style="grid-column: 7"
+				th:classappend="${today.equals(weekStart.plusDays(5))} ? ' timetable-day-today'"
+			>
+				<span>금</span>
+				<strong th:text="${#temporals.format(weekStart.plusDays(5), 'M/d')}"
+					>날짜</strong
+				>
+			</div>
+			<div
+				class="timetable-day"
+				style="grid-column: 8"
+				th:classappend="${today.equals(weekStart.plusDays(6))} ? ' timetable-day-today'"
+			>
+				<span>토</span>
+				<strong th:text="${#temporals.format(weekStart.plusDays(6), 'M/d')}"
+					>날짜</strong
+				>
+			</div>
+
+			<div class="timetable-col-shade" style="grid-column: 2"
+				th:classappend="${(today.equals(weekStart) ? ' today' : '') + (shadeExtraClass != null ? ' ' + shadeExtraClass : '')}"
+				aria-hidden="true"></div>
+			<div class="timetable-col-shade" style="grid-column: 3"
+				th:classappend="${(today.equals(weekStart.plusDays(1)) ? ' today' : '') + (shadeExtraClass != null ? ' ' + shadeExtraClass : '')}"
+				aria-hidden="true"></div>
+			<div class="timetable-col-shade" style="grid-column: 4"
+				th:classappend="${(today.equals(weekStart.plusDays(2)) ? ' today' : '') + (shadeExtraClass != null ? ' ' + shadeExtraClass : '')}"
+				aria-hidden="true"></div>
+			<div class="timetable-col-shade" style="grid-column: 5"
+				th:classappend="${(today.equals(weekStart.plusDays(3)) ? ' today' : '') + (shadeExtraClass != null ? ' ' + shadeExtraClass : '')}"
+				aria-hidden="true"></div>
+			<div class="timetable-col-shade" style="grid-column: 6"
+				th:classappend="${(today.equals(weekStart.plusDays(4)) ? ' today' : '') + (shadeExtraClass != null ? ' ' + shadeExtraClass : '')}"
+				aria-hidden="true"></div>
+			<div class="timetable-col-shade" style="grid-column: 7"
+				th:classappend="${(today.equals(weekStart.plusDays(5)) ? ' today' : '') + (shadeExtraClass != null ? ' ' + shadeExtraClass : '')}"
+				aria-hidden="true"></div>
+			<div class="timetable-col-shade" style="grid-column: 8"
+				th:classappend="${(today.equals(weekStart.plusDays(6)) ? ' today' : '') + (shadeExtraClass != null ? ' ' + shadeExtraClass : '')}"
+				aria-hidden="true"></div>
+
+			<div
+				class="timetable-time"
+				th:each="hour : ${timeLabels}"
+				th:classappend="${hour == startHour} ? ' timetable-time-start'"
+				th:style="|--timetable-time-row: ${2 + (hour - startHour) * 6}|"
+				th:text="|${hour < 10 ? '0' : ''}${hour}:00|"
+				aria-hidden="true"
+			>
+				00:00
+			</div>
+
+			<div
+				class="timetable-hour-line"
+				th:each="hour : ${timeLabels}"
+				th:if="${hour != startHour}"
+				th:style="|--timetable-time-row: ${2 + (hour - startHour) * 6}|"
+				aria-hidden="true"
+			></div>
+		</th:block>
+	</body>
+</html>

@@ -42,6 +42,7 @@
 				<div>
 					<a
 						id="sidebar-notification"
+						class="icon icon-bell"
 						th:href="@{/invitations}"
 						aria-label="초대 목록"
 					></a>
@@ -56,7 +57,7 @@
 							th:href="@{/}"
 							th:classappend="${currentPath == '/'} ? 'active'"
 						>
-							<div class="sidebar-page-icon"></div>
+							<div class="sidebar-page-icon icon icon-layout-dashboard"></div>
 							<div class="sidebar-page-name">대시보드</div>
 						</a>
 					</li>
@@ -67,7 +68,7 @@
 							th:href="@{/}"
 							th:classappend="${currentPath == '/'} ? 'active'"
 						>
-							<div class="sidebar-page-icon"></div>
+							<div class="sidebar-page-icon icon icon-circle-plus"></div>
 							<div class="sidebar-page-name">시작하기</div>
 						</a>
 					</li>
@@ -78,7 +79,7 @@
 							th:href="@{/}"
 							th:classappend="${currentPath == '/'} ? 'active'"
 						>
-							<div class="sidebar-page-icon"></div>
+							<div class="sidebar-page-icon icon icon-check-square"></div>
 							<div class="sidebar-page-name">할 일</div>
 						</a>
 					</li>
@@ -89,22 +90,24 @@
 							th:href="@{/schedule}"
 							th:classappend="${currentPath == '/schedule'} ? 'active'"
 						>
-							<div class="sidebar-page-icon"></div>
+							<div class="sidebar-page-icon icon icon-calendar"></div>
 							<div class="sidebar-page-name">일정</div>
 						</a>
 					</li>
 				</ul>
 			</nav>
 			<nav id="sidebar-projects" th:if="${sidebarMemberName != null}">
-				<h2>내 프로젝트</h2>
+				<h2>내 프로젝트 <span class="icon icon-plus" aria-hidden="true"></span></h2>
 				<ul>
 					<li th:each="project: ${sidebarProjects}">
 						<a
 							class="sidebar-project"
 							th:href="@{/project/{projectId}(projectId=${project.id})}"
-							th:classappend="${currentPath == #strings.concat('/project/', project.id)} ? 'active'"
+							th:classappend="${currentPath == #strings.concat('/project/', project.id) || #strings.startsWith(currentPath, #strings.concat('/project/', project.id, '/'))} ? 'active'"
 						>
-							<div class="sidebar-project-icon"></div>
+							<div
+								th:replace="~{fragments/project_icon :: projectIcon(${project.title}, 'sidebar-project-icon')}"
+							></div>
 							<div
 								class="sidebar-project-name"
 								th:text="${project.title}"
@@ -147,7 +150,7 @@
 						/>
 						<label
 							id="sidebar-usermenu-toggle-button"
-							class="toggle-button"
+							class="toggle-button icon icon-chevron-down"
 							for="sidebar-usermenu-toggle-input"
 						></label>
 						<nav id="sidebar-usermenu">
@@ -158,14 +161,14 @@
 										th:href="@{/register}"
 										onclick="authSwitch('register');event.preventDefault();"
 									>
-										<div class="sidebar-usermenu-icon"></div>
+										<div class="sidebar-usermenu-icon icon icon-user-plus"></div>
 										<div class="sidebar-usermenu-label">회원가입</div>
 									</a>
 								</li>
 								<li th:if="${sidebarMemberName != null}">
 									<form th:action="@{/logout}" method="POST">
 										<button id="sidebar-logout" type="submit">
-											<div class="sidebar-usermenu-icon"></div>
+											<div class="sidebar-usermenu-icon icon icon-log-out"></div>
 											<div class="sidebar-usermenu-label">
 												로그아웃
 											</div>

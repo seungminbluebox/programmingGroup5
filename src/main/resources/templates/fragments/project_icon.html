@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<body>
+		<div
+			th:fragment="projectIcon(title, className)"
+			th:class="${className}"
+			aria-hidden="true"
+		>
+			<span th:text="${#strings.substring(title, 0, 1)}">A</span>
+		</div>
+	</body>
+</html>
