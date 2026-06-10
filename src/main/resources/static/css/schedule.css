@@ -94,6 +94,7 @@
 	transition:
 		background 0.15s,
 		border-color 0.15s;
+	box-shadow: var(--shadow-xs);
 }
 
 .schedule-add-button:hover {
