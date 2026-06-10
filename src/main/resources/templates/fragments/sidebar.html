@@ -177,14 +177,12 @@
 							id="sidebar-usermenu-toggle-input"
 							class="toggle-input"
 							type="checkbox"
-							th:if="${sidebarMemberName != null}"
 						/>
 
 						<label
 							id="sidebar-usermenu-toggle-button"
 							class="toggle-button icon icon-chevron-down"
 							for="sidebar-usermenu-toggle-input"
-							th:if="${sidebarMemberName != null}"
 						></label>
 
 						<nav id="sidebar-usermenu">
@@ -204,6 +202,7 @@
 										<div class="sidebar-usermenu-label">회원가입</div>
 									</a>
 								</li>
+								<th:block th:if="${sidebarMemberName != null}">
 								<li>
 									<a id="sidebar-editprofile" th:href="@{/profile/me}">
 										<div
@@ -226,6 +225,7 @@
 										</button>
 									</form>
 								</li>
+								</th:block>
 							</ul>
 						</nav>
 					</li>
