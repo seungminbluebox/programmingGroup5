@@ -1,80 +1,173 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-	<head th:replace="~{fragments/project_layout :: head}"></head>
+    <head th:replace="~{fragments/project_layout :: head}"></head>
+    <body>
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+        <main>
+            <div class="project-detail-page">
+                <div th:replace="~{fragments/project_layout :: header('member')}"></div>
+                <section class="project-detail-layout">
 
-	<body>
-		<div th:replace="~{fragments/sidebar :: sidebar}"></div>
-		<main>
-			<div class="project-detail-page">
-				<div th:replace="~{fragments/project_layout :: header('member')}"></div>
-				<section class="project-detail-layout">
-					<div class="project-detail-main">
-						<article class="card project-detail-card">
-							<div class="project-detail-card-heading">
-								<h2>팀원</h2>
-								<strong
-									class="project-detail-count"
-									th:text="${project.members != null ? project.members.size() : 0} + '명'"
-									>4명</strong
-								>
-							</div>
-							<div
-								class="project-detail-member-list"
-								th:if="${project.members != null and !project.members.isEmpty()}"
-							>
-								<a
-									class="project-detail-member"
-									th:href="@{/profile/{id}(id=${projectMember.member.id})}"
-									th:each="projectMember : ${project.members}"
-								>
-									<th:block th:replace="~{fragments/avatar :: avatar(${projectMember.member.profileUrl}, ${projectMember.member.name}, 'project-detail-member-avatar')}"></th:block>
-									<div>
-										<strong th:text="${projectMember.member.name}">팀원 이름</strong>
-										<p th:text="${projectMember.role}">OWNER</p>
-										<p th:text="${projectMember.member.email}" class="project-detail-member-email">email@example.com</p>
-									</div>
-									<!-- <span class="project-detail-member-menu icon icon-more-horizontal" aria-hidden="true"></span> -->
-								</a>
-							</div>
-							<p
-								class="project-detail-empty"
-								th:if="${project.members == null or project.members.isEmpty()}"
-							>
-								아직 등록된 팀원이 없습니다.
-							</p>
-						</article>
-					</div>
-					<aside class="project-detail-side">
-						<article
-							class="card project-detail-card"
-							th:if="${projectOwner and projectEditable}"
-						>
-							<div class="project-detail-card-heading">
-								<h2>초대</h2>
-							</div>
-							<form
-								class="project-detail-form"
-								th:action="@{/project/{projectId}/members(projectId=${project.id})}"
-								method="post"
-							>
-								<input
-									type="hidden"
-									th:name="${_csrf.parameterName}"
-									th:value="${_csrf.token}"
-								/>
-								<input
-									class="input"
-									type="email"
-									name="memberEmail"
-									placeholder="초대할 회원 이메일"
-									required
-								/>
-								<button type="submit" class="btn btn-primary">초대 보내기</button>
-							</form>
-						</article>
-					</aside>
-				</section>
-			</div>
-		</main>
-	</body>
+                    <!-- 왼쪽: 현재 팀원 -->
+                    <div class="project-detail-main">
+                        <article class="card project-detail-card">
+                            <div class="project-detail-card-heading">
+                                <h2>팀원</h2>
+                                <strong class="project-detail-count"
+                                        th:text="${project.members != null ? project.members.size() : 0} + '명'">0명</strong>
+                            </div>
+                            <div class="project-detail-member-list"
+                                 th:if="${project.members != null and !project.members.isEmpty()}">
+                                <a class="project-detail-member"
+                                   th:href="@{/profile/{id}(id=${projectMember.member.id})}"
+                                   th:each="projectMember : ${project.members}">
+                                    <th:block th:replace="~{fragments/avatar :: avatar(${projectMember.member.profileUrl}, ${projectMember.member.name}, 'project-detail-member-avatar')}"></th:block>
+                                    <div>
+                                        <strong th:text="${projectMember.member.name}">이름</strong>
+                                        <p th:text="${projectMember.role}">OWNER</p>
+                                        <p th:text="${projectMember.member.email}" class="project-detail-member-email">email@example.com</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <p class="project-detail-empty"
+                               th:if="${project.members == null or project.members.isEmpty()}">
+                                아직 등록된 팀원이 없습니다.
+                            </p>
+                        </article>
+                    </div>
+
+                    <!-- 오른쪽: 초대 + 추천 -->
+                    <aside class="project-detail-side">
+
+                        <!-- 이메일 초대 -->
+                        <article class="card project-detail-card"
+                                 th:if="${projectOwner and projectEditable}">
+                            <div class="project-detail-card-heading">
+                                <h2>초대</h2>
+                            </div>
+                            <form class="project-detail-form"
+                                  th:action="@{/project/{projectId}/members(projectId=${project.id})}"
+                                  method="post">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                <input class="input" type="email" name="memberEmail"
+                                       placeholder="초대할 회원 이메일" required />
+                                <button type="submit" class="btn btn-primary">초대 보내기</button>
+                            </form>
+                        </article>
+
+                        <!-- 추천 멤버 -->
+                        <article class="card project-detail-card"
+                                 th:if="${recommendedMembers != null and !#lists.isEmpty(recommendedMembers)}">
+                            <div class="project-detail-card-heading">
+                                <h2>추천 팀원</h2>
+                                <span style="font-size:0.8rem;color:#6b7280;">매칭률 순</span>
+                            </div>
+                            <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px;">
+                                <div th:each="rec, stat : ${recommendedMembers}"
+                                     th:if="${stat.index < 5}"
+                                     style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:#f8f9ff;position:relative;">
+
+                                    <!-- 아바타 -->
+                                    <th:block th:replace="~{fragments/avatar :: avatar(${rec.member().profileUrl}, ${rec.member().name}, 'project-detail-member-avatar')}"></th:block>
+
+                                    <!-- 정보 -->
+                                    <div style="flex:1;min-width:0;">
+                                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
+                                            <strong th:text="${rec.member().name}" style="font-size:0.9rem;"></strong>
+                                            <!-- 매칭률 배지 -->
+                                            <span th:text="${rec.score()} + '%'"
+                                                  style="font-size:0.72rem;font-weight:700;padding:2px 7px;border-radius:99px;white-space:nowrap;"
+                                                  th:style="${rec.score() >= 80} ? 'background:#dcfce7;color:#16a34a;font-size:0.72rem;font-weight:700;padding:2px 7px;border-radius:99px;white-space:nowrap;'
+                                                           : (${rec.score() >= 50} ? 'background:#fef9c3;color:#ca8a04;font-size:0.72rem;font-weight:700;padding:2px 7px;border-radius:99px;white-space:nowrap;'
+                                                           : 'background:#f3f4f6;color:#6b7280;font-size:0.72rem;font-weight:700;padding:2px 7px;border-radius:99px;white-space:nowrap;')">
+                                            </span>
+                                        </div>
+                                        <div style="font-size:0.78rem;color:#6b7280;">
+                                            스택 <span th:text="${rec.stackCount()}"></span>개
+                                            · 시간 매칭 <span th:text="${rec.availabilityCount()}"></span>건
+                                        </div>
+                                    </div>
+
+                                    <!-- 초대 버튼 -->
+                                    <form th:if="${projectOwner and projectEditable}"
+                                          th:action="@{/project/{projectId}/invitations(projectId=${project.id})}"
+                                          method="post" style="flex-shrink:0;">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                        <input type="hidden" name="receiverId" th:value="${rec.member().id}" />
+                                        <button type="submit"
+                                                style="background:#6366f1;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:0.78rem;font-weight:600;cursor:pointer;white-space:nowrap;">
+                                            초대
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- 더보기 -->
+                            <div th:if="${#lists.size(recommendedMembers) > 5}"
+                                 style="text-align:center;margin-top:12px;">
+                                <button onclick="toggleMoreMembers()"
+                                        style="background:none;border:1.5px solid #e5e7eb;border-radius:8px;padding:7px 20px;font-size:0.82rem;color:#6b7280;cursor:pointer;">
+                                    더보기 (<span th:text="${#lists.size(recommendedMembers) - 5}"></span>명)
+                                </button>
+                            </div>
+
+                            <!-- 5명 이후 숨김 처리 -->
+                            <div id="more-members" style="display:none;flex-direction:column;gap:12px;margin-top:12px;">
+                                <div th:each="rec, stat : ${recommendedMembers}"
+                                     th:if="${stat.index >= 5}"
+                                     style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:#f8f9ff;">
+                                    <th:block th:replace="~{fragments/avatar :: avatar(${rec.member().profileUrl}, ${rec.member().name}, 'project-detail-member-avatar')}"></th:block>
+                                    <div style="flex:1;min-width:0;">
+                                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
+                                            <strong th:text="${rec.member().name}" style="font-size:0.9rem;"></strong>
+                                            <span th:text="${rec.score()} + '%'"
+                                                  style="font-size:0.72rem;font-weight:700;padding:2px 7px;border-radius:99px;background:#f3f4f6;color:#6b7280;white-space:nowrap;"></span>
+                                        </div>
+                                        <div style="font-size:0.78rem;color:#6b7280;">
+                                            스택 <span th:text="${rec.stackCount()}"></span>개
+                                            · 시간 매칭 <span th:text="${rec.availabilityCount()}"></span>건
+                                        </div>
+                                    </div>
+                                    <form th:if="${projectOwner and projectEditable}"
+                                          th:action="@{/project/{projectId}/invitations(projectId=${project.id})}"
+                                          method="post" style="flex-shrink:0;">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                        <input type="hidden" name="receiverId" th:value="${rec.member().id}" />
+                                        <button type="submit"
+                                                style="background:#6366f1;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:0.78rem;font-weight:600;cursor:pointer;">
+                                            초대
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- 추천 멤버 없을 때 -->
+                        <article class="card project-detail-card"
+                                 th:if="${recommendedMembers == null or #lists.isEmpty(recommendedMembers)}">
+                            <div class="project-detail-card-heading">
+                                <h2>추천 팀원</h2>
+                            </div>
+                            <p style="font-size:0.85rem;color:#9ca3af;text-align:center;padding:20px 0;">
+                                조건에 맞는 추천 팀원이 없습니다.<br/>
+                                <span style="font-size:0.78rem;">기술 스택이나 활동 시간을 설정하면 더 잘 맞는 팀원을 찾을 수 있어요.</span>
+                            </p>
+                        </article>
+
+                    </aside>
+                </section>
+            </div>
+        </main>
+        <script>
+            function toggleMoreMembers() {
+                const el = document.getElementById('more-members');
+                if (el.style.display === 'none') {
+                    el.style.display = 'flex';
+                    event.target.textContent = '접기';
+                } else {
+                    el.style.display = 'none';
+                }
+            }
+        </script>
+    </body>
 </html>

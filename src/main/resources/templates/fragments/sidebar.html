@@ -89,7 +89,7 @@
 							id="sidebar-task"
 							class="sidebar-page"
 							th:href="@{/}"
-							th:classappend="${currentPath == '/'} ? 'active'"
+							th:classappend="${currentPath == '/tasks'} ? 'active'"
 						>
 							<div class="sidebar-page-icon icon icon-check-square"></div>
 							<div class="sidebar-page-name">할 일</div>
@@ -106,22 +106,25 @@
 							<div class="sidebar-page-name">일정</div>
 						</a>
 					</li>
+					<li th:if="${sidebarMemberName != null}">
+						<a
+							id="sidebar-invitations"
+							class="sidebar-page"
+							th:href="@{/invitations}"
+							th:classappend="${currentPath == '/invitations'} ? 'active'"
+						>
+							<div class="sidebar-page-icon icon icon-mail"></div>
+							<div class="sidebar-page-name">지원 현황</div>
+						</a>
+					</li>
 				</ul>
 			</nav>
 			<nav id="sidebar-projects" th:if="${sidebarMemberName != null}">
 				<div class="sidebar-projects-header">
 					<h2>내 프로젝트</h2>
-					<button
-						type="button"
-						id="sidebar-project-create"
-						aria-label="프로젝트 생성"
-						class="icon icon-plus"
-						onclick="
-							window.dispatchEvent(
-								new CustomEvent('open-project-create-modal'),
-							)
-						"
-					></button>
+					<a th:href="@{/projects/new}" style="text-decoration: none"
+						><span class="icon icon-plus" aria-hidden="true"></span
+					></a>
 				</div>
 
 				<ul>
@@ -186,6 +189,21 @@
 
 						<nav id="sidebar-usermenu" th:if="${sidebarMemberName != null}">
 							<ul>
+								<li th:unless="${sidebarMemberName != null}">
+									<a
+										id="sidebar-register"
+										th:href="@{/register}"
+										onclick="
+											authSwitch('register');
+											event.preventDefault();
+										"
+									>
+										<div
+											class="sidebar-usermenu-icon icon icon-user-plus"
+										></div>
+										<div class="sidebar-usermenu-label">회원가입</div>
+									</a>
+								</li>
 								<li>
 									<a id="sidebar-editprofile" th:href="@{/profile/me}">
 										<div
