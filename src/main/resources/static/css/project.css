@@ -304,6 +304,10 @@
 	color: var(--color-text);
 }
 
+.progress-fill.deadline {
+	background: var(--color-accent-orange);
+}
+
 .project-detail-active-count {
 	display: inline-flex;
 	align-items: center;
