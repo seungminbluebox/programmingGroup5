@@ -57,7 +57,7 @@
                   </span>
                 </div>
                 <div class="progress">
-                  <div class="progress-fill deadline" th:style="'width: ' + ${deadlineRemainingRate} + '%'"></div>
+                  <div class="progress-fill deadline" th:style="'width: ' + (100 - ${deadlineRemainingRate}) + '%'"></div>
                 </div>
               </div>
             </div>
