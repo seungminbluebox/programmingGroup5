@@ -95,17 +95,6 @@
 							<div class="sidebar-page-name">일정</div>
 						</a>
 					</li>
-					<li th:if="${sidebarMemberName != null}">
-						<a
-							id="sidebar-invitations"
-							class="sidebar-page"
-							th:href="@{/invitations}"
-							th:classappend="${currentPath == '/invitations'} ? 'active'"
-						>
-							<div class="sidebar-page-icon icon icon-mail"></div>
-							<div class="sidebar-page-name">지원 현황</div>
-						</a>
-					</li>
 				</ul>
 			</nav>
 
