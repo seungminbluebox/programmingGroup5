@@ -1,144 +1,107 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title th:text="${invitation.project.title} + ' 초대 - AZIT'">초대 - AZIT</title>
-		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-		<link rel="stylesheet" href="/css/common.css" />
-		<link rel="stylesheet" href="/css/sidebar.css" />
-		<link rel="stylesheet" href="/css/azit.css" />
-	</head>
-	<body class="azit-app has-sidebar">
-		<div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
-		<main class="azit-shell azit-page">
-			<section class="azit-page-heading">
-				<div>
-					<div class="azit-kicker">Project Invitation</div>
-					<div
-						style="
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title th:text="${invitation.project.title} + ' 초대 | Azit'">초대 | Azit</title>
+	<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+	<link rel="stylesheet" href="/css/common.css" />
+	<link rel="stylesheet" href="/css/sidebar.css" />
+	<link rel="stylesheet" href="/css/azit.css" />
+</head>
+
+<body class="azit-app has-sidebar">
+	<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+	<main class="azit-shell azit-page">
+		<section class="azit-page-heading">
+			<div>
+				<div class="azit-kicker">Project Invitation</div>
+				<div style="
 							display: flex;
 							align-items: center;
 							gap: 10px;
 							flex-wrap: wrap;
-						"
-					>
-						<h1 th:text="${invitation.project.title}">프로젝트 이름</h1>
-						<span
-							class="azit-status-badge"
-							th:classappend="${invitation.project.status.cssClass}"
-							th:text="${invitation.project.status.label}"
-						>
-							진행중
-						</span>
-					</div>
-					<p th:text="${invitation.project.description}">프로젝트 설명</p>
+						">
+					<h1 th:text="${invitation.project.title}">프로젝트 이름</h1>
+					<span class="azit-status-badge" th:classappend="${invitation.project.status.cssClass}"
+						th:text="${invitation.project.status.label}">
+						진행중
+					</span>
 				</div>
-			</section>
+				<p th:text="${invitation.project.description}">프로젝트 설명</p>
+			</div>
+		</section>
 
-			<p
-				class="azit-alert"
-				th:if="${errorMessage}"
-				th:text="${errorMessage}"
-				style="margin-bottom: 16px"
-			></p>
-			<p
-				class="azit-alert-success"
-				th:if="${successMessage}"
-				th:text="${successMessage}"
-				style="margin-bottom: 16px"
-			></p>
-			<p
-				class="azit-alert"
-				th:if="${invitation.project.status.name() != 'IN_PROGRESS'}"
-				style="margin-bottom: 16px"
-			>
-				완료 또는 중단된 프로젝트 초대는 수락할 수 없습니다. 필요하지 않은 초대는
-				거절할 수 있습니다.
-			</p>
+		<p class="azit-alert" th:if="${errorMessage}" th:text="${errorMessage}" style="margin-bottom: 16px"></p>
+		<p class="azit-alert-success" th:if="${successMessage}" th:text="${successMessage}" style="margin-bottom: 16px">
+		</p>
+		<p class="azit-alert" th:if="${invitation.project.status.name() != 'IN_PROGRESS'}" style="margin-bottom: 16px">
+			완료 또는 중단된 프로젝트 초대는 수락할 수 없습니다. 필요하지 않은 초대는
+			거절할 수 있습니다.
+		</p>
 
-			<section class="azit-grid">
-				<article class="azit-card">
-					<div class="azit-card-header">프로젝트 정보</div>
-					<div class="azit-card-body">
-						<div class="azit-form-section" style="margin-bottom: 14px">
-							<strong>초대한 사람</strong>
-							<p class="azit-empty" style="margin-top: 6px">
-								<span th:text="${invitation.sender.name}">이름</span>
-								/
-								<span th:text="${invitation.sender.email}"
-									>email@example.com</span
-								>
-							</p>
-						</div>
-
-						<div class="azit-form-section">
-							<strong>현재 팀원</strong>
-
-							<div
-								th:if="${invitation.project.members != null and !invitation.project.members.isEmpty()}"
-								style="display: grid; gap: 10px; margin-top: 12px"
-							>
-								<div
-									th:each="projectMember : ${invitation.project.members}"
-								>
-									<span th:text="${projectMember.member.name}"
-										>팀원 이름</span
-									>
-									<span
-										class="azit-stack-badge"
-										th:text="${projectMember.role}"
-										>OWNER</span
-									>
-								</div>
-							</div>
-
-							<p
-								class="azit-empty"
-								th:if="${invitation.project.members == null or invitation.project.members.isEmpty()}"
-								style="margin-top: 10px"
-							>
-								아직 등록된 팀원이 없습니다.
-							</p>
-						</div>
-					</div>
-				</article>
-
-				<aside class="azit-card">
-					<div class="azit-card-header">초대 응답</div>
-					<div class="azit-card-body">
-						<p class="azit-empty" style="margin-bottom: 16px">
-							프로젝트 정보를 확인한 뒤 초대를 수락하거나 거절할 수
-							있습니다.
+		<section class="azit-grid">
+			<article class="azit-card">
+				<div class="azit-card-header">프로젝트 정보</div>
+				<div class="azit-card-body">
+					<div class="azit-form-section" style="margin-bottom: 14px">
+						<strong>초대한 사람</strong>
+						<p class="azit-empty" style="margin-top: 6px"
+							th:text="${invitation.sender.name + '(' + invitation.sender.email + ')'}">
+							이름(email@example.com)
 						</p>
-
-						<div style="display: flex; gap: 10px; flex-wrap: wrap">
-							<form
-								th:if="${invitation.project.status.name() == 'IN_PROGRESS'}"
-								th:action="@{/invitations/{id}/accept(id=${invitation.id})}"
-								method="post"
-							>
-								<button type="submit" class="azit-button">
-									초대 수락
-								</button>
-							</form>
-
-							<form
-								th:action="@{/invitations/{id}/reject(id=${invitation.id})}"
-								method="post"
-							>
-								<button
-									type="submit"
-									class="azit-button azit-button-danger"
-								>
-									거절
-								</button>
-							</form>
-						</div>
 					</div>
-				</aside>
-			</section>
-		</main>
-	</body>
+
+					<div class="azit-form-section">
+						<strong>현재 팀원</strong>
+
+						<div th:if="${invitation.project.members != null and !invitation.project.members.isEmpty()}"
+							style="display: grid; gap: 10px; margin-top: 12px">
+							<div th:each="projectMember : ${invitation.project.members}">
+								<span th:text="${projectMember.member.name}">팀원 이름</span>
+								<span class="azit-stack-badge" th:text="${projectMember.role}">OWNER</span>
+							</div>
+						</div>
+
+						<p class="azit-empty" 할
+							th:if="${invitation.project.members == null or invitation.project.members.isEmpty()}"
+							style="margin-top: 10px">
+							아직 등록된 팀원이 없습니다.
+						</p>
+					</div>
+				</div>
+			</article>
+
+			<aside class="azit-card">
+				<div class="azit-card-header">초대 응답</div>
+				<div class="azit-card-body">
+					<p class="azit-empty" style="margin-bottom: 16px">
+						프로젝트 정보를 확인한 뒤 초대를 수락하거나 거절할 수
+						있습니다.
+					</p>
+
+					<div style="display: flex; gap: 10px; flex-wrap: wrap">
+						<form th:action="@{/invitations/{id}/accept(id=${invitation.id})}" method="post">
+    <button type="submit"
+            class="azit-button"
+            th:disabled="${invitation.project.status.name() != 'IN_PROGRESS'}"
+            th:classappend="${invitation.project.status.name() != 'IN_PROGRESS'} ? ' azit-button-disabled' : ''">
+        초대 수락
+    </button>
+</form>
+
+						<form th:action="@{/invitations/{id}/reject(id=${invitation.id})}" method="post">
+							<button type="submit" class="azit-button azit-button-danger">
+								거절
+							</button>
+						</form>
+					</div>
+				</div>
+			</aside>
+		</section>
+	</main>
+</body>
+
 </html>

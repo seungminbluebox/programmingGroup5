@@ -1,379 +1,235 @@
 <!doctype html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>AZIT</title>
-		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-		<link
-			rel="stylesheet"
-			href="/src/main/resources/static/css/common.css"
-			th:href="@{/css/common.css}"
-		/>
-		<link
-			th:fragment="stylesheet"
-			rel="stylesheet"
-			href="/src/main/resources/static/css/sidebar.css"
-			th:href="@{/css/sidebar.css}"
-		/>
-		<link rel="stylesheet" th:href="@{/css/auth.css}" />
-		<script
-			src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js"
-			integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V"
-			crossorigin="anonymous"
-		></script>
-		<script
-			src="https://cdn.jsdelivr.net/npm/htmx-ext-head-support@2.0.5"
-			integrity="sha384-cvMqHzjCJsOHgGuyB3sWXaUSv/Krm0BdzjuI1rtkjCbL1l1oHJx+cHyVRJhyuEz0"
-			crossorigin="anonymous"
-		></script>
-		<script
-			src="https://cdn.jsdelivr.net/npm/htmx-ext-route-layout@0.1.4/dist/index.min.js"
-			integrity="sha256-X7Tg/54td+irTN7upx+rWIRXE/pBynhrmfsJn7Da/Eo="
-			crossorigin="anonymous"
-		></script>
-	</head>
 
-	<body>
-		<header id="sidebar" th:fragment="sidebar" hx-ext="head-support">
-			<div id="sidebar-header">
-				<div>
-					<a id="sidebar-home" class="logo" th:href="@{/}">AZIT</a>
-				</div>
-				<div>
-					<button
-						id="sidebar-notification"
-						class="icon icon-bell"
-						type="button"
-						aria-label="알림 목록"
-						th:if="${sidebarMemberName != null}"
-					>
-						<span
-							class="notification-badge"
-							th:if="${sidebarNotificationCount > 0}"
-							th:text="${sidebarNotificationCount}"
-						>
-							1
-						</span>
-					</button>
-				</div>
-			</div>
-			<nav id="sidebar-menu">
-				<ul>
-					<li th:if="${sidebarMemberName != null}">
-						<a
-							id="sidebar-dashboard"
-							class="sidebar-page"
-							th:href="@{/dashboard}"
-							th:classappend="${currentPath == '/dashboard'} ? 'active'"
-						>
-							<div
-								class="sidebar-page-icon icon icon-layout-dashboard"
-							></div>
-							<div class="sidebar-page-name">대시보드</div>
-						</a>
-					</li>
-					<li>
-						<a
-							id="sidebar-start"
-							class="sidebar-page"
-							th:href="@{/discover}"
-							th:classappend="${currentPath == '/discover'} ? 'active'"
-						>
-							<div class="sidebar-page-icon icon icon-compass"></div>
-							<div class="sidebar-page-name">탐색</div>
-						</a>
-					</li>
-					<li th:if="${sidebarMemberName != null}">
-						<a
-							id="sidebar-schedule"
-							class="sidebar-page"
-							th:href="@{/schedule}"
-							th:classappend="${currentPath == '/schedule'} ? 'active'"
-						>
-							<div class="sidebar-page-icon icon icon-calendar"></div>
-							<div class="sidebar-page-name">일정</div>
-						</a>
-					</li>
-				</ul>
-			</nav>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>AZIT</title>
+	<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+	<link rel="stylesheet" href="/src/main/resources/static/css/common.css" th:href="@{/css/common.css}" />
+	<link th:fragment="stylesheet" rel="stylesheet" href="/src/main/resources/static/css/sidebar.css"
+		th:href="@{/css/sidebar.css}" />
+	<link rel="stylesheet" th:href="@{/css/auth.css}" />
+	<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js"
+		integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/htmx-ext-head-support@2.0.5"
+		integrity="sha384-cvMqHzjCJsOHgGuyB3sWXaUSv/Krm0BdzjuI1rtkjCbL1l1oHJx+cHyVRJhyuEz0"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/htmx-ext-route-layout@0.1.4/dist/index.min.js"
+		integrity="sha256-X7Tg/54td+irTN7upx+rWIRXE/pBynhrmfsJn7Da/Eo=" crossorigin="anonymous"></script>
+</head>
 
-			<nav id="sidebar-projects" th:if="${sidebarMemberName != null}">
-				<div class="sidebar-projects-header">
-					<h2>내 프로젝트</h2>
-					<a
-						th:href="@{/projects/new}"
-						aria-label="프로젝트 만들기"
-						style="text-decoration: none"
-					>
-						<span class="icon icon-plus" aria-hidden="true"></span>
+<body>
+	<header id="sidebar" th:fragment="sidebar" hx-ext="head-support">
+		<div id="sidebar-header">
+			<a id="sidebar-home" class="logo" th:href="@{/}">AZIT</a>
+
+			<button id="sidebar-notification" class="icon icon-bell" type="button" aria-label="알림 목록"
+				data-notification-open th:if="${sidebarMemberName != null}">
+				<span class="notification-badge" th:if="${sidebarNotificationCount > 0}"
+					th:text="${sidebarNotificationCount}">1</span>
+			</button>
+		</div>
+
+		<nav id="sidebar-menu">
+			<ul>
+				<li th:if="${sidebarMemberName != null}">
+					<a id="sidebar-dashboard" class="sidebar-page" th:href="@{/dashboard}"
+						th:classappend="${currentPath == '/dashboard'} ? 'active'">
+						<div class="sidebar-page-icon icon icon-layout-dashboard"></div>
+						<div class="sidebar-page-name">대시보드</div>
 					</a>
-				</div>
+				</li>
+				<li>
+					<a id="sidebar-start" class="sidebar-page" th:href="@{/discover}"
+						th:classappend="${currentPath == '/discover'} ? 'active'">
+						<div class="sidebar-page-icon icon icon-circle-plus"></div>
+						<div class="sidebar-page-name">탐색하기</div>
+					</a>
+				</li>
+				<li th:if="${sidebarMemberName != null}">
+					<a id="sidebar-schedule" class="sidebar-page" th:href="@{/schedule}"
+						th:classappend="${currentPath == '/schedule'} ? 'active'">
+						<div class="sidebar-page-icon icon icon-calendar"></div>
+						<div class="sidebar-page-name">일정</div>
+					</a>
+				</li>
+				<li th:if="${sidebarMemberName != null}">
+					<a id="sidebar-invitations" class="sidebar-page" th:href="@{/invitations}"
+						th:classappend="${currentPath == '/invitations'} ? 'active'">
+						<div class="sidebar-page-icon icon icon-mail"></div>
+						<div class="sidebar-page-name">지원 현황</div>
+					</a>
+				</li>
+			</ul>
+		</nav>
 
-				<ul>
-					<li th:each="project : ${sidebarProjects}">
-						<a
-							class="sidebar-project"
-							th:href="@{/project/{projectId}(projectId=${project.id})}"
-							th:classappend="${currentPath == #strings.concat('/project/', project.id) || #strings.startsWith(currentPath, #strings.concat('/project/', project.id, '/'))} ? 'active'"
-						>
-							<div
-								th:replace="~{fragments/project_icon :: projectIcon(${project.title}, 'sidebar-project-icon')}"
-							></div>
-							<div
-								class="sidebar-project-name"
-								th:text="${project.title}"
-							></div>
-						</a>
-					</li>
-				</ul>
-			</nav>
+		<nav id="sidebar-projects" th:if="${sidebarMemberName != null}">
+			<div class="sidebar-projects-header">
+				<h2>내 프로젝트</h2>
+				<a th:href="@{/project/new}" aria-label="프로젝트 만들기" style="text-decoration: none">
+					<span class="icon icon-plus" aria-hidden="true"></span>
+				</a>
+			</div>
 
-			<nav id="sidebar-footer">
-				<ul>
-					<li id="sidebar-user">
-						<a
-							id="sidebar-userpage"
-							th:if="${sidebarMemberName != null}"
-							th:href="@{/profile/me}"
-							th:classappend="${currentPath == '/profile/me'} ? 'active'"
-						>
-							<th:block
-								th:replace="~{fragments/avatar :: avatar(${sidebarMemberProfileUrl}, ${sidebarMemberName}, 'sidebar-avatar')}"
-							>
-							</th:block>
-							<span
-								class="sidebar-user-name"
-								th:text="${sidebarMemberName}"
-							></span>
-						</a>
-
-						<a
-							id="sidebar-login"
-							th:unless="${sidebarMemberName != null}"
-							th:href="@{/login}"
-						>
-							<div class="sidebar-login-icon icon icon-log-in"></div>
-							<span class="sidebar-user-name">로그인</span>
-						</a>
-
-						<input
-							id="sidebar-usermenu-toggle-input"
-							class="toggle-input"
-							type="checkbox"
-						/>
-
-						<label
-							id="sidebar-usermenu-toggle-button"
-							class="toggle-button icon icon-chevron-up"
-							for="sidebar-usermenu-toggle-input"
-						></label>
-
-						<nav id="sidebar-usermenu">
-							<ul>
-								<li th:unless="${sidebarMemberName != null}">
-									<a
-										id="sidebar-register"
-										th:href="@{/register}"
-									>
-										<div
-											class="sidebar-usermenu-icon icon icon-user-plus"
-										></div>
-										<div class="sidebar-usermenu-label">회원가입</div>
-									</a>
-								</li>
-								<th:block th:if="${sidebarMemberName != null}">
-								<li>
-									<a id="sidebar-editprofile" th:href="@{/profile/me}">
-										<div
-											class="sidebar-usermenu-icon icon icon-user-cog"
-										></div>
-										<div class="sidebar-usermenu-label">
-											프로필 수정
-										</div>
-									</a>
-								</li>
-								<li>
-									<form th:action="@{/logout}" method="POST">
-										<button id="sidebar-logout" type="submit">
-											<div
-												class="sidebar-usermenu-icon icon icon-log-out"
-											></div>
-											<div class="sidebar-usermenu-label">
-												로그아웃
-											</div>
-										</button>
-									</form>
-								</li>
-								</th:block>
-							</ul>
-						</nav>
-					</li>
-				</ul>
-			</nav>
-
-			<dialog
-				id="notification-modal"
-				class="modal notification-modal"
-				aria-hidden="true"
-				role="dialog"
-				aria-modal="true"
-				aria-labelledby="notification-modal-title"
-				th:if="${sidebarMemberName != null}"
-			>
-				<div class="notification-modal-header">
-					<h2 id="notification-modal-title">알림</h2>
-					<button
-						type="button"
-						class="modal-close icon icon-x"
-						aria-label="닫기"
-					></button>
-				</div>
-
-				<div class="notification-modal-body">
-					<section>
-						<h3>받은 초대</h3>
+			<ul>
+				<li th:each="project : ${sidebarProjects}">
+					<a class="sidebar-project" th:href="@{/project/{projectId}(projectId=${project.id})}"
+						th:classappend="${currentPath == #strings.concat('/project/', project.id) || #strings.startsWith(currentPath, #strings.concat('/project/', project.id, '/'))} ? 'active'">
 						<div
-							class="notification-list"
-							th:if="${sidebarPendingInvitations != null and !sidebarPendingInvitations.isEmpty()}"
-						>
-							<article
-								class="notification-item"
-								th:each="invitation : ${sidebarPendingInvitations}"
-							>
-								<strong th:text="${invitation.project.title}"
-									>프로젝트 이름</strong
-								>
-								<p
-									th:text="${invitation.sender.name + '님이 초대했습니다.'}"
-								>
-									초대한 사람
-								</p>
-								<div class="notification-actions">
-									<form
-										th:action="@{/invitations/{id}/accept(id=${invitation.id})}"
-										method="post"
-									>
-										<button type="submit" class="azit-button">
-											수락
-										</button>
-									</form>
-									<form
-										th:action="@{/invitations/{id}/reject(id=${invitation.id})}"
-										method="post"
-									>
-										<button
-											type="submit"
-											class="azit-button azit-button-danger"
-										>
-											거절
-										</button>
-									</form>
-								</div>
-							</article>
+							th:replace="~{fragments/project_icon :: projectIcon(${project.title}, 'sidebar-project-icon')}">
 						</div>
-						<p
-							class="notification-empty"
-							th:if="${sidebarPendingInvitations == null or sidebarPendingInvitations.isEmpty()}"
-						>
-							받은 초대가 없습니다.
-						</p>
-					</section>
+						<div class="sidebar-project-name" th:text="${project.title}"></div>
+					</a>
+				</li>
+			</ul>
+		</nav>
 
-					<section>
-						<h3>가입신청</h3>
-						<div
-							class="notification-list"
-							th:if="${sidebarPendingJoinRequests != null and !sidebarPendingJoinRequests.isEmpty()}"
-						>
-							<article
-								class="notification-item"
-								th:each="joinRequest : ${sidebarPendingJoinRequests}"
-							>
-								<strong th:text="${joinRequest.project.title}"
-									>프로젝트 이름</strong
-								>
+		<nav id="sidebar-footer">
+			<ul>
+				<li id="sidebar-user">
+					<a id="sidebar-userpage" th:if="${sidebarMemberName != null}" th:href="@{/profile/me}"
+						th:classappend="${currentPath == '/profile/me'} ? 'active'">
+						<th:block
+							th:replace="~{fragments/avatar :: avatar(${sidebarMemberProfileUrl}, ${sidebarMemberName}, 'sidebar-avatar')}">
+						</th:block>
+						<span class="sidebar-user-name" th:text="${sidebarMemberName}"></span>
+					</a>
+
+					<a id="sidebar-login" th:unless="${sidebarMemberName != null}" th:href="@{/login}">
+						<span class="sidebar-user-name">로그인</span>
+					</a>
+
+					<input id="sidebar-usermenu-toggle-input" class="toggle-input" type="checkbox"
+						th:if="${sidebarMemberName != null}" />
+
+					<label id="sidebar-usermenu-toggle-button" class="toggle-button icon icon-chevron-up"
+						for="sidebar-usermenu-toggle-input" th:if="${sidebarMemberName != null}"></label>
+
+					<nav id="sidebar-usermenu" th:if="${sidebarMemberName != null}">
+						<ul>
+							<li>
+								<a id="sidebar-editprofile" th:href="@{/profile/me}">
+									<div class="sidebar-usermenu-icon icon icon-user-cog"></div>
+									<div class="sidebar-usermenu-label">프로필 수정</div>
+								</a>
+							</li>
+							<li>
+								<form th:action="@{/logout}" method="POST">
+									<button id="sidebar-logout" type="submit">
+										<div class="sidebar-usermenu-icon icon icon-log-out"></div>
+										<div class="sidebar-usermenu-label">로그아웃</div>
+									</button>
+								</form>
+							</li>
+						</ul>
+					</nav>
+				</li>
+			</ul>
+		</nav>
+
+		<dialog th:if="${sidebarMemberName != null}" th:replace="~{auth :: modal}"></dialog>
+		<dialog id="notification-modal" class="notification-modal" aria-hidden="true" role="dialog" aria-modal="true"
+			aria-labelledby="notification-modal-title" th:if="${sidebarMemberName != null}">
+			<div class="notification-modal-header">
+				<h2 id="notification-modal-title">알림</h2>
+				<button type="button" class="modal-close notification-modal-close icon icon-x" aria-label="닫기"></button>
+			</div>
+
+			<div class="notification-modal-body">
+				<section>
+					<h3>받은 초대</h3>
+					<div class="notification-list"
+						th:if="${sidebarPendingInvitations != null and !sidebarPendingInvitations.isEmpty()}">
+						<article class="notification-item" th:each="invitation : ${sidebarPendingInvitations}">
+							<div class="notification-content">
+								<strong th:text="${invitation.project.title}">프로젝트 이름</strong>
+								<p th:text="${invitation.sender.name + '님이 초대했습니다.'}">초대한 사람</p>
+							</div>
+
+							<div class="notification-actions">
+								<form th:action="@{/invitations/{id}/accept(id=${invitation.id})}" method="post">
+									<button type="submit" class="azit-button">수락</button>
+								</form>
+								<form th:action="@{/invitations/{id}/reject(id=${invitation.id})}" method="post">
+									<button type="submit" class="azit-button azit-button-danger">거절</button>
+								</form>
+							</div>
+						</article>
+					</div>
+					<p class="notification-empty"
+						th:if="${sidebarPendingInvitations == null or sidebarPendingInvitations.isEmpty()}">
+						받은 초대가 없습니다.
+					</p>
+				</section>
+
+				<section>
+					<h3>가입신청</h3>
+					<div class="notification-list"
+						th:if="${sidebarPendingJoinRequests != null and !sidebarPendingJoinRequests.isEmpty()}">
+						<article class="notification-item" th:each="joinRequest : ${sidebarPendingJoinRequests}">
+							<div class="notification-content">
+								<strong th:text="${joinRequest.project.title}">프로젝트 이름</strong>
 								<p>
-									<a
-										th:href="@{/profile/{id}(id=${joinRequest.applicant.id})}"
-										th:text="${joinRequest.applicant.name}"
-										>신청자</a
-									>
+									<a th:href="@{/profile/{id}(id=${joinRequest.applicant.id})}"
+										th:text="${joinRequest.applicant.name}">신청자</a>
 									<span>님이 가입신청했습니다.</span>
 								</p>
-								<div class="notification-actions">
-									<form
-										th:action="@{/join-requests/{id}/accept(id=${joinRequest.id})}"
-										method="post"
-									>
-										<button type="submit" class="azit-button">
-											수락
-										</button>
-									</form>
-									<form
-										th:action="@{/join-requests/{id}/reject(id=${joinRequest.id})}"
-										method="post"
-									>
-										<button
-											type="submit"
-											class="azit-button azit-button-danger"
-										>
-											거절
-										</button>
-									</form>
-								</div>
-							</article>
-						</div>
-						<p
-							class="notification-empty"
-							th:if="${sidebarPendingJoinRequests == null or sidebarPendingJoinRequests.isEmpty()}"
-						>
-							가입신청이 없습니다.
-						</p>
-					</section>
-				</div>
-			</dialog>
+							</div>
 
-			<script>
-				(() => {
-					const modal = document.getElementById('notification-modal');
-					const openButton = document.querySelector('#sidebar-notification');
-					const closeButton = document.querySelector(
-						'#notification-modal .modal-close',
-					);
+							<div class="notification-actions">
+								<form th:action="@{/join-requests/{id}/accept(id=${joinRequest.id})}" method="post">
+									<button type="submit" class="azit-button">수락</button>
+								</form>
+								<form th:action="@{/join-requests/{id}/reject(id=${joinRequest.id})}" method="post">
+									<button type="submit" class="azit-button azit-button-danger">거절</button>
+								</form>
+							</div>
+						</article>
+					</div>
+					<p class="notification-empty"
+						th:if="${sidebarPendingJoinRequests == null or sidebarPendingJoinRequests.isEmpty()}">
+						가입신청이 없습니다.
+					</p>
+				</section>
+			</div>
+		</dialog>
 
-					if (!modal || !openButton) return;
+		<script>
+			(() => {
+				const modal = document.getElementById('notification-modal');
+				const openButton = document.querySelector('#sidebar-notification');
+				const closeButton = document.querySelector('#notification-modal .modal-close');
 
-					function closeModal() {
-						modal.close();
-						modal.setAttribute('aria-hidden', 'true');
-					}
+				if (!modal || !openButton) return;
 
-					openButton.addEventListener('click', () => {
-						modal.showModal();
-						modal.setAttribute('aria-hidden', 'false');
-					});
+				function closeModal() {
+					modal.close();
+					modal.setAttribute('aria-hidden', 'true');
+				}
 
-					if (closeButton) closeButton.addEventListener('click', closeModal);
+				openButton.addEventListener('click', () => {
+					modal.showModal();
+					modal.setAttribute('aria-hidden', 'false');
+				});
 
-					modal.addEventListener('click', (event) => {
-						if (event.target === modal) closeModal();
-					});
+				if (closeButton) closeButton.addEventListener('click', closeModal);
 
-					document
-						.querySelectorAll('.notification-actions form')
-						.forEach((form) => {
-							form.addEventListener('submit', () => {
-								form.querySelectorAll('button').forEach((button) => {
-									button.disabled = true;
-								});
-							});
+				modal.addEventListener('click', (event) => {
+					if (event.target === modal) closeModal();
+				});
+
+				document.querySelectorAll('.notification-actions form').forEach((form) => {
+					form.addEventListener('submit', () => {
+						form.querySelectorAll('button').forEach((button) => {
+							button.disabled = true;
 						});
-				})();
-			</script>
-		</header>
-		<main>
-			<h1>본문</h1>
-		</main>
-	</body>
+					});
+				});
+			})();
+		</script>
+	</header>
+</body>
+
 </html>

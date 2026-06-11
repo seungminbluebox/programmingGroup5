@@ -63,10 +63,8 @@
 	width: 22px;
 	height: 22px;
 	background-color: currentColor;
-	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/bell.svg')
-		no-repeat center / contain;
-	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/bell.svg')
-		no-repeat center / contain;
+	-webkit-mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/bell.svg') no-repeat center / contain;
+	mask: url('https://cdn.jsdelivr.net/npm/lucide-static@1.17.0/icons/bell.svg') no-repeat center / contain;
 }
 
 #sidebar-notification:hover {
@@ -125,7 +123,7 @@
 	border-top: var(--stroke-thin) solid var(--color-border);
 }
 
-#sidebar-projects > h2 {
+#sidebar-projects>h2 {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -135,7 +133,7 @@
 	padding: 0 var(--space-xs) var(--space-10);
 }
 
-#sidebar-projects > h2 .icon {
+#sidebar-projects>h2 .icon {
 	font-size: 16px;
 	color: var(--color-text-muted);
 	cursor: pointer;
@@ -248,7 +246,7 @@
 	white-space: nowrap;
 }
 
-#sidebar-user > :first-child {
+#sidebar-user> :first-child {
 	flex-grow: 1;
 	font-size: var(--font-size-md\+);
 	font-weight: var(--font-weight-semibold);
@@ -272,7 +270,7 @@
 }
 
 /* 열렸을 때 chevron 회전 */
-#sidebar-usermenu-toggle-input:checked ~ #sidebar-usermenu-toggle-button {
+#sidebar-usermenu-toggle-input:checked~#sidebar-usermenu-toggle-button {
 	rotate: 180deg;
 	color: var(--color-primary);
 }
@@ -296,7 +294,7 @@
 	z-index: 20;
 }
 
-#sidebar-usermenu-toggle-input:checked ~ #sidebar-usermenu {
+#sidebar-usermenu-toggle-input:checked~#sidebar-usermenu {
 	display: block;
 }
 
@@ -524,3 +522,156 @@
 #sidebar-login .sidebar-user-name {
 	padding-left: var(--space-2xs);
 }
+
+#notification-modal.notification-modal {
+	position: fixed;
+	inset: 50% auto auto 50%;
+	transform: translate(-50%, -50%);
+	width: min(620px, calc(100vw - 48px));
+	max-height: calc(100vh - 48px);
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-sm);
+	background: #fff;
+	color: var(--color-text);
+	box-shadow: 0 24px 70px rgba(15, 23, 42, 0.24);
+}
+
+#notification-modal.notification-modal::backdrop {
+	background: rgba(15, 23, 42, 0.42);
+}
+
+#notification-modal .notification-modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 18px 20px;
+	border-bottom: 1px solid var(--color-border);
+	background: #fff;
+}
+
+#notification-modal .notification-modal-header h2 {
+	margin: 0;
+	color: var(--color-text);
+	font-size: var(--font-size-3xl);
+	font-weight: var(--font-weight-bold);
+	line-height: 1.2;
+}
+
+#notification-modal .notification-modal-close {
+	display: grid;
+	width: 36px;
+	height: 36px;
+	place-items: center;
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-sm);
+	background: #fff;
+	color: var(--color-text);
+	font: inherit;
+	font-weight: var(--font-weight-bold);
+	cursor: pointer;
+}
+
+#notification-modal .notification-modal-body {
+	display: grid;
+	gap: 20px;
+	max-height: calc(100vh - 140px);
+	overflow-y: auto;
+	padding: 20px;
+	background: #fff;
+}
+
+#notification-modal .notification-modal-body h3 {
+	margin: 0 0 10px;
+	color: var(--color-text);
+	font-size: var(--font-size-lg\+);
+	font-weight: var(--font-weight-bold);
+}
+
+#notification-modal .notification-list {
+	display: grid;
+	gap: 10px;
+}
+
+#notification-modal .notification-item {
+	display: grid;
+	gap: 8px;
+	padding: 14px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-sm);
+	background: #fff;
+}
+
+#notification-modal .notification-item p,
+#notification-modal .notification-empty {
+	margin: 0;
+	color: var(--color-text-muted);
+}
+
+#notification-modal .notification-item a {
+	color: var(--color-primary);
+	font-weight: var(--font-weight-semibold);
+}
+
+#notification-modal .notification-actions {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+#notification-modal .notification-actions .azit-button {
+	min-height: 38px;
+	padding: 0 14px;
+	border-radius: var(--radius-sm);
+}
+
+#notification-modal .notification-item {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 16px;
+}
+
+#notification-modal .notification-content {
+	min-width: 0;
+	display: grid;
+	gap: 8px;
+}
+
+#notification-modal .notification-content strong {
+	display: block;
+	color: var(--color-text);
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-extrabold);
+	line-height: 1.3;
+}
+
+#notification-modal .notification-content p {
+	margin: 0;
+	color: var(--color-text-muted);
+	font-size: var(--font-size-md);
+	line-height: 1.5;
+}
+
+#notification-modal .notification-content a {
+	color: var(--color-primary);
+	font-weight: var(--font-weight-bold);
+}
+
+#notification-modal .notification-actions {
+	justify-content: flex-end;
+	align-items: center;
+	flex-wrap: nowrap;
+}
+
+#notification-modal .notification-actions form {
+	margin: 0;
+}
+
+#notification-modal .notification-actions .azit-button {
+	white-space: nowrap;
+}
+
