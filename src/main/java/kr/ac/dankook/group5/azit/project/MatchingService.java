@@ -108,32 +108,30 @@ public class MatchingService {
         return new RecommendedMember(member, score, memberStackIds.size(), availabilityMatchCount);
     }
 
+    // 루틴은 회원의 "바쁜 시간"이므로(ScheduleService 참고), 프로젝트 활동시간과
+    // 겹치는 루틴이 없는 시간대를 참여 가능한 시간대로 센다. 루틴이 없으면 항상 가능.
     private int calculateAvailabilityMatchCount(
             List<ProjectAvailability> projectAvailabilities,
-            List<Routine> memberAvailabilities) {
-        if (projectAvailabilities.isEmpty() || memberAvailabilities.isEmpty()) {
-            return 0;
-        }
-
+            List<Routine> memberRoutines) {
         return (int) projectAvailabilities.stream()
-                .filter(projectAvailability -> memberAvailabilities.stream()
-                        .anyMatch(memberAvailability -> isOverlap(projectAvailability, memberAvailability)))
+                .filter(projectAvailability -> memberRoutines.stream()
+                        .noneMatch(routine -> isConflict(projectAvailability, routine)))
                 .count();
     }
 
-    private boolean isOverlap(ProjectAvailability projectAvailability, Routine memberAvailability) {
-        if (projectAvailability.getDayOfWeek() != memberAvailability.getDayOfWeek()) {
+    private boolean isConflict(ProjectAvailability projectAvailability, Routine routine) {
+        if (projectAvailability.getDayOfWeek() != routine.getDayOfWeek()) {
             return false;
         }
 
         LocalTime projectStart = projectAvailability.getStartTime();
         LocalTime projectEnd = projectAvailability.getEndTime();
-        LocalTime memberStart = memberAvailability.getStartTime();
-        LocalTime memberEnd = memberAvailability.getEndTime();
+        LocalTime busyStart = routine.getStartTime();
+        LocalTime busyEnd = routine.getEndTime();
 
-        return projectStart != null && projectEnd != null && memberStart != null && memberEnd != null
-                && !projectEnd.isBefore(memberStart)
-                && !memberEnd.isBefore(projectStart);
+        return projectStart != null && projectEnd != null && busyStart != null && busyEnd != null
+                && busyStart.isBefore(projectEnd)
+                && projectStart.isBefore(busyEnd);
     }
 
     private Project getProjectById(Long projectId) {
